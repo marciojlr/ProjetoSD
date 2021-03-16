@@ -5,7 +5,7 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 
-
+// Script de Cliente diretamente ligado ao Server
 public class AdminConsole {
 
     public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException{
