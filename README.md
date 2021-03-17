@@ -3,7 +3,8 @@
 ## Ideias de Implementação
 
 #### RMI SERVER
-
+> É o servidor que armazeda todos os dados da aplicação, suportando por essa razão
+> todas as operações necessárias através de métodos remotos usando Java RMI.
 #### ADMIN CONSOLE
 * Registar Pessoas
 * Criar Eleição
