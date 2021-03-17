@@ -15,6 +15,7 @@ public class MulticastServer extends Thread {
         server.start();
     }
 
+    // 
     public MulticastServer() {
         super("Server " + (long) (Math.random() * 1000));
     }
