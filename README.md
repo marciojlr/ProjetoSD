@@ -1,7 +1,7 @@
 # ProjetoSD
 
 ## Ideias de Implementação
-<span style="color:red">some **This is Red Bold.** text</span>
+
 #### RMI SERVER
 > Progamar Server para se connectar a um porto. Se o porto já estiver ocupado vai dar uma
 > excessão, essa excessão vai para um while que mete o servidor a mandar pings, se não receber
