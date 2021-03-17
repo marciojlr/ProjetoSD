@@ -2,16 +2,16 @@
 
 ## Ideias de Implementação
 
-### RMI SERVER
+#### RMI SERVER
 
-### ADMIN CONSOLE
+#### ADMIN CONSOLE
 * Registar Pessoas
 * Criar Eleição
 * Gerir listas de candidatos de uma eleição
 * Gerir mesas de voto
-### MULTICAST SERVER
+#### MULTICAST SERVER
 * Gerir terminais de voto
 * Indentificar eleitor na mesa de voto
-### VOTING TERMINAL
+#### VOTING TERMINAL
 * Autenticação de eleitor no terminal de voto
 * Votar
