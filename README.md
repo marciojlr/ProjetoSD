@@ -19,10 +19,15 @@
   > Registar dados de uma eleição numa classe e guardar essa classe num ArrayList.
 
 * **3 - Gerir listas de candidatos de uma eleição**
+  
+  > Verificar as pessoas que podem fazer parte da lista.
 
 * **4 - Gerir mesas de voto**
 
+  > Criar mesas de voto e terminais associados. Apenas pode existir uma mesa de votos por departamento.
+
 * **9 - Alterar propriedade de uma eleição**
+
 
 * **10 - Saber em que local votou cada eleitor**
 
@@ -42,9 +47,12 @@
 
 * **5 - Gerir terminais de voto**
 
+  > Esta funcionalidade tem de ser automática. Acho que é a parte de quando se liga procurar terminais para se conectar.
+  > Criar dois grupos Multicast, um para as maquinas se descobrirem e outro para comunicação de votos dos terminais para o servidor da mesa.
+  
 * **6 - Indentificar eleitor na mesa de voto**
 
-
+  > Inserir dados, se houver mais que uma eleição escolher a eleição e ordenar a ida a um terminal.
 
 #### VOTING TERMINAL
 > As Voting Terminals estão bloquadas até serem desbloqueadas pelo Multicast Server.
@@ -54,3 +62,5 @@
 * **7 - Autenticação de eleitor no terminal de voto**
 
 * **8 - Votar**
+
+  > Um dos problemas aqui vai ser ter a certeza que o voto foi contabilizado, sem saber a identidade da pessoa que votou.
