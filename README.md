@@ -10,26 +10,26 @@
 
 
 #### ADMIN CONSOLE
-* 1 - Registar Pessoas
+* **1 - Registar Pessoas**
   > Registar dados das pessoas numa classe pessoa e guardar essa classe num ArrayList.
-* 2 - Criar Eleição
+* **2 - Criar Eleição**
   > Registar dados de uma eleição numa classe e guardar essa classe num ArrayList.
-* 3 - Gerir listas de candidatos de uma eleição
-* 4 - Gerir mesas de voto
-* 9 - Alterar propriedade de uma eleição
-* 10 - Saber em que local votou cada eleitor
-* 11 - Mostrar estado das mesas de voto
-* 12 - Mostrar eleitores em tempo real
-* 13 - Término da eleição na data
-* 14 - Consultar resultador detalhados de eleições passadas
+* **3 - Gerir listas de candidatos de uma eleição**
+* **4 - Gerir mesas de voto**
+* **9 - Alterar propriedade de uma eleição**
+* **10 - Saber em que local votou cada eleitor**
+* **11 - Mostrar estado das mesas de voto**
+* **12 - Mostrar eleitores em tempo real**
+* **13 - Término da eleição na data**
+* **14 - Consultar resultador detalhados de eleições passadas**
 
 
 #### MULTICAST SERVER
 > Existe um Multicast Server por cada mesa de voto que gere localmente os terminais
 > que lhe estão associados. Uma pessoa entra num Multicast Server e identifica-se,
 
-* 5 - Gerir terminais de voto
-* 6 - Indentificar eleitor na mesa de voto
+* **5 - Gerir terminais de voto**
+* **6 - Indentificar eleitor na mesa de voto**
 
 
 #### VOTING TERMINAL
@@ -37,5 +37,5 @@
 > Basicamente acho que o eleitor se dirige ao Server, identifica-se e depois é mandado
 > para um terminal.
 
-* 7 - Autenticação de eleitor no terminal de voto
-* 8 - Votar
+* **7 - Autenticação de eleitor no terminal de voto**
+* **8 - Votar**
