@@ -3,8 +3,11 @@
 ## Ideias de Implementação
 
 #### RMI SERVER
-> É o servidor que armazeda todos os dados da aplicação, suportando por essa razão
-> todas as operações necessárias através de métodos remotos usando Java RMI.
+> Progamar Server para se connectar a um porto. Se o porto já estiver ocupado vai dar uma
+> excessão, essa excessão vai para um while que mete o servidor a mandar pings, se não receber
+> resposta este pode voltar a tentar conectar-se ao porto, assim se o principal já não estiver
+> a operar, o secundário pode assumir o seu papel.
+
 
 #### ADMIN CONSOLE
 * Registar Pessoas
@@ -18,12 +21,14 @@
 * Término da eleição na data
 * Consultar resultador detalhados de eleições passadas
 
+
 #### MULTICAST SERVER
 > Existe um Multicast Server por cada mesa de voto que gere localmente os terminais
 > que lhe estão associados. Uma pessoa entra num Multicast Server e identifica-se,
 
 * 5 - Gerir terminais de voto
 * 6 - Indentificar eleitor na mesa de voto
+
 
 #### VOTING TERMINAL
 > As Voting Terminals estão bloquadas até serem desbloqueadas pelo Multicast Server.
