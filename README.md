@@ -10,16 +10,18 @@
 
 
 #### ADMIN CONSOLE
-* Registar Pessoas
-* Criar Eleição
-* Gerir listas de candidatos de uma eleição
-* Gerir mesas de voto
-* Alterar propriedade de uma eleição
-* Saber em que local votou cada eleitor
-* Mostrar estado das mesas de voto
-* Mostrar eleitores em tempo real
-* Término da eleição na data
-* Consultar resultador detalhados de eleições passadas
+* 1 - Registar Pessoas
+  > Registar dados das pessoas numa classe pessoa e guardar essa classe num ArrayList.
+* 2 - Criar Eleição
+  > Registar dados de uma eleição numa classe e guardar essa classe num ArrayList.
+* 3 - Gerir listas de candidatos de uma eleição
+* 4 - Gerir mesas de voto
+* 9 - Alterar propriedade de uma eleição
+* 10 - Saber em que local votou cada eleitor
+* 11 - Mostrar estado das mesas de voto
+* 12 - Mostrar eleitores em tempo real
+* 13 - Término da eleição na data
+* 14 - Consultar resultador detalhados de eleições passadas
 
 
 #### MULTICAST SERVER
