@@ -6,11 +6,11 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
-/*very good ma friend*/
 
-public class RMIServer extends UnicastRemoteObject implements AdminInterface {
+public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     ArrayList<Pessoa> listaPessoas = new ArrayList<Pessoa>();
+
     protected RMIServer() throws RemoteException {
         super();
     }
@@ -35,7 +35,7 @@ public class RMIServer extends UnicastRemoteObject implements AdminInterface {
 
     public static void main(String [] args ){
         try{
-            AdminInterface admin = new RMIServer();
+            RMI_S_I admin = new RMIServer();
             LocateRegistry.createRegistry(1099).rebind("Server",admin);
             System.out.println("RMI Server ready...!");
         } catch (RemoteException e){

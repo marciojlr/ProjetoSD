@@ -10,10 +10,13 @@ import java.util.Scanner;
 
 // Script de Cliente diretamente ligado ao Server
 public class AdminConsole {
-    private static AdminInterface adminConsole;
+
+    private static RMI_S_I adminConsole;
+
+
     public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException{
 
-        adminConsole = (AdminInterface) Naming.lookup("Server");
+        adminConsole = (RMI_S_I) Naming.lookup("Server");
         String teste;
         teste= adminConsole.teste();
         System.out.println(teste);
@@ -28,11 +31,11 @@ public class AdminConsole {
 
         while (true){
             System.out.println("Bem vindo!");
-            System.out.println("1-Registar");
-            System.out.println("2-");
-            System.out.println("3-");
-            System.out.println("4-");
-            System.out.println("5-");
+            System.out.println("1 - Registar");
+            System.out.println("2 - ");
+            System.out.println("3 - ");
+            System.out.println("4 - ");
+            System.out.println("5 - ");
             option= myObj.nextLine();
 
             if(option.equals(option)){
@@ -77,7 +80,7 @@ public class AdminConsole {
             while (true){
                 try {
                     //Thread.sleep(1000);
-                    adminConsole = (AdminInterface) Naming.lookup("Server");
+                    adminConsole = (RMI_S_I) Naming.lookup("Server");
                     break;
                 }catch(NotBoundException  | RemoteException |MalformedURLException m){
                     System.out.println("nao conectei");
