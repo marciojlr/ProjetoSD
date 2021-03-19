@@ -2,6 +2,11 @@
 
 ## Ideias de Implementação
 
+#### Classes a implmentar
+* Classe Pessoas
+* Classe Mesa
+* Classe Eleição
+
 #### RMI SERVER
 > Progamar Server para se connectar a um porto. Se o porto já estiver ocupado vai dar uma
 > excessão, essa excessão vai para um while que mete o servidor a mandar pings, se não receber
