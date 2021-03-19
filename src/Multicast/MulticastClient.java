@@ -14,7 +14,7 @@ import java.util.Scanner;
  * The example IPv4 address chosen may require you to use a VM option to
  * prefer IPv4 (if your operating system uses IPv6 sockets by default).
  * <p>
- * Usage: java -Djava.net.preferIPv4Stack=true MulticastClient
+ * Usage: java -D java.net.preferIPv4Stack=true MulticastClient
  *
  * @author Raul Barbosa
  * @version 1.0
