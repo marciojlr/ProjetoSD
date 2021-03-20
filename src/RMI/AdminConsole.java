@@ -38,7 +38,7 @@ public class AdminConsole {
             System.out.println("5 - ");
             option= myObj.nextLine();
 
-            if(option.equals(option)){
+            if(option.equals("1")){
                 //Determinar o tipo de Pessoa a criar
                 String tipo;
                 Scanner s = new Scanner(System.in);
@@ -66,15 +66,23 @@ public class AdminConsole {
         nome = s.nextLine();
         System.out.print("Numero Eleitor: ");
         num_eleitor = Integer.parseInt(s.nextLine());
-
-        // Criar objeto
-        Pessoa p = new Pessoa(nome,num_eleitor,tipo);
-
+        System.out.print("Password: ");
+        String password= s.nextLine();
+        System.out.print("Departamento: ");
+        String Departamento = s.nextLine();
+        System.out.print("Telemovel: ");
+        int tel=Integer.parseInt(s.nextLine());
+        System.out.print("Morada: ");
+        String morada = s.nextLine();
+        System.out.print("CC: ");
+        int CC=Integer.parseInt(s.nextLine());
+        System.out.print("CC validade: ");
+        int validade_CC=Integer.parseInt(s.nextLine());
         //chamar funçao registar do server
         try{
             System.out.println("aqui");
             String r;
-            r = adminConsole.registarPessoa(p);
+            r = adminConsole.registarPessoa(nome,num_eleitor,tipo,password,Departamento,tel,morada,CC,validade_CC);
             System.out.println(r);
         }catch (RemoteException e){
             while (true){

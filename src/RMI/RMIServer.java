@@ -21,8 +21,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return "olaaaaaa";
     }
 
-    public String registarPessoa(Pessoa p){
+    public String registarPessoa(String nome, int num_eleitor, String tipo, String password, String departamento, int tel, String morada, int CC, int validade_CC){
 
+        Pessoa p = new Pessoa(nome,num_eleitor,tipo,password,departamento,tel,morada,CC,validade_CC);
         System.out.println("Estou a registar");
         System.out.println(p.getNome());
         System.out.println(p.getNum_eleitor());
