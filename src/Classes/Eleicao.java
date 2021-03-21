@@ -1,6 +1,8 @@
 package Classes;
 
-public class Eleicao {
+import java.io.Serializable;
+
+public class Eleicao implements Serializable {
     //usar Date
     private int data_inicio;
     private int data_final;
@@ -67,4 +69,6 @@ public class Eleicao {
     public void setTipo_Pessoa(String tipo_Pessoa) {
         this.tipo_Pessoa = tipo_Pessoa;
     }
+
+
 }

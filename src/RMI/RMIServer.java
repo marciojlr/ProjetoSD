@@ -1,5 +1,6 @@
 package RMI;
 
+import Classes.Eleicao;
 import Classes.Pessoa;
 
 import java.rmi.RemoteException;
@@ -10,6 +11,7 @@ import java.util.ArrayList;
 public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     ArrayList<Pessoa> listaPessoas = new ArrayList<Pessoa>();
+    ArrayList<Eleicao> listaEleicoes = new ArrayList<Eleicao>();
 
     protected RMIServer() throws RemoteException {
         super();
@@ -19,6 +21,14 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         System.out.println("olaaaa");
 
         return "olaaaaaa";
+    }
+
+    public ArrayList<Pessoa> getListaPessoas() {
+        return listaPessoas;
+    }
+
+    public ArrayList<Eleicao> getListaEleicoes() {
+        return listaEleicoes;
     }
 
     public String registarPessoa(String nome, int num_eleitor, String tipo, String password, String departamento, int tel, String morada, int CC, int validade_CC){
@@ -32,6 +42,20 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         listaPessoas.add(p);
 
         return "Registado";
+    }
+
+    public String criarEleicao(int data_inicio, int data_final, String titulo, String descricao, String dept, String tipo_Pessoa){
+
+        Eleicao e = new Eleicao(data_inicio,data_final,titulo,descricao,dept,tipo_Pessoa);
+
+        System.out.println(e.getTitulo());
+        System.out.println(e.getDescricao());
+
+        //talvez seja necessario fazer verificaçao se a eleiçao ja existe
+        listaEleicoes.add(e);
+
+        return "eleiçao criada com sucesso";
+
     }
 
     public static void main(String [] args ){
