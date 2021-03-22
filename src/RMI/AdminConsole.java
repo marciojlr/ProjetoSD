@@ -37,7 +37,7 @@ public class AdminConsole {
             System.out.println("2 - Criar Eleiçao");
             System.out.println("3 - Gerir Listas de candidatos a uma eleiçao");
             System.out.println("4 - ");
-            System.out.println("5 - ");
+            System.out.println("5 - Alterar propriedades de eleição");
             option= myObj.nextLine();
 
             if(option.equals("1")){
@@ -55,20 +55,23 @@ public class AdminConsole {
                 }
 
             }
-            if(option.equals("2")){
+            else if(option.equals("2")){
                 try {
                     criaEleicao();
                 }catch (RemoteException e){
                     System.out.println(e);
                 }
             }
-            if(option.equals("3")){
+            else if(option.equals("3")){
                 try {
                     //funçao
                     gerirListaCandidata();
                 }catch (RemoteException e){
                     System.out.println(e);
                 }
+            }
+            else if(option.equals("5")){
+                System.out.println("Alterar Propridades de Eleição");
             }
         }
     }
@@ -160,7 +163,7 @@ public class AdminConsole {
     *
      */
 
-    public static void  gerirListaCandidata() throws RemoteException {
+    public static void gerirListaCandidata() throws RemoteException {
         try{
             ArrayList<Eleicao> eleicoes = adminConsole.getListaEleicoes();
 
@@ -209,5 +212,4 @@ public class AdminConsole {
             }
         }
     }
-
 }

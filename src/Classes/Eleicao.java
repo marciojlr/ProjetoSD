@@ -101,5 +101,4 @@ public class Eleicao implements Serializable {
         }
     }
 
-
 }
