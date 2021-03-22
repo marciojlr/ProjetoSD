@@ -73,7 +73,7 @@ public class AdminConsole {
         }
     }
 
-
+    //Coment
     public static void  RegistoPessoa(String tipo) throws RemoteException {
         //Recolher informaçao
         String nome;

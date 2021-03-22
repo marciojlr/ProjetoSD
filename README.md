@@ -2,13 +2,13 @@
 
 ## Ideias de Implementação
 
-#### Classes a implmentar
+#### Classes a implementar
 * Classe Pessoas
 * Classe Mesa
 * Classe Eleição
 
 #### RMI SERVER
-> Progamar Server para se connectar a um porto. Se o porto já estiver ocupado vai dar uma
+> Programar Servidor para se connector a um porto. Se o porto já estiver ocupado vai dar uma
 > excessão, essa excessão vai para um while que mete o servidor a mandar pings, se não receber
 > resposta este pode voltar a tentar conectar-se ao porto, assim se o principal já não estiver
 > a operar, o secundário pode assumir o seu papel.
@@ -47,15 +47,15 @@
 
 
 #### MULTICAST SERVER
-> Existe um Multicast Server por cada mesa de voto que gere localmente os terminais
-> que lhe estão associados. Uma pessoa entra num Multicast Server e identifica-se,
+> Existe um Multicast Servidor por cada mesa de voto que gere localmente os terminais
+> que lhe estão associados. Uma pessoa entra num Multicast Servidor e identifica-se.
 
 * **5 - Gerir terminais de voto**
 
-  > Esta funcionalidade tem de ser automática. Acho que é a parte de quando se liga procurar terminais para se conectar.
+  > Esta funcionalidade tem de ser automática. Penso que é a parte de quando se liga procurar terminais para se conectar.
   > Criar dois grupos Multicast, um para as maquinas se descobrirem e outro para comunicação de votos dos terminais para o servidor da mesa.
   
-* **6 - Indentificar eleitor na mesa de voto**
+* **6 - Identificar eleitor na mesa de voto**
 
   > Inserir dados, se houver mais que uma eleição escolher a eleição e ordenar a ida a um terminal.
 
@@ -69,3 +69,19 @@
 * **8 - Votar**
 
   > Um dos problemas aqui vai ser ter a certeza que o voto foi contabilizado, sem saber a identidade da pessoa que votou.
+
+
+####Questões
+
+* Tem de ser m - out - n reliable Multicast ? 
+* Se houver mais que uma eleição a decorrer ao mesmo tempo, no mesmo departamento, a mesa de voto é a mesma para as
+  duas eleições?
+  
+* Podemos criar uma classe (Departamento) que tem um endereço de ip associado? 
+  > Visto só haver uma mesa por departamento, quando criamos as eleições, dizemos os departamentos em que elas ocorrem e depois
+  > podemos criar os grupos para esses endereços já guardados. A melhor maneira é criar um ip random ou existe algum comando?
+  
+* Como é que os clientes vão saber os endereços das mesas?
+  > Existe um grupo principal em que estão conectadas todas as mesas e todos os terminais. Depois os terminais
+  > vão sendo redirecionados para os grupos específicos. A partir daí só passam a comunicar com o grupo que lhes diz
+  > respeito.
