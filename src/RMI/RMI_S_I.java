@@ -14,4 +14,8 @@ public interface RMI_S_I extends Remote {
     public String criarEleicao(int data_inicio, int data_final, String titulo, String descricao, String dept, String tipo_Pessoa) throws RemoteException;
     public ArrayList<Eleicao> getListaEleicoes() throws RemoteException;
 
+    public void AddListaCandidata(String e, String nome) throws RemoteException;
+
+    public void RemoveListaCandidata(String e, String nome) throws RemoteException;
+
 }
