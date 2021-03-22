@@ -15,6 +15,7 @@ public class Eleicao implements Serializable {
     private String tipo_Pessoa;
 
     private ArrayList<ListaCandidata> listaCandidata;
+    private ArrayList<Departamento> listaDepts;
 
     public Eleicao(int data_inicio, int data_final, String titulo, String descricao, String dept, String tipo_Pessoa) {
         this.data_inicio = data_inicio;
