@@ -1,6 +1,7 @@
 package Classes;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class Eleicao implements Serializable {
     //usar Date
@@ -13,6 +14,8 @@ public class Eleicao implements Serializable {
     //So podem votar pessoas deste tipo
     private String tipo_Pessoa;
 
+    private ArrayList<ListaCandidata> listaCandidata;
+
     public Eleicao(int data_inicio, int data_final, String titulo, String descricao, String dept, String tipo_Pessoa) {
         this.data_inicio = data_inicio;
         this.data_final = data_final;
@@ -20,6 +23,7 @@ public class Eleicao implements Serializable {
         Descricao = descricao;
         this.dept = dept;
         this.tipo_Pessoa = tipo_Pessoa;
+        this.listaCandidata= new ArrayList<ListaCandidata>();
     }
 
     public int getData_inicio() {
@@ -62,12 +66,38 @@ public class Eleicao implements Serializable {
         this.dept = dept;
     }
 
-    public String getTipo_Pessoa() {
-        return tipo_Pessoa;
-    }
+    public String getTipo_Pessoa() { return tipo_Pessoa; }
 
     public void setTipo_Pessoa(String tipo_Pessoa) {
         this.tipo_Pessoa = tipo_Pessoa;
+    }
+
+    public ArrayList<ListaCandidata> getListaCandidata() {
+        return listaCandidata;
+    }
+
+    public void setListaCandidata(ArrayList<ListaCandidata> listaCandidata) {
+        this.listaCandidata = listaCandidata;
+    }
+
+    public void addListaCandidata(String nome){
+        ListaCandidata l = new ListaCandidata(nome);
+        this.listaCandidata.add(l);
+    }
+
+    public void removeListaCandidata(String nome){
+
+        for (ListaCandidata l: this.listaCandidata) {
+            if(nome.equals(l.getNome())){
+                listaCandidata.remove(l);
+            }
+        }
+    }
+
+    public void printLista(){
+        for(ListaCandidata l: this.listaCandidata){
+            System.out.println(l.toString());
+        }
     }
 
 

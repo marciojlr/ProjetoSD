@@ -58,6 +58,33 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     }
 
+    public void AddListaCandidata(String e, String nome){
+        int i=0;
+        Eleicao aux=null;
+        for (Eleicao e2: this.listaEleicoes) {
+            if(e2.getTitulo().equals(e)){
+                System.out.println("Entrei aqui");
+                e2.addListaCandidata(nome);
+                System.out.println(e2.getListaCandidata());
+                e2.printLista();
+            }
+            i++;
+        }
+
+
+    }
+
+    public void RemoveListaCandidata(String e, String nome){
+        for (Eleicao el: this.listaEleicoes
+             ) {
+            if(el.getTitulo().equals(e)){
+                el.getListaCandidata().remove(el);
+                return;
+            }
+        }
+
+    }
+
     public static void main(String [] args ){
         try{
             RMI_S_I admin = new RMIServer();

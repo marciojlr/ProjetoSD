@@ -65,7 +65,7 @@ public class AdminConsole {
             if(option.equals("3")){
                 try {
                     //funçao
-                    criaEleicao();
+                    gerirListaCandidata();
                 }catch (RemoteException e){
                     System.out.println(e);
                 }
@@ -126,6 +126,7 @@ public class AdminConsole {
         String titulo= s.nextLine();
         System.out.println("Descrição: ");
         String Descricao= s.nextLine();
+        //preciso alterar
         //Classe departamento
         System.out.println("Departamento: ");
         String dept = s.nextLine();
@@ -150,8 +151,6 @@ public class AdminConsole {
         }
     }
     /*
-    *Eleiçao necessita de ter uma lista das listas candidatas
-    *
     *Adicionar ou remover lista
     *
     *fazer metodo para editar a lista de candidatos eleiçao.listaCandidatos
@@ -161,37 +160,43 @@ public class AdminConsole {
     *
      */
 
-
-    /*
     public static void  gerirListaCandidata() throws RemoteException {
-
-        ArrayList<Eleicao> eleicoes = adminConsole.getListaEleicoes();
-        if(eleicoes.isEmpty()){
-            System.out.println("Nao ha nenhuma eleiçao a decorrer");
-            return;
-        }
-        for( Eleicao e : eleicoes){
-            //verificar q nao acabou
-            System.out.println(e.getTitulo());
-        }
-
-        Scanner s = new Scanner(System.in);
-        System.out.println("Insira a eleiçao que pretende: ");
-        //fazer uma defesa para verificar se é valida ou entao obrigar a escolher um indice
-        String eleicao = s.nextLine();
-        Eleicao aux;
-        for(Eleicao e : eleicoes){
-            if(e.getTitulo().equals(eleicao)){
-                aux = e;
-            }
-        }
-        System.out.println("Editar");
-
         try{
-            String r;
+            ArrayList<Eleicao> eleicoes = adminConsole.getListaEleicoes();
 
-            //r = adminConsole.
-            //System.out.println(r);
+            if(eleicoes.isEmpty()){
+                System.out.println("Nao ha nenhuma eleiçao a decorrer");
+                return;
+            }
+            for( Eleicao e : eleicoes){
+                //verificar q nao acabou
+                System.out.println(e.getTitulo());
+            }
+            Scanner s = new Scanner(System.in);
+            System.out.println("Insira a eleiçao que pretende: ");
+            //fazer uma defesa para verificar se é valida ou entao obrigar a escolher um indice
+            String eleicao = s.nextLine();
+            System.out.println("1-Adicionar  2-Remover");
+            String opcao= s.nextLine();
+            if(opcao.equals("1")){
+                System.out.println("Insira Lista Candidata que deseja inserir: ");
+                String nome = s.nextLine();
+                adminConsole.AddListaCandidata(eleicao,nome);
+            }
+            else if(opcao.equals("2")){
+                //Display das listas Candidatas;
+                eleicoes = adminConsole.getListaEleicoes();
+                for (Eleicao e2:eleicoes
+                     ) {
+                    if(e2.getTitulo().equals(eleicao)){
+                        System.out.println(e2.getListaCandidata());
+                        e2.printLista();
+                    }
+                }
+                System.out.println("Insira a Lista Candidata que deseja remover:");
+                String nome = s.nextLine();
+                adminConsole.RemoveListaCandidata(eleicao,nome);
+            }
         }catch (RemoteException e){
             while (true){
                 try {
@@ -203,6 +208,6 @@ public class AdminConsole {
                 }
             }
         }
-    }*/
+    }
 
 }

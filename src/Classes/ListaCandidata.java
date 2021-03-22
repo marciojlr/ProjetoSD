@@ -1,6 +1,7 @@
 package Classes;
 
 import java.io.Serializable;
+import java.util.ArrayList;
 
 public class ListaCandidata implements Serializable {
 
@@ -17,4 +18,12 @@ public class ListaCandidata implements Serializable {
     public void setNome(String nome) {
         this.nome = nome;
     }
+
+    @Override
+    public String toString() {
+        return "ListaCandidata{" +
+                "nome='" + nome + '\'' +
+                '}';
+    }
+
 }
