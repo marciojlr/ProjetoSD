@@ -17,7 +17,7 @@ public class MulticastServer extends Thread {
     private String MULTICAST_ADDRESS = "224.0.224.0";
     private int PORT = 4321;
     private long SLEEP_TIME = 5000;
-
+    private RMI_S_I server;
     public static void main(String[] args) {
         MulticastServer server = new MulticastServer();
         server.start();
@@ -33,6 +33,16 @@ public class MulticastServer extends Thread {
 
     public void run() {
         MulticastSocket socket = null;
+        try {
+            server = (RMI_S_I) Naming.lookup("Server");
+            server.teste();
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
         long counter = 0;
         System.out.println(this.getName() + " running...");
         try {
