@@ -91,7 +91,8 @@ public class Eleicao implements Serializable {
 
         for (ListaCandidata l: this.listaCandidata) {
             if(nome.equals(l.getNome())){
-                listaCandidata.remove(l);
+                this.listaCandidata.remove(l);
+                return;
             }
         }
     }

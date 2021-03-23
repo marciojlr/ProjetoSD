@@ -1,5 +1,6 @@
 package RMI;
 
+import Classes.ListaCandidata;
 import Classes.Pessoa;
 import Classes.Eleicao;
 import Classes.Departamento;
@@ -76,14 +77,31 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     public void RemoveListaCandidata(String e, String nome){
-        for (Eleicao el: this.listaEleicoes
-             ) {
+        for (Eleicao el: this.listaEleicoes ) {
             if(el.getTitulo().equals(e)){
-                el.getListaCandidata().remove(el);
-                return;
+                System.out.println("Entrei aqui");
+                System.out.println(el.getListaCandidata());
+
+                //Outra alternativa
+                //el.getListaCandidata().removeIf(l -> l.getNome().equals(nome));
+
+                el.removeListaCandidata(nome);
+
             }
         }
 
+    }
+    public String AlteraEleicao(String eleicao, int data_inicio,int data_fim,String titulo, String descricao){
+
+        for(Eleicao e : listaEleicoes){
+            if (e.getTitulo().equals(eleicao)){
+                e.setData_inicio(null);
+                e.setData_final(null);
+                e.setTitulo(titulo);
+                e.setDescricao(descricao);
+            }
+        }
+        return "Propriedades Alteradas com sucesso";
     }
 
     public static void main(String [] args ){

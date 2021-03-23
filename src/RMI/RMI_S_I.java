@@ -19,4 +19,6 @@ public interface RMI_S_I extends Remote {
 
     public void RemoveListaCandidata(String e, String nome) throws RemoteException;
 
+    public String AlteraEleicao(String eleicao, int data_inicio,int data_fim,String titulo, String descricao) throws RemoteException;
+
 }

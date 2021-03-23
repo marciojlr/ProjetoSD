@@ -34,7 +34,7 @@ public class AdminConsole {
         String option;
 
         while (true){
-            System.out.println("Bem vindo!");
+            System.out.println("======Bem vindo!======");
             System.out.println("1. Registar");
             System.out.println("2. Criar Eleição");
             System.out.println("3. Gerir Listas de candidatos a uma eleição");
@@ -59,14 +59,17 @@ public class AdminConsole {
             }
             else if(option.equals("3")){
                 try {
-                    //funçao
                     gerirListaCandidata();
                 }catch (RemoteException e){
                     System.out.println(e);
                 }
             }
             else if(option.equals("5")){
-                System.out.println("Alterar Propridades de Eleição");
+                try {
+                    AlteraPropriedadesEleicao();
+                }catch (RemoteException e){
+                    System.out.println(e);
+                }
             }
         }
     }
@@ -159,8 +162,23 @@ public class AdminConsole {
 
         //So podem votar pessoas deste tipo
         System.out.println("Grupo de pessoas que pode votar");
-        System.out.println("1. Docente\n2. Estudante\n3. Funcionario");
-        String tipo_Pessoa = s.nextLine();
+        String tipo_Pessoa;
+        while(true){
+            System.out.print("1. Docente\n2. Estudante\n3. Funcionário\n");
+            int aux = Integer.parseInt(s.nextLine());
+            if(aux == 1){
+                tipo_Pessoa = "Docente";
+                break;
+            }
+            else if(aux == 2){
+                tipo_Pessoa = "Estudante";
+                break;
+            }
+            else if(aux == 3){
+                tipo_Pessoa = "Funcionario";
+                break;
+            }
+        }
         try{
             String r;
             r = adminConsole.criarEleicao(null, null, titulo, descricao, departamento, tipo_Pessoa);
@@ -178,11 +196,6 @@ public class AdminConsole {
         }
     }
     /*
-    *Adicionar ou remover lista
-    *
-    *fazer metodo para editar a lista de candidatos eleiçao.listaCandidatos
-    *Penso q o metodo pode ser na classe
-    *
     * Temos eleiçoes de conselho geral ?
     *
      */
@@ -212,7 +225,7 @@ public class AdminConsole {
             }
             else if(opcao.equals("2")){
                 //Display das listas Candidatas;
-                eleicoes = adminConsole.getListaEleicoes();
+                //eleicoes = adminConsole.getListaEleicoes();
                 for (Eleicao e2:eleicoes
                      ) {
                     if(e2.getTitulo().equals(eleicao)){
@@ -236,4 +249,43 @@ public class AdminConsole {
             }
         }
     }
+
+    public static void AlteraPropriedadesEleicao() throws RemoteException{
+        try{
+            ArrayList<Eleicao> eleicoes = adminConsole.getListaEleicoes();
+            //TODO: DAR PRINT APENAS DAS ELEGIVEIS
+            for (Eleicao e: eleicoes) {
+                System.out.println(e.getTitulo());
+            }
+            Scanner s = new Scanner(System.in);
+            System.out.println("Selecione a Eleição que deseja alterar");
+            String escolha = s.nextLine();
+
+            System.out.println("Data de inicio: ");
+            int data_inicio = Integer.parseInt(s.nextLine());
+
+            System.out.println("Data de final: ");
+            int data_final = Integer.parseInt(s.nextLine());
+
+            System.out.println("Titulo: ");
+            String titulo= s.nextLine();
+
+            System.out.println("Descrição: ");
+            String descricao= s.nextLine();
+
+            adminConsole.AlteraEleicao(escolha,data_inicio,data_final, titulo,descricao);
+
+        }catch(RemoteException e){
+            while (true){
+                try {
+                    //Thread.sleep(1000);
+                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    break;
+                }catch(NotBoundException  | RemoteException |MalformedURLException m){
+                    System.out.println("nao conectei");
+                }
+            }
+        }
+    }
+
 }
