@@ -7,22 +7,24 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 import java.util.Scanner;
 
 // Script de Cliente diretamente ligado ao Server
-public class AdminConsole {
+public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     private static RMI_S_I adminConsole;
 
+    public AdminConsole() throws RemoteException {super();}
 
     public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException{
-
         adminConsole = (RMI_S_I) Naming.lookup("Server");
+        RMI_C_I client = new AdminConsole();
         String teste;
-        teste= adminConsole.teste();
+        teste = adminConsole.teste((RMI_C_I) client);
         System.out.println(teste);
         menu();
 
@@ -288,4 +290,8 @@ public class AdminConsole {
         }
     }
 
+    @Override
+    public void newServer() throws RemoteException, NotBoundException, MalformedURLException {
+        adminConsole = (RMI_S_I) Naming.lookup("Server");
+    }
 }

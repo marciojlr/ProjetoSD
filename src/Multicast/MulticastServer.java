@@ -35,7 +35,7 @@ public class MulticastServer extends Thread {
         MulticastSocket socket = null;
         try {
             server = (RMI_S_I) Naming.lookup("Server");
-            server.teste();
+
         } catch (NotBoundException e) {
             e.printStackTrace();
         } catch (MalformedURLException e) {

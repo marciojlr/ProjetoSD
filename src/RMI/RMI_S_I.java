@@ -10,7 +10,7 @@ import java.util.GregorianCalendar;
 
 public interface RMI_S_I extends Remote {
 
-    public String teste () throws RemoteException;
+    public String teste (RMI_C_I c) throws RemoteException;
     public String registarPessoa(String nome, String tipo, String password, String departamento, int CC, int dia, int mes, int ano, int telemovel, String morada) throws RemoteException;
     public String criarEleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, String dept, String tipo_Pessoa) throws RemoteException;
     public ArrayList<Eleicao> getListaEleicoes() throws RemoteException;

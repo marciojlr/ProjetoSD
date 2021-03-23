@@ -5,6 +5,9 @@ import Classes.Pessoa;
 import Classes.Eleicao;
 import Classes.Departamento;
 
+import java.io.*;
+import java.net.MalformedURLException;
+import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
@@ -13,14 +16,16 @@ import java.util.GregorianCalendar;
 
 public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
-    ArrayList<Pessoa> listaPessoas = new ArrayList<Pessoa>();
-    ArrayList<Eleicao> listaEleicoes = new ArrayList<Eleicao>();
+    public ArrayList<Pessoa> listaPessoas = new ArrayList<Pessoa>();
+    public ArrayList<Eleicao> listaEleicoes = new ArrayList<Eleicao>();
+    static RMI_C_I client;
 
     protected RMIServer() throws RemoteException {
         super();
     }
 
-    public String teste (){
+    public String teste (RMI_C_I c){
+        client = c;
         System.out.println("olaaaa");
 
         return "olaaaaaa";
@@ -104,13 +109,70 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return "Propriedades Alteradas com sucesso";
     }
 
-    public static void main(String [] args ){
+    public void escreveFicheiro(RMIServer server){
+
+        File f = new File("objeto.obj");
+
         try{
-            RMI_S_I admin = new RMIServer();
-            LocateRegistry.createRegistry(1099).rebind("Server",admin);
+            FileOutputStream os = new FileOutputStream(f);
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+
+            oos.writeObject(server);
+
+            oos.close();
+
+        }catch(FileNotFoundException e){
+            System.out.println("Erro a criar ficheiro");
+        }
+        catch(IOException e){
+            System.out.println("Erro a escrever para ficheiro");
+        }
+    }
+
+    public RMIServer leFicheiro() throws IOException, ClassNotFoundException {
+        File f = new File("objeto.obj");
+        FileInputStream fis = new FileInputStream(f);
+        ObjectInputStream ois = new ObjectInputStream(fis);
+
+        RMIServer server = (RMIServer) ois.readObject();
+        ois.close();
+
+        return server;
+    }
+
+    public static void main(String [] args ) throws RemoteException {
+
+        boolean failed = true;
+        RMI_S_I server = new RMIServer();
+
+        try
+        {
+            LocateRegistry.createRegistry(1099).rebind("Server",server);
             System.out.println("RMI Server ready...!");
-        } catch (RemoteException e){
-            System.out.println(e);
+        }
+        catch (RemoteException exception){
+            System.out.println(exception);
+            System.out.println("O server principal já se encontra ligado");
+
+            while(failed){
+                try
+                {
+                    Thread.sleep(5000);
+                    System.out.println("A tentar de novo");
+                    LocateRegistry.createRegistry(1099).rebind("Server",server);
+                    client.newServer();
+                    System.out.println("Server Secundario is Ready");
+                    failed = false;
+                }
+                catch (InterruptedException | RemoteException exception2) {
+                    System.out.println(exception2);
+                } catch (NotBoundException e) {
+                    e.printStackTrace();
+                } catch (MalformedURLException e) {
+                    e.printStackTrace();
+                }
+
+            }
         }
     }
 
