@@ -1,12 +1,14 @@
 package RMI;
 
-import Classes.Eleicao;
 import Classes.Pessoa;
+import Classes.Eleicao;
+import Classes.Departamento;
 
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
@@ -31,12 +33,11 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return listaEleicoes;
     }
 
-    public String registarPessoa(String nome, int num_eleitor, String tipo, String password, String departamento, int tel, String morada, int CC, int validade_CC){
+    public String registarPessoa(String nome, String tipo, String password, String departamento, int CC, int dia, int mes, int ano, int telemovel, String morada){
 
-        Pessoa p = new Pessoa(nome,num_eleitor,tipo,password,departamento,tel,morada,CC,validade_CC);
+        Pessoa p = new Pessoa(nome, tipo, password, departamento, CC, dia, mes, ano, telemovel, morada);
         System.out.println("Estou a registar");
         System.out.println(p.getNome());
-        System.out.println(p.getNum_eleitor());
         System.out.println(p.getTipo());
 
         listaPessoas.add(p);
@@ -44,7 +45,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return "Registado";
     }
 
-    public String criarEleicao(int data_inicio, int data_final, String titulo, String descricao, String dept, String tipo_Pessoa){
+    public String criarEleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, String dept, String tipo_Pessoa){
 
         Eleicao e = new Eleicao(data_inicio,data_final,titulo,descricao,dept,tipo_Pessoa);
 

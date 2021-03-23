@@ -8,6 +8,8 @@ import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.GregorianCalendar;
 import java.util.Scanner;
 
 // Script de Cliente diretamente ligado ao Server
@@ -33,23 +35,16 @@ public class AdminConsole {
 
         while (true){
             System.out.println("Bem vindo!");
-            System.out.println("1 - Registar");
-            System.out.println("2 - Criar Eleiçao");
-            System.out.println("3 - Gerir Listas de candidatos a uma eleiçao");
-            System.out.println("4 - ");
-            System.out.println("5 - Alterar propriedades de eleição");
+            System.out.println("1. Registar");
+            System.out.println("2. Criar Eleição");
+            System.out.println("3. Gerir Listas de candidatos a uma eleição");
+            System.out.println("4. ");
+            System.out.println("5. Alterar propriedades de eleição");
+            System.out.println("> ");
             option= myObj.nextLine();
-
             if(option.equals("1")){
-                //Determinar o tipo de Pessoa a criar
-                String tipo;
-                Scanner s = new Scanner(System.in);
-                System.out.println("1-Estudante");
-                System.out.println("2-Funcionario");
-                System.out.println("3-");
-                tipo = s.nextLine();
                 try{
-                    RegistoPessoa(tipo);
+                    RegistoPessoa();
                 }catch (RemoteException e){
                     System.out.println(e);
                 }
@@ -76,33 +71,59 @@ public class AdminConsole {
         }
     }
 
-    //Coment
-    public static void  RegistoPessoa(String tipo) throws RemoteException {
-        //Recolher informaçao
-        String nome;
-        int num_eleitor;
+
+    public static void  RegistoPessoa() throws RemoteException {
+
         Scanner s = new Scanner(System.in);
+
         System.out.print("Nome: ");
-        nome = s.nextLine();
-        System.out.print("Numero Eleitor: ");
-        num_eleitor = Integer.parseInt(s.nextLine());
+        String nome = s.nextLine();
+
+        String tipo;
+        while(true){
+            System.out.print("1. Docente\n2. Estudante\n3. Funcionário\n");
+            int aux = Integer.parseInt(s.nextLine());
+            if(aux == 1){
+                tipo = "Docente";
+                break;
+            }
+            else if(aux == 2){
+                tipo = "Estudante";
+                break;
+            }
+            else if(aux == 3){
+                tipo = "Funcionario";
+                break;
+            }
+        }
+
         System.out.print("Password: ");
-        String password= s.nextLine();
+        String password = s.nextLine();
+        //TODO: alterar para a classe departamento
         System.out.print("Departamento: ");
-        String Departamento = s.nextLine();
-        System.out.print("Telemovel: ");
-        int tel=Integer.parseInt(s.nextLine());
-        System.out.print("Morada: ");
-        String morada = s.nextLine();
+        String departamento = s.nextLine();
+
         System.out.print("CC: ");
         int CC=Integer.parseInt(s.nextLine());
-        System.out.print("CC validade: ");
-        int validade_CC=Integer.parseInt(s.nextLine());
+
+        System.out.println("Validade CC");
+        System.out.print("Dia: ");
+        int dia = Integer.parseInt(s.nextLine());
+        System.out.print("Mês: ");
+        int mes = Integer.parseInt(s.nextLine());
+        System.out.print("Ano: ");
+        int ano = Integer.parseInt(s.nextLine());
+
+        System.out.print("Telemovel: ");
+        int telemovel =Integer.parseInt(s.nextLine());
+
+        System.out.print("Morada: ");
+        String morada = s.nextLine();
+
         //chamar funçao registar do server
         try{
-            System.out.println("aqui");
             String r;
-            r = adminConsole.registarPessoa(nome,num_eleitor,tipo,password,Departamento,tel,morada,CC,validade_CC);
+            r = adminConsole.registarPessoa(nome, tipo, password, departamento, CC, dia, mes, ano, telemovel, morada);
             System.out.println(r);
         }catch (RemoteException e){
             while (true){
@@ -118,28 +139,31 @@ public class AdminConsole {
     }
     public static void  criaEleicao() throws RemoteException {
         //Recolher informaçao
-        String nome;
-        int num_eleitor;
         Scanner s = new Scanner(System.in);
+
         System.out.println("Data de inicio: ");
         int data_inicio = Integer.parseInt(s.nextLine());
+
         System.out.println("Data de final: ");
         int data_final = Integer.parseInt(s.nextLine());
+
         System.out.println("Titulo: ");
         String titulo= s.nextLine();
+
         System.out.println("Descrição: ");
-        String Descricao= s.nextLine();
-        //preciso alterar
-        //Classe departamento
+        String descricao= s.nextLine();
+
+        //TODO: alterar para a classe departamento
         System.out.println("Departamento: ");
-        String dept = s.nextLine();
+        String departamento = s.nextLine();
+
         //So podem votar pessoas deste tipo
         System.out.println("Grupo de pessoas que pode votar");
-        System.out.println("1- Estudante   2- Funcionario   3-Docente ");
+        System.out.println("1. Docente\n2. Estudante\n3. Funcionario");
         String tipo_Pessoa = s.nextLine();
         try{
             String r;
-            r = adminConsole.criarEleicao(data_inicio,data_final,titulo,Descricao,dept,tipo_Pessoa);
+            r = adminConsole.criarEleicao(null, null, titulo, descricao, departamento, tipo_Pessoa);
             System.out.println(r);
         }catch (RemoteException e){
             while (true){
@@ -147,7 +171,7 @@ public class AdminConsole {
                     //Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
                     break;
-                }catch(NotBoundException  | RemoteException |MalformedURLException m){
+                }catch(NotBoundException  | RemoteException | MalformedURLException m){
                     System.out.println("nao conectei");
                 }
             }

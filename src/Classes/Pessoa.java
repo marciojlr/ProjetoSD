@@ -1,62 +1,93 @@
 package Classes;
 
 import java.io.Serializable;
+import java.util.GregorianCalendar;
+
 
 public class Pessoa implements Serializable{
+
     private String nome;
-    private int num_eleitor;
     private String tipo;
     private String password;
-    //vai ser classe
-    private String Departamento;
-    private int tel;
-    private String morada;
+    String departamento;
     private int CC;
-    //Date
-    private int validade_CC;
+    private GregorianCalendar validade_CC;
+    private int telemovel;
+    private String morada;
 
 
-    public Pessoa(String nome, int num_eleitor, String tipo, String password, String departamento, int tel, String morada, int CC, int validade_CC) {
+    public Pessoa(String nome, String tipo, String password, String departamento, int CC, int dia, int mes, int ano, int telemovel, String morada) {
         this.nome = nome;
-        this.num_eleitor = num_eleitor;
         this.tipo = tipo;
         this.password = password;
-        Departamento = departamento;
-        this.tel = tel;
-        this.morada = morada;
+        this.departamento = departamento;
         this.CC = CC;
-        this.validade_CC = validade_CC;
+        this.validade_CC = new GregorianCalendar(ano, mes, dia);
+        this.telemovel = telemovel;
+        this.morada = morada;
     }
 
     public String getNome() {
         return nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
-    public int getNum_eleitor() {
-        return num_eleitor;
-    }
-
-    public void setNum_eleitor(int num_eleitor) {
-        this.num_eleitor = num_eleitor;
-    }
-
     public String getTipo() {
         return tipo;
+    }
+
+    public String getPassword() {
+        return password;
+    }
+
+    public String getDepartamento() {
+        return departamento;
+    }
+
+    public int getCC() {
+        return CC;
+    }
+
+    public GregorianCalendar getValidade_CC() {
+        return validade_CC;
+    }
+
+    public int getTelemovel() {
+        return telemovel;
+    }
+
+    public String getMorada() {
+        return morada;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public void setTipo(String tipo) {
         this.tipo = tipo;
     }
 
-    public String getPassword() { return password; }
+    public void setPassword(String password) {
+        this.password = password;
+    }
 
-    public void setPassword(String password) { this.password = password; }
+    public void setDepartamento(String departamento) {
+        this.departamento = departamento;
+    }
 
-    public int getTel() { return tel; }
+    public void setCC(int CC) {
+        this.CC = CC;
+    }
 
-    public void setTel(int tel) { this.tel = tel; }
+    public void setValidade_CC(GregorianCalendar validade_CC) {
+        this.validade_CC = validade_CC;
+    }
+
+    public void setTelemovel(int telemovel) {
+        this.telemovel = telemovel;
+    }
+
+    public void setMorada(String morada) {
+        this.morada = morada;
+    }
 }

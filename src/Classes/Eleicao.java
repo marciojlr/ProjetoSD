@@ -2,13 +2,14 @@ package Classes;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.GregorianCalendar;
 
 public class Eleicao implements Serializable {
     //usar Date
-    private int data_inicio;
-    private int data_final;
+    private GregorianCalendar data_inicio;
+    private GregorianCalendar data_final;
     private String titulo;
-    private String Descricao;
+    private String descricao;
     //Classe departamento
     private String dept;
     //So podem votar pessoas deste tipo
@@ -17,29 +18,29 @@ public class Eleicao implements Serializable {
     private ArrayList<ListaCandidata> listaCandidata;
     private ArrayList<Departamento> listaDepts;
 
-    public Eleicao(int data_inicio, int data_final, String titulo, String descricao, String dept, String tipo_Pessoa) {
+    public Eleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, String dept, String tipo_Pessoa) {
         this.data_inicio = data_inicio;
         this.data_final = data_final;
         this.titulo = titulo;
-        Descricao = descricao;
+        this.descricao = descricao;
         this.dept = dept;
         this.tipo_Pessoa = tipo_Pessoa;
         this.listaCandidata= new ArrayList<ListaCandidata>();
     }
 
-    public int getData_inicio() {
+    public GregorianCalendar getData_inicio() {
         return data_inicio;
     }
 
-    public void setData_inicio(int data_inicio) {
+    public void setData_inicio(GregorianCalendar data_inicio) {
         this.data_inicio = data_inicio;
     }
 
-    public int getData_final() {
+    public GregorianCalendar getData_final() {
         return data_final;
     }
 
-    public void setData_final(int data_final) {
+    public void setData_final(GregorianCalendar data_final) {
         this.data_final = data_final;
     }
 
@@ -52,11 +53,11 @@ public class Eleicao implements Serializable {
     }
 
     public String getDescricao() {
-        return Descricao;
+        return descricao;
     }
 
     public void setDescricao(String descricao) {
-        Descricao = descricao;
+        this.descricao = descricao;
     }
 
     public String getDept() {

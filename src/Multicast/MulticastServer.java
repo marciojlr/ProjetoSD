@@ -68,8 +68,8 @@ class MulticastUserS extends Thread {
     private String MULTICAST_ADDRESS = "224.0.224.0";
     private int PORT = 4321;
 
-    private Pessoa a = new Pessoa("Marcio", 123, "Estudante", "123", "DEI", 911234567, "Ramalheira", 1234567, 20/20);
-    private Pessoa b = new Pessoa("Filipe", 456, "Estudante", "123", "DEI", 911234567, "Viseu", 7654321, 20/20);
+    //private Pessoa a = new Pessoa("Marcio", "Estudante", "123", "DEI", 123456789, "Ramalheira");
+    //private Pessoa b = new Pessoa("Filipe", "Estudante", "123", "DEI", 987654321, "Viseu");
 
     public MulticastUserS() { super("User " + (long) (Math.random() * 1000)); }
 

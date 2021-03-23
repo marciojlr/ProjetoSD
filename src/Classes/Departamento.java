@@ -15,12 +15,12 @@ public class Departamento implements Serializable{
         return nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
-
     public String getIp() {
         return ip;
+    }
+
+    public void setNome(String nome) {
+        this.nome = nome;
     }
 
     public void setIp(String ip) {
