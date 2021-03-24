@@ -4,6 +4,7 @@ import java.net.MulticastSocket;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.io.IOException;
+import java.util.HashMap;
 import java.util.Scanner;
 
 /**
@@ -43,13 +44,33 @@ public class MulticastClient extends Thread {
 
                 System.out.println("Received packet from " + packet.getAddress().getHostAddress() + ":" + packet.getPort() + " with message:");
                 String message = new String(packet.getData(), 0, packet.getLength());
-                System.out.println(message);
+                readMessage(message);
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             socket.close();
         }
+    }
+
+    private void readMessage(String message){
+        HashMap<String,String> map = new HashMap();
+
+        String[] pares =  message.split("; ");
+
+        for(String comandos : pares){
+            String[] a = comandos.split(" \\| ");
+            map.put(a[0],a[1]);
+        }
+
+        if(map.get("type").equals("login")){
+            System.out.println(map.get("type"));
+
+            System.out.println("Username: " + map.get("username"));
+
+            System.out.println("Password: " + map.get("password"));
+        }
+
     }
 }
 

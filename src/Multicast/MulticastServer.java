@@ -1,13 +1,9 @@
 package Multicast;
 
-import Classes.Departamento;
 import Classes.Pessoa;
 import RMI.RMI_S_I;
 
-import java.net.MalformedURLException;
-import java.net.MulticastSocket;
-import java.net.DatagramPacket;
-import java.net.InetAddress;
+import java.net.*;
 import java.io.IOException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
@@ -21,11 +17,6 @@ public class MulticastServer extends Thread {
     private long SLEEP_TIME = 5000;
     private static RMI_S_I serverRMI;
 
-
-    private RMI_S_I server;
-
-    //onde se encontra localizada a mesa
-    private Departamento dept;
 
     public static void main(String[] args) {
 
@@ -41,39 +32,41 @@ public class MulticastServer extends Thread {
 
         MulticastServer server = new MulticastServer();
         server.start();
-        MulticastUserS u = new MulticastUserS();
-        u.start();
+        //MulticastUserS u = new MulticastUserS();
+        //u.start();
     }
-
 
     public MulticastServer() {
         super("Server " + (long) (Math.random() * 1000));
     }
 
-
     public void run() {
-        MulticastSocket socket = null;
+
         try {
             System.out.println(serverRMI.ping());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+
         MulticastSocket socket = null;
         long counter = 0;
+        Pessoa eleitor;
         System.out.println(this.getName() + " running...");
         try {
             socket = new MulticastSocket(PORT);  // recebe e envia
             InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
             socket.joinGroup(group);
+
             while (true) {
-                //String message = this.getName() + " packet " + counter++;
-                //byte[] buffer = message.getBytes();
-                byte[] b = new byte[256];
+
+                eleitor = intruduzirCC();
+                send(socket,"type | login; username | Filipe; password | gay");
+                //byte[] b = new byte[256];
                 //DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
-                DatagramPacket packet = new DatagramPacket(b, b.length);
-                socket.receive(packet);
-                String protocolo = new String(packet.getData(), 0, packet.getLength());
-                System.out.println(protocolo);
+                //DatagramPacket packet = new DatagramPacket(b, b.length);
+                //socket.receive(packet);
+                //String protocolo = new String(packet.getData(), 0, packet.getLength());
+                //System.out.println(protocolo);
                 //para enviar para o rmi
                 //separar o protocolo
                 //socket.send(packet);
@@ -86,6 +79,22 @@ public class MulticastServer extends Thread {
             socket.close();
         }
     }
+
+    private Pessoa intruduzirCC(){
+        Scanner s = new Scanner(System.in);
+        System.out.println("- - - - Bem vindo - - - -");
+        System.out.println("Número do CC");
+        int CC=Integer.parseInt(s.nextLine());
+        return new Pessoa("Marcio","Estudante","1234","DEI",1234,null, 910669899, "Coimbra");
+    }
+
+    private void send(MulticastSocket socket, String message) throws IOException {
+        byte[] buffer = message.getBytes();
+        InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
+        socket.send(packet);
+    }
+
 }
 /*para ler da consola
 * type| login ; (...)
