@@ -119,6 +119,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.print("Ano: ");
         int ano = Integer.parseInt(s.nextLine());
 
+        GregorianCalendar CC_val = new GregorianCalendar(dia,mes,ano);
         System.out.print("Telemovel: ");
         int telemovel =Integer.parseInt(s.nextLine());
 
@@ -128,14 +129,14 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         //chamar funçao registar do server
         try{
             String r;
-            r = adminConsole.registarPessoa(nome, tipo, password, departamento, CC, dia, mes, ano, telemovel, morada);
+            r = adminConsole.registarPessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada);
             System.out.println(r);
         }catch (RemoteException e){
             while (true){
                 try {
                     //Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
-                    adminConsole.registarPessoa(nome, tipo, password, departamento, CC, dia, mes, ano, telemovel, morada);
+                    adminConsole.registarPessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada);
                     break;
                 }catch(NotBoundException  | RemoteException | MalformedURLException m){
                     System.out.println("nao conectei");
@@ -149,10 +150,24 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         Scanner s = new Scanner(System.in);
 
         System.out.println("Data de inicio: ");
-        int data_inicio = Integer.parseInt(s.nextLine());
+        System.out.print("Dia: ");
+        int dia = Integer.parseInt(s.nextLine());
+        System.out.print("Mês: ");
+        int mes = Integer.parseInt(s.nextLine());
+        System.out.print("Ano: ");
+        int ano = Integer.parseInt(s.nextLine());
+
+        GregorianCalendar data_inicio = new GregorianCalendar(dia,mes,ano);
 
         System.out.println("Data de final: ");
-        int data_final = Integer.parseInt(s.nextLine());
+        System.out.print("Dia: ");
+        int dia2 = Integer.parseInt(s.nextLine());
+        System.out.print("Mês: ");
+        int mes2 = Integer.parseInt(s.nextLine());
+        System.out.print("Ano: ");
+        int ano2 = Integer.parseInt(s.nextLine());
+
+        GregorianCalendar data_fim = new GregorianCalendar(dia2,mes2,ano2);
 
         System.out.println("Titulo: ");
         String titulo= s.nextLine();
@@ -185,14 +200,14 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
         try{
             String r;
-            r = adminConsole.criarEleicao(null, null, titulo, descricao, departamento, tipo_Pessoa);
+            r = adminConsole.criarEleicao(data_inicio, data_fim , titulo, descricao, departamento, tipo_Pessoa);
             System.out.println(r);
         }catch (RemoteException e){
             while (true){
                 try {
                     //Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
-                    adminConsole.criarEleicao(null, null, titulo, descricao, departamento, tipo_Pessoa);
+                    adminConsole.criarEleicao(data_inicio, data_fim, titulo, descricao, departamento, tipo_Pessoa);
                     break;
                 }catch(NotBoundException  | RemoteException | MalformedURLException m){
                     System.out.println("nao conectei");

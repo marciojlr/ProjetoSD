@@ -7,6 +7,7 @@ public class ListaCandidata implements Serializable {
 
     private String nome;
 
+    //TODO: Lista de candidatos
     public ListaCandidata(String nome) {
         this.nome = nome;
     }

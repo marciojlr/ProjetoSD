@@ -9,20 +9,20 @@ public class Pessoa implements Serializable{
     private String nome;
     private String tipo;
     private String password;
-    String departamento;
+    private String departamento;
     private int CC;
     private GregorianCalendar validade_CC;
     private int telemovel;
     private String morada;
 
 
-    public Pessoa(String nome, String tipo, String password, String departamento, int CC, int dia, int mes, int ano, int telemovel, String morada) {
+    public Pessoa(String nome, String tipo, String password, String departamento, int CC, GregorianCalendar CC_val,int telemovel, String morada) {
         this.nome = nome;
         this.tipo = tipo;
         this.password = password;
         this.departamento = departamento;
         this.CC = CC;
-        this.validade_CC = new GregorianCalendar(ano, mes, dia);
+        this.validade_CC = CC_val;
         this.telemovel = telemovel;
         this.morada = morada;
     }
