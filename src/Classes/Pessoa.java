@@ -9,14 +9,14 @@ public class Pessoa implements Serializable{
     private String nome;
     private String tipo;
     private String password;
-    private String departamento;
+    private Departamento departamento;
     private int CC;
     private GregorianCalendar validade_CC;
     private int telemovel;
     private String morada;
 
 
-    public Pessoa(String nome, String tipo, String password, String departamento, int CC, GregorianCalendar CC_val,int telemovel, String morada) {
+    public Pessoa(String nome, String tipo, String password, Departamento departamento, int CC, GregorianCalendar CC_val,int telemovel, String morada) {
         this.nome = nome;
         this.tipo = tipo;
         this.password = password;
@@ -39,7 +39,7 @@ public class Pessoa implements Serializable{
         return password;
     }
 
-    public String getDepartamento() {
+    public Departamento getDepartamento() {
         return departamento;
     }
 
@@ -71,7 +71,7 @@ public class Pessoa implements Serializable{
         this.password = password;
     }
 
-    public void setDepartamento(String departamento) {
+    public void setDepartamento(Departamento departamento) {
         this.departamento = departamento;
     }
 

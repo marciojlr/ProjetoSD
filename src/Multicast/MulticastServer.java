@@ -1,5 +1,6 @@
 package Multicast;
 
+import Classes.Departamento;
 import Classes.Pessoa;
 import RMI.RMI_S_I;
 
@@ -18,6 +19,10 @@ public class MulticastServer extends Thread {
     private int PORT = 4321;
     private long SLEEP_TIME = 5000;
     private RMI_S_I server;
+
+    //onde se encontra localizada a mesa
+    private Departamento dept;
+
     public static void main(String[] args) {
         MulticastServer server = new MulticastServer();
         server.start();

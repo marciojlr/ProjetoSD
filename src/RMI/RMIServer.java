@@ -18,7 +18,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     public ArrayList<Pessoa> listaPessoas = new ArrayList<Pessoa>();
     public ArrayList<Eleicao> listaEleicoes = new ArrayList<Eleicao>();
+    public ArrayList<Departamento> listaDepartamentos = new ArrayList<Departamento>();
     static RMI_C_I client;
+
 
     protected RMIServer() throws RemoteException {
         super();
@@ -39,7 +41,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return listaEleicoes;
     }
 
-    public String registarPessoa(String nome, String tipo, String password, String departamento, int CC, GregorianCalendar CC_val, int telemovel, String morada){
+    public ArrayList<Departamento> getListaDepartamentos() { return listaDepartamentos; }
+
+    public String registarPessoa(String nome, String tipo, String password, Departamento departamento, int CC, GregorianCalendar CC_val, int telemovel, String morada){
 
         Pessoa p = new Pessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada);
         System.out.println("Estou a registar");
@@ -51,7 +55,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return "Registado";
     }
 
-    public String criarEleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, String dept, String tipo_Pessoa){
+    public String criarEleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, Departamento dept, String tipo_Pessoa){
 
         Eleicao e = new Eleicao(data_inicio,data_final,titulo,descricao,dept,tipo_Pessoa);
 
@@ -107,6 +111,11 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             }
         }
         return "Propriedades Alteradas com sucesso";
+    }
+
+    public void AddDepartamento(Departamento d){
+
+        listaDepartamentos.add(d);
     }
 
     public void escreveFicheiro(RMIServer server){
