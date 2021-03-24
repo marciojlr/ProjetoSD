@@ -14,11 +14,25 @@ import java.rmi.RemoteException;
 import java.util.Scanner;
 
 public class MulticastServer extends Thread {
+
     private String MULTICAST_ADDRESS = "224.0.224.0";
     private int PORT = 4321;
     private long SLEEP_TIME = 5000;
-    private RMI_S_I server;
+    private static RMI_S_I serverRMI;
+
+
     public static void main(String[] args) {
+
+        try {
+            serverRMI = (RMI_S_I) Naming.lookup("Server");
+        } catch (NotBoundException e) {
+            e.printStackTrace();
+        } catch (MalformedURLException e) {
+            e.printStackTrace();
+        } catch (RemoteException e) {
+            e.printStackTrace();
+        }
+
         MulticastServer server = new MulticastServer();
         server.start();
         MulticastUserS u = new MulticastUserS();
@@ -32,17 +46,12 @@ public class MulticastServer extends Thread {
 
 
     public void run() {
-        MulticastSocket socket = null;
         try {
-            server = (RMI_S_I) Naming.lookup("Server");
-
-        } catch (NotBoundException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
+            System.out.println(serverRMI.ping());
         } catch (RemoteException e) {
             e.printStackTrace();
         }
+        MulticastSocket socket = null;
         long counter = 0;
         System.out.println(this.getName() + " running...");
         try {
@@ -83,18 +92,6 @@ class MulticastUserS extends Thread {
 
     public MulticastUserS() { super("User " + (long) (Math.random() * 1000)); }
 
-    public void dadosEleitor(){
-        Scanner keyboardScanner = new Scanner(System.in);
-        System.out.println("- - - - Bem Vindo - - - -");
-        System.out.println("Insira os seus dados de eleitor");
-
-        System.out.print("Numero CC: ");
-        String readKeyboard = keyboardScanner.nextLine();
-        // verifiicar por RMI se existem os dados das pessoas
-
-        System.out.println(readKeyboard);
-    }
-
     public void run() {
         MulticastSocket socket = null;
         System.out.println(this.getName() + " ready...");
@@ -102,7 +99,6 @@ class MulticastUserS extends Thread {
             socket = new MulticastSocket();  // create socket without binding it (only for sending)
             Scanner keyboardScanner = new Scanner(System.in);
             while (true) {
-                dadosEleitor();
                 String readKeyboard = keyboardScanner.nextLine();
                 byte[] buffer = readKeyboard.getBytes();
 

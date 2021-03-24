@@ -137,7 +137,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
                     adminConsole.registarPessoa(nome, tipo, password, departamento, CC, dia, mes, ano, telemovel, morada);
                     break;
-                }catch(NotBoundException  | RemoteException |MalformedURLException m){
+                }catch(NotBoundException  | RemoteException | MalformedURLException m){
                     System.out.println("nao conectei");
                 }
             }

@@ -31,6 +31,11 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return "olaaaaaa";
     }
 
+    @Override
+    public String ping() throws RemoteException {
+        return "Conectada ao Server";
+    }
+
     public ArrayList<Pessoa> getListaPessoas() {
         return listaPessoas;
     }
