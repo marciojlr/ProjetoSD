@@ -135,6 +135,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 try {
                     //Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    adminConsole.registarPessoa(nome, tipo, password, departamento, CC, dia, mes, ano, telemovel, morada);
                     break;
                 }catch(NotBoundException  | RemoteException |MalformedURLException m){
                     System.out.println("nao conectei");
@@ -142,6 +143,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             }
         }
     }
+
     public static void  criaEleicao() throws RemoteException {
         //Recolher informaçao
         Scanner s = new Scanner(System.in);
@@ -190,6 +192,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 try {
                     //Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    adminConsole.criarEleicao(null, null, titulo, descricao, departamento, tipo_Pessoa);
                     break;
                 }catch(NotBoundException  | RemoteException | MalformedURLException m){
                     System.out.println("nao conectei");

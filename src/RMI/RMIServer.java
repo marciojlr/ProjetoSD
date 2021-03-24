@@ -160,18 +160,12 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
                     Thread.sleep(5000);
                     System.out.println("A tentar de novo");
                     LocateRegistry.createRegistry(1099).rebind("Server",server);
-                    client.newServer();
                     System.out.println("Server Secundario is Ready");
                     failed = false;
                 }
                 catch (InterruptedException | RemoteException exception2) {
                     System.out.println(exception2);
-                } catch (NotBoundException e) {
-                    e.printStackTrace();
-                } catch (MalformedURLException e) {
-                    e.printStackTrace();
                 }
-
             }
         }
     }
