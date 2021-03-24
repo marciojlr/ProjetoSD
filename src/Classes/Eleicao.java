@@ -11,14 +11,14 @@ public class Eleicao implements Serializable {
     private String titulo;
     private String descricao;
     //Classe departamento
-    private String dept;
+    private Departamento dept;
     //So podem votar pessoas deste tipo
     private String tipo_Pessoa;
 
     private ArrayList<ListaCandidata> listaCandidata;
     private ArrayList<Departamento> listaDepts;
 
-    public Eleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, String dept, String tipo_Pessoa) {
+    public Eleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, Departamento dept, String tipo_Pessoa) {
         this.data_inicio = data_inicio;
         this.data_final = data_final;
         this.titulo = titulo;
@@ -60,11 +60,11 @@ public class Eleicao implements Serializable {
         this.descricao = descricao;
     }
 
-    public String getDept() {
+    public Departamento getDept() {
         return dept;
     }
 
-    public void setDept(String dept) {
+    public void setDept(Departamento dept) {
         this.dept = dept;
     }
 

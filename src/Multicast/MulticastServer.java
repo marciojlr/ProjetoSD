@@ -1,5 +1,6 @@
 package Multicast;
 
+import Classes.Departamento;
 import Classes.Pessoa;
 import RMI.RMI_S_I;
 
@@ -20,6 +21,11 @@ public class MulticastServer extends Thread {
     private long SLEEP_TIME = 5000;
     private static RMI_S_I serverRMI;
 
+
+    private RMI_S_I server;
+
+    //onde se encontra localizada a mesa
+    private Departamento dept;
 
     public static void main(String[] args) {
 
@@ -46,6 +52,7 @@ public class MulticastServer extends Thread {
 
 
     public void run() {
+        MulticastSocket socket = null;
         try {
             System.out.println(serverRMI.ping());
         } catch (RemoteException e) {

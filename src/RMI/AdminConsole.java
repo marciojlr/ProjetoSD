@@ -1,5 +1,6 @@
 package RMI;
 
+import Classes.Departamento;
 import Classes.Eleicao;
 import Classes.Pessoa;
 
@@ -17,6 +18,7 @@ import java.util.Scanner;
 public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     private static RMI_S_I adminConsole;
+
 
     public AdminConsole() throws RemoteException {super();}
 
@@ -104,13 +106,17 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
         System.out.print("Password: ");
         String password = s.nextLine();
-        //TODO: alterar para a classe departamento
-        System.out.print("Departamento: ");
-        String departamento = s.nextLine();
+        //System.out.print("Departamento: ");
+
+        Departamento departamento = escolherDept();
+        if(departamento == null){
+
+            departamento = criaDepartamento();
+            adminConsole.AddDepartamento(departamento);
+        }
 
         System.out.print("CC: ");
         int CC=Integer.parseInt(s.nextLine());
-
         System.out.println("Validade CC");
         System.out.print("Dia: ");
         int dia = Integer.parseInt(s.nextLine());
@@ -177,7 +183,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
         //TODO: alterar para a classe departamento
         System.out.println("Departamento: ");
-        String departamento = s.nextLine();
+        Departamento departamento = escolherDept();
+        if(departamento == null){
+            System.out.println("Nao existem departamentos, não é possivel criar eleiçao");
+            return;
+        }
 
         //So podem votar pessoas deste tipo
         System.out.println("Grupo de pessoas que pode votar");
@@ -308,6 +318,64 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
+    public void CriaMesaVoto(){
+        Scanner s = new Scanner(System.in);
+        System.out.println("Em que Departamento pretende criar a Mesa de Voto");
+        //Dar display dos depts
+        String dept = s.nextLine();
+        //verificar se o departamento ja tem uma mesa
+        //se nao tiver crio a mesa e adiciono ao array de mesas
+
+    }
+
+    public static Departamento escolherDept(){
+        try{
+            ArrayList<Departamento> depts = adminConsole.getListaDepartamentos();
+            if( depts.isEmpty()){
+                System.out.println("Nao existe departamentos para Associar");
+                System.out.println("Crie o seu Departamento");
+                return null;
+            }
+            int i=1;
+            System.out.println("Departamentos disponiveis");
+            for (Departamento d: depts) {
+                System.out.println(i +"- " +d.getNome());
+                i++;
+            }
+            System.out.println("0- Criar Departamento");
+            //TODO Defesa para numeros e opçao valida
+            Scanner s = new Scanner(System.in);
+            System.out.println("Escolha: ");
+            int opçao = Integer.parseInt(s.nextLine());
+            if(opçao == 0 ){
+                return null;
+            }
+
+            return depts.get(i-1);
+        }catch (RemoteException e){
+            while (true){
+                try {
+                    //Thread.sleep(1000);
+                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    break;
+                }catch(NotBoundException  | RemoteException |MalformedURLException m){
+                    System.out.println("nao conectei");
+                }
+            }
+        }
+        return null;
+    }
+
+    public static Departamento criaDepartamento(){
+        //TODO Defesa: ver se o departamento a ser criado ja existe
+        Scanner s = new Scanner(System.in);
+        System.out.println("Insira nome do Departamento");
+        String nome = s.nextLine();
+        System.out.println("Insira ip");
+        String ip = s.nextLine();
+        Departamento d = new Departamento(nome,ip);
+        return d;
+    }
     @Override
     public void newServer() throws RemoteException, NotBoundException, MalformedURLException {
         adminConsole = (RMI_S_I) Naming.lookup("Server");
