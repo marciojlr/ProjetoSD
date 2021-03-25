@@ -14,22 +14,16 @@ import java.util.Scanner;
 
 public class MulticastServer extends Thread {
 
-    private String MULTICAST_ADDRESS = "224.0.224.0";
-    private int PORT = 4321;
-    private long SLEEP_TIME = 5000;
-    private static RMI_S_I serverRMI;
+    private final String MULTICAST_ADDRESS = "224.0.224.0";
+    private final int PORT = 4321;
 
     private Departamento dept;
 
     public static void main(String[] args) {
 
         try {
-            serverRMI = (RMI_S_I) Naming.lookup("Server");
-        } catch (NotBoundException e) {
-            e.printStackTrace();
-        } catch (MalformedURLException e) {
-            e.printStackTrace();
-        } catch (RemoteException e) {
+            RMI_S_I serverRMI = (RMI_S_I) Naming.lookup("Server");
+        } catch (NotBoundException | MalformedURLException | RemoteException e) {
             e.printStackTrace();
         }
 
@@ -41,7 +35,8 @@ public class MulticastServer extends Thread {
 
     public MulticastServer() {
         super("Server " + (long) (Math.random() * 1000));
-        this.dept = dept;
+        //todo: Configurar o departamento da mesa
+        //this.dept = dept;
     }
 
     public void run() {
@@ -56,21 +51,8 @@ public class MulticastServer extends Thread {
             socket.joinGroup(group);
 
             while (true) {
-
                 String message = readMessage(socket);
-                System.out.println(message);
-                readComands(message);
-                //eleitor = intruduzirCC();
-                //send(socket,"type | free;");
-                //byte[] b = new byte[256];
-                //DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
-                //DatagramPacket packet = new DatagramPacket(b, b.length);
-                //socket.receive(packet);
-                //String protocolo = new String(packet.getData(), 0, packet.getLength());
-                //System.out.println(protocolo);
-                //para enviar para o rmi
-                //separar o protocolo
-                //socket.send(packet);
+                readComands(socket, message);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,12 +67,12 @@ public class MulticastServer extends Thread {
 
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.receive(packet);
-        System.out.println("Received packet from " + packet.getAddress().getHostAddress() + ":" + packet.getPort() + " with message:");
+        //System.out.println("Received packet from " + packet.getAddress().getHostAddress() + ":" + packet.getPort() + " with message:");
         String message = new String(packet.getData(), 0, packet.getLength());
         return message;
     }
 
-    private void readComands(String message) {
+    private void readComands(MulticastSocket socket, String message) throws IOException {
         HashMap<String,String> map = new HashMap();
         String[] pares =  message.split("; ");
 
@@ -99,23 +81,10 @@ public class MulticastServer extends Thread {
             map.put(a[0],a[1]);
         }
 
-        System.out.println(map.get("type"));
-
-        if(map.get("type").equals("free")){
-            System.out.println("Type: " + map.get("type"));
-
-            System.out.println("Username: " + map.get("username"));
-
-            System.out.println("Password: " + map.get("password"));
+        if(map.get("type").equals("freeTerminal")){
+            System.out.println("Este terminal esta livre: " + map.get("id"));
+            send(socket, "type | chosen; id | " + map.get("id"));
         }
-    }
-
-    private Pessoa intruduzirCC(){
-        Scanner s = new Scanner(System.in);
-        System.out.println("- - - - Bem vindo - - - -");
-        System.out.println("Número do CC");
-        int CC=Integer.parseInt(s.nextLine());
-        return new Pessoa("Marcio","Estudante","1234",null,1234,null, 910669899, "Coimbra");
     }
 
     private void send(MulticastSocket socket, String message) throws IOException {
@@ -126,42 +95,52 @@ public class MulticastServer extends Thread {
     }
 
 }
-/*para ler da consola
-* type| login ; (...)
-* */
+
+
+/**
+ * Classe para escrever input do lado das mesa de voto
+ */
 class MulticastUserS extends Thread {
-    private String MULTICAST_ADDRESS = "224.0.224.0";
-    private int PORT = 4321;
 
-    //private Pessoa a = new Pessoa("Marcio", "Estudante", "123", "DEI", 123456789, "Ramalheira");
-    //private Pessoa b = new Pessoa("Filipe", "Estudante", "123", "DEI", 987654321, "Viseu");
+    private final String MULTICAST_ADDRESS;
+    private final int PORT;
 
-    public MulticastUserS() { super("User " + (long) (Math.random() * 1000)); }
+    public MulticastUserS() {
+        super("User " + (long) (Math.random() * 1000));
+        this.MULTICAST_ADDRESS = "224.0.224.0";
+        this.PORT = 4321;
+    }
+
+    private void getCC(MulticastSocket socket) throws IOException {
+        System.out.println("Inserir número de Identificação: ");
+        //READ FROM INPUT
+        Scanner keyboardScanner = new Scanner(System.in);
+        String readKeyboard = keyboardScanner.nextLine();
+
+        //SEND DATA TO ALL THE CLIENTS
+        String message = "type | free";
+        byte[] buffer = message.getBytes();
+        InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
+        socket.send(packet);
+    }
 
     public void run() {
+
         MulticastSocket socket = null;
+
         System.out.println(this.getName() + " ready...");
         try {
             socket = new MulticastSocket();  // create socket without binding it (only for sending)
             while (true) {
                 getCC(socket);
+                Thread.sleep(500);
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             socket.close();
         }
-    }
-
-    private void getCC(MulticastSocket socket) throws IOException {
-        System.out.println("Inserir número de Identificação: ");
-        Scanner keyboardScanner = new Scanner(System.in);
-        String readKeyboard = keyboardScanner.nextLine();
-        byte[] buffer = readKeyboard.getBytes();
-
-        InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
-        socket.send(packet);
     }
 }
 

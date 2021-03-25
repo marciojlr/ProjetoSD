@@ -25,22 +25,28 @@ public class MulticastClient extends Thread {
     private int PORT = 4321;
     private boolean free = true;
 
+    public MulticastClient(long number) {
+        super("User " + number);
+    }
+
     public static void main(String[] args) {
-        MulticastClient client = new MulticastClient();
+        long number = (long) (Math.random() * 1000);
+        MulticastClient client = new MulticastClient(number);
         client.start();
-        MulticastUser user = new MulticastUser();
+        MulticastUser user = new MulticastUser(number);
         user.start();
     }
 
     public void run() {
         MulticastSocket socket = null;
+        System.out.println(this.getName());
         try {
             socket = new MulticastSocket(PORT);  // create socket and bind it
             InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
             socket.joinGroup(group);
             while (true) {
                 String message = readMessage(socket);
-                readComands(message);
+                readComands(socket,message);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -55,30 +61,32 @@ public class MulticastClient extends Thread {
 
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.receive(packet);
-        System.out.println("Received packet from " + packet.getAddress().getHostAddress() + ":" + packet.getPort() + " with message:");
-        System.out.println("Sim estou aqui");
+        //System.out.println("Received packet from " + packet.getAddress().getHostAddress() + ":" + packet.getPort() + " with message:");
         String message = new String(packet.getData(), 0, packet.getLength());
 
         return message;
     }
 
-    private void readComands(String message) throws IOException {
+    private void readComands(MulticastSocket socket, String message) throws IOException {
         HashMap<String,String> codes = new HashMap();
         String[] pares =  message.split("; ");
 
-        for(String comandos : pares){
+        for(String comandos : pares) {
             String[] a = comandos.split(" \\| ");
-            codes.put(a[0],a[1]);
+            codes.put(a[0], a[1]);
         }
 
-        System.out.println(codes.get("type"));
-
         if(codes.get("type").equals("free")){
-            System.out.println("Type: " + codes.get("type"));
-
-            System.out.println("Username: " + codes.get("username"));
-
-            System.out.println("Password: " + codes.get("password"));
+            if(free){
+                send(socket, "type | freeTerminal; id | " + this.getName());
+            }
+        }
+        else if(codes.get("type").equals("chosen")){
+            if(codes.get("id").equals(this.getName())){
+                System.out.println(this.getName() + " foi escolhido");
+                free = false;
+                // abrir voto;
+            }
         }
     }
 
@@ -94,13 +102,13 @@ class MulticastUser extends Thread {
     private String MULTICAST_ADDRESS = "224.0.224.0";
     private int PORT = 4321;
 
-    public MulticastUser() {
-        super("User " + (long) (Math.random() * 1000));
+    public MulticastUser(long number) {
+        super("User " + number);
     }
 
     public void run() {
         MulticastSocket socket = null;
-        System.out.println(this.getName() + " ready...");
+        System.out.println(this.getName());
         try {
             socket = new MulticastSocket();  // create socket without binding it (only for sending)
             Scanner keyboardScanner = new Scanner(System.in);
