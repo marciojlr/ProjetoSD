@@ -42,12 +42,6 @@ public class MulticastServer extends Thread {
 
     public void run() {
 
-        try {
-            System.out.println(serverRMI.ping());
-        } catch (RemoteException e) {
-            e.printStackTrace();
-        }
-
         MulticastSocket socket = null;
         long counter = 0;
         Pessoa eleitor;
@@ -70,8 +64,6 @@ public class MulticastServer extends Thread {
                 //para enviar para o rmi
                 //separar o protocolo
                 //socket.send(packet);
-
-                try { sleep((long) (Math.random() * SLEEP_TIME)); } catch (InterruptedException e) { }
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -85,7 +77,7 @@ public class MulticastServer extends Thread {
         System.out.println("- - - - Bem vindo - - - -");
         System.out.println("Número do CC");
         int CC=Integer.parseInt(s.nextLine());
-        return new Pessoa("Marcio","Estudante","1234","DEI",1234,null, 910669899, "Coimbra");
+        return new Pessoa("Marcio","Estudante","1234",null,1234,null, 910669899, "Coimbra");
     }
 
     private void send(MulticastSocket socket, String message) throws IOException {
