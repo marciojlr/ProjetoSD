@@ -26,4 +26,11 @@ public interface RMI_S_I extends Remote {
     public ArrayList<Departamento> getListaDepartamentos() throws RemoteException;
 
     public void AddDepartamento(Departamento d) throws RemoteException;
+
+    public boolean isRegisted(int CC) throws RemoteException;
+
+    public void ping(String message) throws RemoteException;
+
+    public boolean acceptLogin(int userCC, String name, String password) throws RemoteException;
+
 }

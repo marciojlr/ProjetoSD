@@ -110,7 +110,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
          */
     }
 
-
     public String AlteraEleicao(String eleicao, int data_inicio,int data_fim,String titulo, String descricao){
 
         for(Eleicao e : listaEleicoes){
@@ -127,6 +126,22 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     public void AddDepartamento(Departamento d){
 
         listaDepartamentos.add(d);
+    }
+
+    @Override
+    public boolean isRegisted(int CC) throws RemoteException {
+
+        for(Pessoa pessoa : this.listaPessoas){
+            if(pessoa.getCC() == CC){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    @Override
+    public void ping(String message) throws RemoteException {
+        System.out.println(message);
     }
 
     public void escreveFicheiro(RMIServer server){
@@ -158,6 +173,15 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         ois.close();
 
         return server;
+    }
+
+    public boolean acceptLogin(int userCC, String name, String password){
+        for(Pessoa pessoa : listaPessoas){
+            if(pessoa.getCC() == userCC && pessoa.getNome().equals(name) && pessoa.getPassword().equals(password)){
+                return true;
+            }
+        }
+        return false;
     }
 
     public static void main(String [] args ) throws RemoteException {

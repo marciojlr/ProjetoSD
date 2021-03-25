@@ -18,9 +18,10 @@ import java.util.Scanner;
  */
 class DadosPartilhados{
     int pedido;
-
-    public DadosPartilhados(){
+    RMI_S_I RMIserver;
+    public DadosPartilhados() throws RemoteException, NotBoundException, MalformedURLException {
         int n_pedido = 0;
+        this.RMIserver = (RMI_S_I) Naming.lookup("Server");
     }
 
     public int getPedido() {
@@ -39,15 +40,10 @@ public class MulticastServer extends Thread {
 
     private Departamento dept;
     private DadosPartilhados dados;
-    public static void main(String[] args) {
+    public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
 
-        try {
-            RMI_S_I serverRMI = (RMI_S_I) Naming.lookup("Server");
-        } catch (NotBoundException | MalformedURLException | RemoteException e) {
-            e.printStackTrace();
-        }
         DadosPartilhados dados = new DadosPartilhados();
-
+        dados.RMIserver.ping("Ola do lado do multicast");
         MulticastServer server = new MulticastServer(dados);
         server.start();
         MulticastUserS u = new MulticastUserS(dados);
@@ -107,8 +103,17 @@ public class MulticastServer extends Thread {
             System.out.println("Este terminal esta livre: " + map.get("id"));
             if(Integer.parseInt(map.get("request")) == dados.getPedido()){
                 dados.setPedido();
-                send(socket, "type | chosen; id | " + map.get("id"));
+                send(socket, "type | chosen; id | " + map.get("id") + "; userCC | " + map.get("userCC"));
             }
+        }
+        else if(map.get("type").equals("login")){
+            if(dados.RMIserver.acceptLogin(Integer.parseInt(map.get("userCC")), map.get("username"), map.get("password"))){
+                System.out.println("Login with success");
+            }
+            else{
+                System.out.println("Se fodeu!");
+            }
+
         }
     }
 
@@ -143,13 +148,21 @@ class MulticastUserS extends Thread {
         //READ FROM INPUT
         Scanner keyboardScanner = new Scanner(System.in);
         String readKeyboard = keyboardScanner.nextLine();
+        //VERIFY IF ELECTOR IS REGISTERED
+        int CC = Integer.parseInt(readKeyboard);
 
-        //SEND DATA TO ALL THE CLIENTS
-        String message = "type | free; request | " + dados.getPedido();
-        byte[] buffer = message.getBytes();
-        InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
-        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
-        socket.send(packet);
+        if(dados.RMIserver.isRegisted(CC)){
+            System.out.println("Está registado");
+            //SEND DATA TO ALL THE CLIENTS
+            String message = "type | free; request | " + dados.getPedido() + "; userCC | " + CC;
+            byte[] buffer = message.getBytes();
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
+            socket.send(packet);
+        }
+        else{
+            System.out.println("O utilizador não se encontra nos registos");
+        }
     }
 
     public void run() {

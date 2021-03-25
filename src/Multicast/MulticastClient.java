@@ -24,16 +24,20 @@ public class MulticastClient extends Thread {
     private String MULTICAST_ADDRESS = "224.0.224.0";
     private int PORT = 4321;
     private boolean free = true;
+    private Data data;
 
-    public MulticastClient(long number) {
+    public MulticastClient(long number, Data data) {
+
         super("User " + number);
+        this.data = data;
     }
 
     public static void main(String[] args) {
         long number = (long) (Math.random() * 1000);
-        MulticastClient client = new MulticastClient(number);
+        Data data = new Data();
+        MulticastClient client = new MulticastClient(number, data);
         client.start();
-        MulticastUser user = new MulticastUser(number);
+        MulticastUser user = new MulticastUser(number, data);
         user.start();
     }
 
@@ -78,14 +82,17 @@ public class MulticastClient extends Thread {
 
         if(codes.get("type").equals("free")){
             if(free){
-                send(socket, "type | freeTerminal; id | " + this.getName() + "; request | " + codes.get("request"));
+                send(socket, "type | freeTerminal; id | " + this.getName() + "; request | " + codes.get("request") + "; userCC | " + codes.get("userCC"));
             }
         }
         else if(codes.get("type").equals("chosen")){
             if(codes.get("id").equals(this.getName())){
                 System.out.println(this.getName() + " foi escolhido");
                 free = false;
-                // abrir voto;
+                int userCC = Integer.parseInt(codes.get("userCC"));
+                data.setUserCC(userCC);
+                data.setBlocked();
+                System.out.println("O user : " + userCC + " tem acesso e a maquina esta " + data.getBlocked());
             }
         }
     }
@@ -101,9 +108,17 @@ public class MulticastClient extends Thread {
 class MulticastUser extends Thread {
     private String MULTICAST_ADDRESS = "224.0.224.0";
     private int PORT = 4321;
-
-    public MulticastUser(long number) {
+    private Data data;
+    public MulticastUser(long number, Data data) {
         super("User " + number);
+        this.data = data;
+    }
+
+    private void send(MulticastSocket socket, String message) throws IOException {
+        byte[] buffer = message.getBytes();
+        InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
+        socket.send(packet);
     }
 
     public void run() {
@@ -113,17 +128,58 @@ class MulticastUser extends Thread {
             socket = new MulticastSocket();  // create socket without binding it (only for sending)
             Scanner keyboardScanner = new Scanner(System.in);
             while (true) {
-                String readKeyboard = keyboardScanner.nextLine();
-                byte[] buffer = readKeyboard.getBytes();
+                //String readKeyboard = keyboardScanner.nextLine();
+                System.out.print("Username: ");
+                String username = keyboardScanner.nextLine();
+                //byte[] buffer = readKeyboard.getBytes();
 
-                InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
-                DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
-                socket.send(packet);
+                if(data.getBlocked()){
+                    System.out.println("A máquina encontra-se bloquada, por favor dirija-se à mesa de voto");
+                }
+                else{
+                    System.out.print("Password: ");
+                    String password = keyboardScanner.nextLine();
+                    send(socket, "type | login; userCC | " + data.getUserCC() + "; username | " + username + "; password | " + password);
+
+                }
+
+                //InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+                //DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
+                //socket.send(packet);
             }
         } catch (IOException e) {
             e.printStackTrace();
         } finally {
             socket.close();
         }
+    }
+}
+
+class Data{
+    private int userCC;
+    private boolean blocked;
+    public Data(){
+        this.userCC = 0;
+        blocked = true;
+    }
+
+    public void setUserCC(int userCC){
+        this.userCC = userCC;
+    }
+
+    public int getUserCC() {
+        return userCC;
+    }
+
+    public void clearUser(){
+        this.userCC = 0;
+    }
+
+    public void setBlocked(){
+        this.blocked = !this.blocked;
+    }
+
+    public boolean getBlocked(){
+        return blocked;
     }
 }

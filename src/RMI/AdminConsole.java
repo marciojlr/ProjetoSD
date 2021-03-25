@@ -361,16 +361,16 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 System.out.println(i +"- " +d.getNome());
                 i++;
             }
-            System.out.println("0- Criar Departamento");
+            System.out.println("0. Criar Departamento");
             //TODO Defesa para numeros e opçao valida
             Scanner s = new Scanner(System.in);
             System.out.println("Escolha: ");
-            int opçao = Integer.parseInt(s.nextLine());
-            if(opçao == 0 ){
+            int opcao = Integer.parseInt(s.nextLine());
+            if(opcao == 0 ){
                 return null;
             }
 
-            return depts.get(i-1);
+            return depts.get(opcao-1);
         }catch (RemoteException e){
             while (true){
                 try {
