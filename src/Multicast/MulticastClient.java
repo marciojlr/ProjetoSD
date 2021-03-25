@@ -78,7 +78,7 @@ public class MulticastClient extends Thread {
 
         if(codes.get("type").equals("free")){
             if(free){
-                send(socket, "type | freeTerminal; id | " + this.getName());
+                send(socket, "type | freeTerminal; id | " + this.getName() + "; request | " + codes.get("request"));
             }
         }
         else if(codes.get("type").equals("chosen")){
