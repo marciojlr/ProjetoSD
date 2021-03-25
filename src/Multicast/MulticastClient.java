@@ -23,6 +23,7 @@ import java.util.Scanner;
 public class MulticastClient extends Thread {
     private String MULTICAST_ADDRESS = "224.0.224.0";
     private int PORT = 4321;
+    private boolean free = true;
 
     public static void main(String[] args) {
         MulticastClient client = new MulticastClient();
@@ -38,13 +39,8 @@ public class MulticastClient extends Thread {
             InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
             socket.joinGroup(group);
             while (true) {
-                byte[] buffer = new byte[256];
-                DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
-                socket.receive(packet);
-
-                System.out.println("Received packet from " + packet.getAddress().getHostAddress() + ":" + packet.getPort() + " with message:");
-                String message = new String(packet.getData(), 0, packet.getLength());
-                readMessage(message);
+                String message = readMessage(socket);
+                readComands(message);
             }
         } catch (IOException e) {
             e.printStackTrace();
@@ -53,24 +49,44 @@ public class MulticastClient extends Thread {
         }
     }
 
-    private void readMessage(String message){
-        HashMap<String,String> map = new HashMap();
+    private String readMessage(MulticastSocket socket) throws IOException {
 
+        byte[] buffer = new byte[256];
+
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+        socket.receive(packet);
+        System.out.println("Received packet from " + packet.getAddress().getHostAddress() + ":" + packet.getPort() + " with message:");
+        System.out.println("Sim estou aqui");
+        String message = new String(packet.getData(), 0, packet.getLength());
+
+        return message;
+    }
+
+    private void readComands(String message) throws IOException {
+        HashMap<String,String> codes = new HashMap();
         String[] pares =  message.split("; ");
 
         for(String comandos : pares){
             String[] a = comandos.split(" \\| ");
-            map.put(a[0],a[1]);
+            codes.put(a[0],a[1]);
         }
 
-        if(map.get("type").equals("login")){
-            System.out.println(map.get("type"));
+        System.out.println(codes.get("type"));
 
-            System.out.println("Username: " + map.get("username"));
+        if(codes.get("type").equals("free")){
+            System.out.println("Type: " + codes.get("type"));
 
-            System.out.println("Password: " + map.get("password"));
+            System.out.println("Username: " + codes.get("username"));
+
+            System.out.println("Password: " + codes.get("password"));
         }
+    }
 
+    private void send(MulticastSocket socket, String message) throws IOException {
+        byte[] buffer = message.getBytes();
+        InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
+        socket.send(packet);
     }
 }
 
