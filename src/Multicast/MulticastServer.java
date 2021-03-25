@@ -1,5 +1,6 @@
 package Multicast;
 
+import Classes.Departamento;
 import Classes.Pessoa;
 import RMI.RMI_S_I;
 
@@ -17,6 +18,7 @@ public class MulticastServer extends Thread {
     private long SLEEP_TIME = 5000;
     private static RMI_S_I serverRMI;
 
+    private Departamento dept;
 
     public static void main(String[] args) {
 
@@ -38,6 +40,7 @@ public class MulticastServer extends Thread {
 
     public MulticastServer() {
         super("Server " + (long) (Math.random() * 1000));
+        this.dept = dept;
     }
 
     public void run() {

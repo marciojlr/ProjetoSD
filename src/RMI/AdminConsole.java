@@ -42,7 +42,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             System.out.println("1. Registar");
             System.out.println("2. Criar Eleição");
             System.out.println("3. Gerir Listas de candidatos a uma eleição");
-            System.out.println("4. ");
+            System.out.println("4. Mesas de Voto");
             System.out.println("5. Alterar propriedades de eleição");
             System.out.println("> ");
             option= myObj.nextLine();
@@ -280,6 +280,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
+
     public static void AlteraPropriedadesEleicao() throws RemoteException{
         try{
             ArrayList<Eleicao> eleicoes = adminConsole.getListaEleicoes();
@@ -322,9 +323,27 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         Scanner s = new Scanner(System.in);
         System.out.println("Em que Departamento pretende criar a Mesa de Voto");
         //Dar display dos depts
-        String dept = s.nextLine();
+        Departamento dep = escolherDept();
         //verificar se o departamento ja tem uma mesa
+        if(dep.getNome().equals("")){
+            System.out.println("O ja tem mesa de voto");
+        }
         //se nao tiver crio a mesa e adiciono ao array de mesas
+
+    }
+
+    public void AssociarMesaVoto(){
+
+        //Dar display das eleicoes
+
+        //Escolher a eleiçao que desaja associar uma mesa
+
+        //Escolher mesa
+
+        //Ver é possivel adicionar mesa a eleiçao
+    }
+
+    public void ApagarMesaVoto(){
 
     }
 

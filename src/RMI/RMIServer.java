@@ -4,6 +4,7 @@ import Classes.ListaCandidata;
 import Classes.Pessoa;
 import Classes.Eleicao;
 import Classes.Departamento;
+import Multicast.MulticastServer;
 
 import java.io.*;
 import java.net.MalformedURLException;
@@ -19,6 +20,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     public ArrayList<Pessoa> listaPessoas = new ArrayList<Pessoa>();
     public ArrayList<Eleicao> listaEleicoes = new ArrayList<Eleicao>();
     public ArrayList<Departamento> listaDepartamentos = new ArrayList<Departamento>();
+    public ArrayList<MulticastServer> listaMesasVoto = new ArrayList<MulticastServer>();
     static RMI_C_I client;
 
 
@@ -100,6 +102,15 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
 
     }
+    public void  AddMesaVoto(Departamento d) {
+        /*TODO Multicast receber o departamento
+        MulticastServer s = new MulticastServer(d);
+        listaMesasVoto.add(s);
+
+         */
+    }
+
+
     public String AlteraEleicao(String eleicao, int data_inicio,int data_fim,String titulo, String descricao){
 
         for(Eleicao e : listaEleicoes){
