@@ -117,10 +117,10 @@ public class MulticastServer extends Thread {
         //MESSAGE TO VERIFY LOGIN CREDENTIALS
         else if(map.get("type").equals("login")){
             if(dados.RMIserver.acceptLogin(Integer.parseInt(map.get("userCC")), map.get("username"), map.get("password"))){
-                send(socket, "type | loginC; status | on; id | " + map.get("id"));
+                send(socket, "type | status; logged | on; id | " + map.get("id"));
             }
             else{
-                send(socket, "type | loginC; status | off; id | " + map.get("id"));
+                send(socket, "type | status; logged | off; id | " + map.get("id"));
             }
 
         }

@@ -90,4 +90,9 @@ public class Pessoa implements Serializable{
     public void setMorada(String morada) {
         this.morada = morada;
     }
+
+    @Override
+    public String toString() {
+        return "Nome: " + this.nome + " - Tipo: " + this.tipo + " - CC " + this.CC;
+    }
 }

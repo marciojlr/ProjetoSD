@@ -43,18 +43,16 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return listaEleicoes;
     }
 
-    public ArrayList<Departamento> getListaDepartamentos() { return listaDepartamentos; }
+    public ArrayList<Departamento> getListaDepartamentos() {
+        return listaDepartamentos;
+    }
 
-    public String registarPessoa(String nome, String tipo, String password, Departamento departamento, int CC, GregorianCalendar CC_val, int telemovel, String morada){
-
+    public boolean registarPessoa(String nome, String tipo, String password, Departamento departamento, int CC, GregorianCalendar CC_val, int telemovel, String morada){
         Pessoa p = new Pessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada);
-        System.out.println("Estou a registar");
-        System.out.println(p.getNome());
-        System.out.println(p.getTipo());
-
+        System.out.println(p);
         listaPessoas.add(p);
 
-        return "Registado";
+        return true;
     }
 
     public String criarEleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, Departamento dept, String tipo_Pessoa){
@@ -102,6 +100,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
 
     }
+
     public void  AddMesaVoto(Departamento d) {
         /*TODO Multicast receber o departamento
         MulticastServer s = new MulticastServer(d);
@@ -124,7 +123,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     public void AddDepartamento(Departamento d){
-
+        System.out.println("Novo departamento adicionado: " + d);
         listaDepartamentos.add(d);
     }
 

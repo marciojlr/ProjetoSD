@@ -26,4 +26,9 @@ public class Departamento implements Serializable{
     public void setIp(String ip) {
         this.ip = ip;
     }
+
+    @Override
+    public String toString() {
+        return this.nome;
+    }
 }

@@ -98,10 +98,11 @@ public class MulticastClient extends Thread {
                     System.out.println("O user : " + userCC + " tem acesso e a maquina esta " + data.getBlocked());
             }
             // VERIFY IF LOGIN CREDENTIALS ARE CORRECT
-            else if(map.get("type").equals("loginC")){
+            else if(map.get("type").equals("status")){
                 System.out.println(message);
-                if(map.get("status").equals("on")){
-                    System.out.println("Credenciais corretas");
+                if(map.get("logged").equals("on")){
+                    data.setLoggedIn();
+                    System.out.println("Welcome to eVoting");
                 }
                 else{
                     System.out.println("Credenciais erradas");
@@ -183,6 +184,7 @@ class Data{
     private int userCC;
     private boolean blocked;
     private boolean loggedIn;
+
     public Data(){
         this.userCC = 0;
         this.blocked = true;

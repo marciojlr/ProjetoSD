@@ -38,13 +38,13 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         String option;
 
         while (true){
-            System.out.println("======Bem vindo!======");
+            System.out.println("====== Bem vindo! ======");
             System.out.println("1. Registar");
             System.out.println("2. Criar Eleição");
             System.out.println("3. Gerir Listas de candidatos a uma eleição");
             System.out.println("4. Mesas de Voto");
             System.out.println("5. Alterar propriedades de eleição");
-            System.out.println("> ");
+            System.out.print("> ");
             option= myObj.nextLine();
             if(option.equals("1")){
                 try{
@@ -89,6 +89,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         String tipo;
         while(true){
             System.out.print("1. Docente\n2. Estudante\n3. Funcionário\n");
+            System.out.print("> ");
             int aux = Integer.parseInt(s.nextLine());
             if(aux == 1){
                 tipo = "Docente";
@@ -106,11 +107,9 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
         System.out.print("Password: ");
         String password = s.nextLine();
-        //System.out.print("Departamento: ");
 
         Departamento departamento = escolherDept();
         if(departamento == null){
-
             departamento = criaDepartamento();
             adminConsole.AddDepartamento(departamento);
         }
@@ -118,14 +117,12 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.print("CC: ");
         int CC=Integer.parseInt(s.nextLine());
         System.out.println("Validade CC");
-        System.out.print("Dia: ");
-        int dia = Integer.parseInt(s.nextLine());
         System.out.print("Mês: ");
         int mes = Integer.parseInt(s.nextLine());
         System.out.print("Ano: ");
         int ano = Integer.parseInt(s.nextLine());
 
-        GregorianCalendar CC_val = new GregorianCalendar(dia,mes,ano);
+        GregorianCalendar CC_val = new GregorianCalendar(ano,mes,1);
         System.out.print("Telemovel: ");
         int telemovel =Integer.parseInt(s.nextLine());
 
@@ -134,9 +131,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
         //chamar funçao registar do server
         try{
-            String r;
-            r = adminConsole.registarPessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada);
-            System.out.println(r);
+            boolean result;
+            result = adminConsole.registarPessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada);
+            if(result){
+                System.out.println("\nELEITOR REGISTADO COM SUCESSO!\n");
+            }
         }catch (RemoteException e){
             while (true){
                 try {
@@ -152,7 +151,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     }
 
     public static void  criaEleicao() throws RemoteException {
-        //Recolher informaçao
+        //RECOLHER INFORMAÇÃO
         Scanner s = new Scanner(System.in);
 
         System.out.println("Data de inicio: ");
@@ -163,7 +162,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.print("Ano: ");
         int ano = Integer.parseInt(s.nextLine());
 
-        GregorianCalendar data_inicio = new GregorianCalendar(dia,mes,ano);
+        GregorianCalendar data_inicio = new GregorianCalendar(ano,mes,dia);
 
         System.out.println("Data de final: ");
         System.out.print("Dia: ");
@@ -173,7 +172,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.print("Ano: ");
         int ano2 = Integer.parseInt(s.nextLine());
 
-        GregorianCalendar data_fim = new GregorianCalendar(dia2,mes2,ano2);
+        GregorianCalendar data_fim = new GregorianCalendar(ano2,mes2,dia2);
 
         System.out.println("Titulo: ");
         String titulo= s.nextLine();
@@ -350,21 +349,20 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     public static Departamento escolherDept(){
         try{
             ArrayList<Departamento> depts = adminConsole.getListaDepartamentos();
-            if( depts.isEmpty()){
-                System.out.println("Nao existe departamentos para Associar");
-                System.out.println("Crie o seu Departamento");
+            if(depts.isEmpty()){
+                System.out.println("NÃO EXISTEM DEPARTAMENTOS NOS REGISTOS, ADICIONE O DEPARTAMENTO QUE DESEJA");
                 return null;
             }
             int i=1;
-            System.out.println("Departamentos disponiveis");
+            System.out.println("Departamentos disponíveis");
             for (Departamento d: depts) {
-                System.out.println(i +"- " +d.getNome());
+                System.out.println(i +". " +d.getNome());
                 i++;
             }
-            System.out.println("0. Criar Departamento");
+            System.out.println("0. Registar novo departamento");
             //TODO Defesa para numeros e opçao valida
             Scanner s = new Scanner(System.in);
-            System.out.println("Escolha: ");
+            System.out.print("> ");
             int opcao = Integer.parseInt(s.nextLine());
             if(opcao == 0 ){
                 return null;
@@ -388,10 +386,13 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     public static Departamento criaDepartamento(){
         //TODO Defesa: ver se o departamento a ser criado ja existe
         Scanner s = new Scanner(System.in);
-        System.out.println("Insira nome do Departamento");
+        System.out.println("Insira nome do departamento");
+        System.out.print("> ");
         String nome = s.nextLine();
-        System.out.println("Insira ip");
+        System.out.println("Insira ip correspondente ao departamento");
+        System.out.print("> ");
         String ip = s.nextLine();
+        System.out.println("DEPARTAMENTO ADICIONADO AOS REGISTOS E ELEITOR");
         Departamento d = new Departamento(nome,ip);
         return d;
     }
