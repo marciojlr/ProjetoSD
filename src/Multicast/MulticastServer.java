@@ -104,6 +104,7 @@ public class MulticastServer extends Thread {
             System.out.println("Este terminal esta livre: " + map.get("id"));
             if(Integer.parseInt(map.get("request")) == dados.getPedido()){
                 dados.setPedido();
+                System.out.println("Dirigi-se ao terminal de voto " + map.get("id"));
                 send(socket, "type | chosen; id | " + map.get("id") + "; userCC | " + map.get("userCC"));
             }
         }
