@@ -33,6 +33,10 @@ class DadosPartilhados{
     }
 }
 
+/**
+ * Classe que serve para coordenar as ligações entre a mesa de voto
+ * e os diferentes terminais de voto
+ */
 public class MulticastServer extends Thread {
 
     private final String MULTICAST_ADDRESS = "224.0.224.0";
@@ -48,6 +52,8 @@ public class MulticastServer extends Thread {
         server.start();
         MulticastUserS u = new MulticastUserS(dados);
         u.start();
+        Vote v = new Vote(dados);
+        v.start();
     }
 
     public MulticastServer(DadosPartilhados dados) {
@@ -129,7 +135,6 @@ public class MulticastServer extends Thread {
 
 }
 
-
 /**
  * Classe para escrever input do lado das mesa de voto
  */
@@ -187,3 +192,39 @@ class MulticastUserS extends Thread {
     }
 }
 
+class Vote extends Thread {
+    private final String MULTICAST_ADDRESS = "224.1.224.0";
+    private final int PORT = 4321;
+    private DadosPartilhados dados;
+
+    public Vote(DadosPartilhados dados) {
+        super("VoteThread " + (long) (Math.random() * 1000));
+        this.dados = dados;
+    }
+
+    public void receiveVote(MulticastSocket socket) throws IOException {
+        byte[] buffer = new byte[256];
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
+        socket.receive(packet);
+        String message = new String(packet.getData(), 0, packet.getLength());
+        System.out.println(message);
+    }
+
+    public void run() {
+        MulticastSocket socket = null;
+        System.out.println(this.getName() + " running...");
+        try {
+            socket = new MulticastSocket(PORT);  // recebe e envia
+            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+            socket.joinGroup(group);
+
+            while (true) {
+                receiveVote(socket);
+            }
+        } catch (IOException e) {
+            e.printStackTrace();
+        } finally {
+            socket.close();
+        }
+    }
+}

@@ -65,7 +65,6 @@ public class MulticastClient extends Thread {
 
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.receive(packet);
-        //System.out.println("Received packet from " + packet.getAddress().getHostAddress() + ":" + packet.getPort() + " with message:");
         String message = new String(packet.getData(), 0, packet.getLength());
 
         return message;
@@ -122,6 +121,7 @@ public class MulticastClient extends Thread {
 }
 
 class MulticastUser extends Thread {
+    private String VOTE_ADDRESS = "224.1.224.0";
     private String MULTICAST_ADDRESS = "224.0.224.0";
     private int PORT = 4321;
     private Data data;
@@ -137,11 +137,20 @@ class MulticastUser extends Thread {
         socket.send(packet);
     }
 
+    private void sendVote(MulticastSocket socket, String message) throws IOException {
+        byte[] buffer = message.getBytes();
+        InetAddress group = InetAddress.getByName(VOTE_ADDRESS);
+        DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
+        socket.send(packet);
+    }
+
     public void run() {
         MulticastSocket socket = null;
+        MulticastSocket voteSocket = null;
         System.out.println(this.getName());
         try {
             socket = new MulticastSocket();  // create socket without binding it (only for sending)
+            voteSocket = new MulticastSocket(); // create socket to send vote
             Scanner keyboardScanner = new Scanner(System.in);
             while (true) {
                 //String readKeyboard = keyboardScanner.nextLine();
@@ -156,14 +165,13 @@ class MulticastUser extends Thread {
                     System.out.print("Password: ");
                     String password = keyboardScanner.nextLine();
                     send(socket, "type | login; id | " + this.getName() + "; userCC | " + data.getUserCC() + "; username | " + username + "; password | " + password);
-
+                    Thread.sleep(500);
+                    sendVote(voteSocket, "Votar");
+                    sendVote(voteSocket, "Votar");
+                    sendVote(voteSocket, "Votar");
                 }
-
-                //InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
-                //DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
-                //socket.send(packet);
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             socket.close();
@@ -174,9 +182,11 @@ class MulticastUser extends Thread {
 class Data{
     private int userCC;
     private boolean blocked;
+    private boolean loggedIn;
     public Data(){
         this.userCC = 0;
-        blocked = true;
+        this.blocked = true;
+        this.loggedIn = false;
     }
 
     public void setUserCC(int userCC){
@@ -197,5 +207,13 @@ class Data{
 
     public boolean getBlocked(){
         return blocked;
+    }
+
+    public boolean isLoggedIn() {
+        return loggedIn;
+    }
+
+    public void setLoggedIn() {
+        this.loggedIn = !this.loggedIn;
     }
 }
