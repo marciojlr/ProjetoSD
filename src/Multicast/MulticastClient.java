@@ -72,29 +72,45 @@ public class MulticastClient extends Thread {
     }
 
     private void readComands(MulticastSocket socket, String message) throws IOException {
-        HashMap<String,String> codes = new HashMap();
+        HashMap<String,String> map = new HashMap();
         String[] pares =  message.split("; ");
 
         for(String comandos : pares) {
             String[] a = comandos.split(" \\| ");
-            codes.put(a[0], a[1]);
+            map.put(a[0], a[1]);
         }
 
-        if(codes.get("type").equals("free")){
+        //MESSAGE TO ALL TERMINALS
+        if(map.get("type").equals("free")){
             if(free){
-                send(socket, "type | freeTerminal; id | " + this.getName() + "; request | " + codes.get("request") + "; userCC | " + codes.get("userCC"));
+                send(socket, "type | freeTerminal; id | " + this.getName() + "; request | " + map.get("request") + "; userCC | " + map.get("userCC"));
             }
         }
-        else if(codes.get("type").equals("chosen")){
-            if(codes.get("id").equals(this.getName())){
-                System.out.println(this.getName() + " foi escolhido");
-                free = false;
-                int userCC = Integer.parseInt(codes.get("userCC"));
-                data.setUserCC(userCC);
-                data.setBlocked();
-                System.out.println("O user : " + userCC + " tem acesso e a maquina esta " + data.getBlocked());
+        // MESSAGES TO SPECIFIC TERMINAL
+        else if(map.get("id").equals(this.getName())){
+
+            // IF THIS WAS THE CHOSEN TERMINAL
+            if(map.get("type").equals("chosen")){
+                    System.out.println(this.getName() + " foi escolhido");
+                    free = false;
+                    int userCC = Integer.parseInt(map.get("userCC"));
+                    data.setUserCC(userCC);
+                    data.setBlocked();
+                    System.out.println("O user : " + userCC + " tem acesso e a maquina esta " + data.getBlocked());
             }
+            // VERIFY IF LOGIN CREDENTIALS ARE CORRECT
+            else if(map.get("type").equals("loginC")){
+                System.out.println(message);
+                if(map.get("status").equals("on")){
+                    System.out.println("Credenciais corretas");
+                }
+                else{
+                    System.out.println("Credenciais erradas");
+                }
+            }
+
         }
+
     }
 
     private void send(MulticastSocket socket, String message) throws IOException {
@@ -139,7 +155,7 @@ class MulticastUser extends Thread {
                 else{
                     System.out.print("Password: ");
                     String password = keyboardScanner.nextLine();
-                    send(socket, "type | login; userCC | " + data.getUserCC() + "; username | " + username + "; password | " + password);
+                    send(socket, "type | login; id | " + this.getName() + "; userCC | " + data.getUserCC() + "; username | " + username + "; password | " + password);
 
                 }
 

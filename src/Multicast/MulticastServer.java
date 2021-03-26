@@ -99,6 +99,7 @@ public class MulticastServer extends Thread {
             map.put(a[0],a[1]);
         }
 
+        //MESSAGE TO GET A FREE TERMINAL
         if(map.get("type").equals("freeTerminal")){
             System.out.println("Este terminal esta livre: " + map.get("id"));
             if(Integer.parseInt(map.get("request")) == dados.getPedido()){
@@ -106,12 +107,13 @@ public class MulticastServer extends Thread {
                 send(socket, "type | chosen; id | " + map.get("id") + "; userCC | " + map.get("userCC"));
             }
         }
+        //MESSAGE TO VERIFY LOGIN CREDENTIALS
         else if(map.get("type").equals("login")){
             if(dados.RMIserver.acceptLogin(Integer.parseInt(map.get("userCC")), map.get("username"), map.get("password"))){
-                System.out.println("Login with success");
+                send(socket, "type | loginC; status | on; id | " + map.get("id"));
             }
             else{
-                System.out.println("Se fodeu!");
+                send(socket, "type | loginC; status | off; id | " + map.get("id"));
             }
 
         }
