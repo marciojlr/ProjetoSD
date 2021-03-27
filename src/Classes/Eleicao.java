@@ -12,9 +12,9 @@ public class Eleicao implements Serializable {
     private String titulo;
     private String descricao;
     //Classe departamento
-    private Departamento dept;
+    private ArrayList<Departamento> dept;
     //So podem votar pessoas deste tipo
-    private String tipo_Pessoa;
+    private ArrayList<String> tipo_Pessoa;
 
     private ArrayList<ListaCandidata> listaCandidata;
     private ArrayList<Departamento> listaDepts;
@@ -24,8 +24,8 @@ public class Eleicao implements Serializable {
         this.data_final = data_final;
         this.titulo = titulo;
         this.descricao = descricao;
-        this.dept = dept;
-        this.tipo_Pessoa = tipo_Pessoa;
+        this.dept.add(dept);
+        this.tipo_Pessoa.add(tipo_Pessoa);
         this.listaCandidata= new ArrayList<ListaCandidata>();
     }
 
@@ -61,18 +61,12 @@ public class Eleicao implements Serializable {
         this.descricao = descricao;
     }
 
-    public Departamento getDept() {
-        return dept;
-    }
-
     public void setDept(Departamento dept) {
-        this.dept = dept;
+        this.dept.add(dept);
     }
-
-    public String getTipo_Pessoa() { return tipo_Pessoa; }
 
     public void setTipo_Pessoa(String tipo_Pessoa) {
-        this.tipo_Pessoa = tipo_Pessoa;
+        this.tipo_Pessoa.add(tipo_Pessoa);
     }
 
     public ArrayList<ListaCandidata> getListaCandidata() {

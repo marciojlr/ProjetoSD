@@ -240,10 +240,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             }
         }
     }
-    /*
-    * Temos eleiçoes de conselho geral ?
-    *
-     */
 
     public static void gerirListaCandidata() throws RemoteException {
         try{
@@ -294,7 +290,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             }
         }
     }
-
 
     public static void AlteraPropriedadesEleicao() throws RemoteException{
         try{
@@ -412,6 +407,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         Departamento d = new Departamento(nome,ip);
         return d;
     }
+
     @Override
     public void newServer() throws RemoteException, NotBoundException, MalformedURLException {
         adminConsole = (RMI_S_I) Naming.lookup("Server");
