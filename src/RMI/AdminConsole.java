@@ -27,8 +27,17 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         String teste;
         teste = adminConsole.teste((RMI_C_I) client);
         System.out.println(teste);
-        menu();
+        Departamento dei = new Departamento("DEI","123");
+        Departamento deec = new Departamento("DEEC","123");
+        GregorianCalendar data = new GregorianCalendar();
+        adminConsole.AddDepartamento(dei);
+        adminConsole.AddDepartamento(deec);
+        adminConsole.registarPessoa("Marcio","Estudante", "123", dei, 12345678, data,910,"Coimbra");
+        adminConsole.registarPessoa("Filipe","Estudante", "123", deec, 123456789, data,910,"Coimbra");
 
+        adminConsole.criarEleicao(data,data,"Eleicao 1", "Descricao 1", dei, "Estudante");
+        adminConsole.criarEleicao(data,data,"Eleicao 2", "Descricao 2", deec, "Estudante");
+        menu();
 
     }
 
