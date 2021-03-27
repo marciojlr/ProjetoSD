@@ -19,7 +19,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     private static RMI_S_I adminConsole;
 
-
     public AdminConsole() throws RemoteException {super();}
 
     public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException{
@@ -77,7 +76,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             }
         }
     }
-
 
     public static void  RegistoPessoa() throws RemoteException {
 
@@ -150,11 +148,28 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
+    private static void setHour(GregorianCalendar date){
+        Scanner s = new Scanner(System.in);
+        System.out.println("HORA DE INICIO (HH:MM)");
+        System.out.print("> ");
+        String input = s.nextLine();
+
+        try {
+            int hour = Integer.parseInt(input.split(":")[0]);
+            int minute = Integer.parseInt(input.split(":")[1]);
+            date.set(Calendar.HOUR_OF_DAY, hour);
+            date.set(Calendar.MINUTE,minute);
+        }catch(Exception e){
+            System.out.println("POR FAVOR INSIRA UM FORMATO DE DATA VÁLIDO");
+            setHour(date);
+        }
+    }
+
     public static void  criaEleicao() throws RemoteException {
         //RECOLHER INFORMAÇÃO
         Scanner s = new Scanner(System.in);
 
-        System.out.println("Data de inicio: ");
+        System.out.println("DATA DE INICIO");
         System.out.print("Dia: ");
         int dia = Integer.parseInt(s.nextLine());
         System.out.print("Mês: ");
@@ -163,8 +178,9 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         int ano = Integer.parseInt(s.nextLine());
 
         GregorianCalendar data_inicio = new GregorianCalendar(ano,mes,dia);
+        setHour(data_inicio);
 
-        System.out.println("Data de final: ");
+        System.out.println("DATA DE ENCERRAMENTO");
         System.out.print("Dia: ");
         int dia2 = Integer.parseInt(s.nextLine());
         System.out.print("Mês: ");
@@ -173,6 +189,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         int ano2 = Integer.parseInt(s.nextLine());
 
         GregorianCalendar data_fim = new GregorianCalendar(ano2,mes2,dia2);
+        setHour(data_fim);
 
         System.out.println("Titulo: ");
         String titulo= s.nextLine();
@@ -181,11 +198,10 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         String descricao= s.nextLine();
 
         //TODO: alterar para a classe departamento
-        System.out.println("Departamento: ");
         Departamento departamento = escolherDept();
         if(departamento == null){
-            System.out.println("Nao existem departamentos, não é possivel criar eleiçao");
-            return;
+            departamento = criaDepartamento();
+            adminConsole.AddDepartamento(departamento);
         }
 
         //So podem votar pessoas deste tipo
@@ -392,7 +408,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.println("Insira ip correspondente ao departamento");
         System.out.print("> ");
         String ip = s.nextLine();
-        System.out.println("DEPARTAMENTO ADICIONADO AOS REGISTOS E ELEITOR");
+        System.out.println("DEPARTAMENTO ADICIONADO AOS REGISTOS");
         Departamento d = new Departamento(nome,ip);
         return d;
     }

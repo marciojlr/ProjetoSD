@@ -2,6 +2,7 @@ package Classes;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class Eleicao implements Serializable {
@@ -101,6 +102,16 @@ public class Eleicao implements Serializable {
         for(ListaCandidata l: this.listaCandidata){
             System.out.println(l.toString());
         }
+    }
+
+    @Override
+    public String toString(){
+        return  "Titulo: " + this.titulo + "\n" +
+                "Descrição: " + this.descricao + "\n" +
+                "Departamento: " + this.dept + "\n" +
+                "Data de inicio: " + this.data_inicio.get(Calendar.DATE) + "\n" +
+                "Data de encerramento: " + this.data_inicio.get(Calendar.DATE)
+                ;
     }
 
 }
