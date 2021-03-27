@@ -18,10 +18,13 @@ import java.util.Scanner;
  */
 class DadosPartilhados{
     int pedido;
+    String name;
     RMI_S_I RMIserver;
-    public DadosPartilhados() throws RemoteException, NotBoundException, MalformedURLException {
-        int n_pedido = 0;
+    public DadosPartilhados(String name) throws RemoteException, NotBoundException, MalformedURLException {
+        this.pedido = 0;
+        this.name = name;
         this.RMIserver = (RMI_S_I) Naming.lookup("Server");
+        System.out.println(this.name);
     }
 
     public int getPedido() {
@@ -46,7 +49,7 @@ public class MulticastServer extends Thread {
     private DadosPartilhados dados;
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
 
-        DadosPartilhados dados = new DadosPartilhados();
+        DadosPartilhados dados = new DadosPartilhados(args[0]);
         dados.RMIserver.ping("Ola do lado do multicast");
         MulticastServer server = new MulticastServer(dados);
         server.start();
@@ -64,11 +67,9 @@ public class MulticastServer extends Thread {
     }
 
     public void run() {
-
-        MulticastSocket socket = null;
-        long counter = 0;
-        Pessoa eleitor;
         System.out.println(this.getName() + " running...");
+        MulticastSocket socket = null;
+
         try {
             socket = new MulticastSocket(PORT);  // recebe e envia
             InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
@@ -86,12 +87,9 @@ public class MulticastServer extends Thread {
     }
 
     private String readMessage(MulticastSocket socket) throws IOException {
-
         byte[] buffer = new byte[256];
-
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.receive(packet);
-        //System.out.println("Received packet from " + packet.getAddress().getHostAddress() + ":" + packet.getPort() + " with message:");
         String message = new String(packet.getData(), 0, packet.getLength());
         return message;
     }
@@ -110,8 +108,8 @@ public class MulticastServer extends Thread {
             System.out.println("Este terminal esta livre: " + map.get("id"));
             if(Integer.parseInt(map.get("request")) == dados.getPedido()){
                 dados.setPedido();
-                System.out.println("Dirigi-se ao terminal de voto " + map.get("id"));
                 send(socket, "type | chosen; id | " + map.get("id") + "; userCC | " + map.get("userCC"));
+                System.out.println("POR FAVOR EFETUE O SEU VOTO NO TERMINAL " + map.get("id"));
             }
         }
         //MESSAGE TO VERIFY LOGIN CREDENTIALS
@@ -161,6 +159,8 @@ class MulticastUserS extends Thread {
 
         if(dados.RMIserver.isRegisted(CC)){
             System.out.println("Está registado");
+            // TODO: listar opçoes de eleições
+
             //SEND DATA TO ALL THE CLIENTS
             String message = "type | free; request | " + dados.getPedido() + "; userCC | " + CC;
             byte[] buffer = message.getBytes();

@@ -103,6 +103,7 @@ public class MulticastClient extends Thread {
                 if(map.get("logged").equals("on")){
                     data.setLoggedIn();
                     System.out.println("Welcome to eVoting");
+                    // TODO: imprimir as listas presentes na candidatura
                 }
                 else{
                     System.out.println("Credenciais erradas");
