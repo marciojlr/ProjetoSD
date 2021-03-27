@@ -80,7 +80,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     public static void  RegistoPessoa() throws RemoteException {
 
         Scanner s = new Scanner(System.in);
-
+        System.out.println("\n- - - - REGISTO DE ELEITOR- - - -\n");
         System.out.print("Nome: ");
         String nome = s.nextLine();
 
@@ -168,7 +168,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     public static void  criaEleicao() throws RemoteException {
         //RECOLHER INFORMAÇÃO
         Scanner s = new Scanner(System.in);
-
+        System.out.println("\n- - - - REGISTO DE ELEIÇÃO- - - -\n");
         System.out.println("DATA DE INICIO");
         System.out.print("Dia: ");
         int dia = Integer.parseInt(s.nextLine());
@@ -197,7 +197,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.println("Descrição: ");
         String descricao= s.nextLine();
 
-        //TODO: alterar para a classe departamento
         Departamento departamento = escolherDept();
         if(departamento == null){
             departamento = criaDepartamento();
@@ -205,10 +204,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
 
         //So podem votar pessoas deste tipo
-        System.out.println("Grupo de pessoas que pode votar");
+        System.out.println("GRUPO DE PESSOAS QUE PODEM ESTUDAR");
         String tipo_Pessoa;
         while(true){
-            System.out.print("1. Docente\n2. Estudante\n3. Funcionário\n");
+            System.out.print("1. Docentes\n2. Estudantes\n3. Funcionários\n");
+            System.out.println("> ");
             int aux = Integer.parseInt(s.nextLine());
             if(aux == 1){
                 tipo_Pessoa = "Docente";
@@ -365,7 +365,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 return null;
             }
             int i=1;
-            System.out.println("Departamentos disponíveis");
+            System.out.println("\nDEPARTAMENTOS DISPONÍVEIS");
             for (Departamento d: depts) {
                 System.out.println(i +". " +d.getNome());
                 i++;
@@ -403,7 +403,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.println("Insira ip correspondente ao departamento");
         System.out.print("> ");
         String ip = s.nextLine();
-        System.out.println("DEPARTAMENTO ADICIONADO AOS REGISTOS");
+        System.out.println("\nDEPARTAMENTO ADICIONADO AOS REGISTOS\n");
         Departamento d = new Departamento(nome,ip);
         return d;
     }

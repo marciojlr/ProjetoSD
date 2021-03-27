@@ -11,21 +11,20 @@ public class Eleicao implements Serializable {
     private GregorianCalendar data_final;
     private String titulo;
     private String descricao;
-    //Classe departamento
-    private ArrayList<Departamento> dept;
     //So podem votar pessoas deste tipo
-    private ArrayList<String> tipo_Pessoa;
-
+    private String tipo_Pessoa;
+    // LISTAS
     private ArrayList<ListaCandidata> listaCandidata;
-    private ArrayList<Departamento> listaDepts;
+    private ArrayList<Departamento> dept;
 
     public Eleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, Departamento dept, String tipo_Pessoa) {
         this.data_inicio = data_inicio;
         this.data_final = data_final;
         this.titulo = titulo;
         this.descricao = descricao;
+        this.dept = new ArrayList<Departamento>();
         this.dept.add(dept);
-        this.tipo_Pessoa.add(tipo_Pessoa);
+        this.tipo_Pessoa = tipo_Pessoa;
         this.listaCandidata= new ArrayList<ListaCandidata>();
     }
 
@@ -66,7 +65,7 @@ public class Eleicao implements Serializable {
     }
 
     public void setTipo_Pessoa(String tipo_Pessoa) {
-        this.tipo_Pessoa.add(tipo_Pessoa);
+        this.tipo_Pessoa = tipo_Pessoa;
     }
 
     public ArrayList<ListaCandidata> getListaCandidata() {
@@ -100,11 +99,12 @@ public class Eleicao implements Serializable {
 
     @Override
     public String toString(){
-        return  "Titulo: " + this.titulo + "\n" +
+        return  "Nova eleição criada\n" +
+                "Titulo: " + this.titulo + "\n" +
                 "Descrição: " + this.descricao + "\n" +
-                "Departamento: " + this.dept + "\n" +
-                "Data de inicio: " + this.data_inicio.get(Calendar.DATE) + "\n" +
-                "Data de encerramento: " + this.data_inicio.get(Calendar.DATE)
+                "Departamentos: " + this.dept + "\n" +
+                "Data de inicio: " + this.data_inicio.DAY_OF_MONTH + "/" + this.data_inicio.MONTH + "/" + this.data_inicio.YEAR + "\n" +
+                "Data de encerramento: " + this.data_inicio.DAY_OF_MONTH + "/" + this.data_inicio.MONTH + "/" + this.data_inicio.YEAR
                 ;
     }
 
