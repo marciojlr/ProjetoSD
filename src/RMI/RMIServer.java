@@ -13,6 +13,7 @@ import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
@@ -99,18 +100,62 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     }
 
-    public void  AddMesaVoto(Departamento d) {
-        /*TODO Multicast receber o departamento
-        MulticastServer s = new MulticastServer(d);
-        listaMesasVoto.add(s);
+    public void  AddMesaVoto(Eleicao e, Departamento d) {
+        //TODO Multicast receber o departamento
+        //MulticastServer s = new MulticastServer(d);
+        //listaMesasVoto.add(s);
 
-         */
+
+       for (Eleicao el: this.listaEleicoes
+             ) {
+            if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
+                el.getDept().add(d);
+
+            }
+        }
+        for (Eleicao el: this.listaEleicoes
+        ) {
+            if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
+                System.out.println(el.toString());
+            }
+        }
+
+        System.out.println("Mesa adicionada com sucesso");
+
     }
+    public void  RemoverMesaVoto(Eleicao e, Departamento d) {
+
+        //TODO Multicast receber o departamento
+        //MulticastServer s = new MulticastServer(d);
+        //listaMesasVoto.remove(s);
+
+        for (Eleicao el: this.listaEleicoes
+        ) {
+            if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
+                el.removeDepartamento(d);
+            }
+        }
+
+        System.out.println("Mesa removida com sucesso");
+        for (Eleicao el: this.listaEleicoes
+        ) {
+            if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
+                System.out.println(el.toString());
+            }
+        }
+
+    }
+
+
 
     public String AlteraEleicao(String eleicao, int data_inicio,int data_fim,String titulo, String descricao){
 
+        GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
         for(Eleicao e : listaEleicoes){
             if (e.getTitulo().equals(eleicao)){
+                if(e.getData_inicio().compareTo(date) < 0){
+                    return "NAO É POSSIVEL";
+                }
                 e.setData_inicio(null);
                 e.setData_final(null);
                 e.setTitulo(titulo);
@@ -123,6 +168,21 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     public void AddDepartamento(Departamento d){
         System.out.println("Novo departamento adicionado: " + d);
         listaDepartamentos.add(d);
+    }
+
+
+    //TODO: TESTAR QUANDO A PARTE DOS LOCAIS DE VOTOS ESTIVER FEITA
+    public ArrayList<String> LocalVoto(String pessoa){
+        ArrayList<String> locais = new ArrayList<>();
+        for (Eleicao e: this.listaEleicoes) {
+            for(Pessoa p: e.getVotantes()){
+                if(p.getNome().equals(pessoa)){
+                    String s = "Eleiçao: " + e.getTitulo() + "  " + "Local: " + p.getLocalVoto();
+                    locais.add(s);
+                }
+            }
+        }
+        return locais;
     }
 
     @Override

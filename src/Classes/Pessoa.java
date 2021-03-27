@@ -14,7 +14,7 @@ public class Pessoa implements Serializable{
     private GregorianCalendar validade_CC;
     private int telemovel;
     private String morada;
-
+    private String localVoto;
 
     public Pessoa(String nome, String tipo, String password, Departamento departamento, int CC, GregorianCalendar CC_val,int telemovel, String morada) {
         this.nome = nome;
@@ -25,6 +25,14 @@ public class Pessoa implements Serializable{
         this.validade_CC = CC_val;
         this.telemovel = telemovel;
         this.morada = morada;
+    }
+
+    public String getLocalVoto() {
+        return localVoto;
+    }
+
+    public void setLocalVoto(String localVoto) {
+        this.localVoto = localVoto;
     }
 
     public String getNome() {

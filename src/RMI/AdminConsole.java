@@ -29,14 +29,15 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.println(teste);
         Departamento dei = new Departamento("DEI","123");
         Departamento deec = new Departamento("DEEC","123");
-        GregorianCalendar data = new GregorianCalendar();
+        GregorianCalendar datainicio = new GregorianCalendar(2021,2,26);
+        GregorianCalendar datafim = new GregorianCalendar(2021,2,30);
         adminConsole.AddDepartamento(dei);
         adminConsole.AddDepartamento(deec);
-        adminConsole.registarPessoa("Marcio","Estudante", "123", dei, 12345678, data,910,"Coimbra");
-        adminConsole.registarPessoa("Filipe","Estudante", "123", deec, 123456789, data,910,"Coimbra");
+        adminConsole.registarPessoa("Marcio","Estudante", "123", dei, 12345678, null,910,"Coimbra");
+        adminConsole.registarPessoa("Filipe","Estudante", "123", deec, 123456789, null,910,"Coimbra");
 
-        adminConsole.criarEleicao(data,data,"Eleicao 1", "Descricao 1", dei, "Estudante");
-        adminConsole.criarEleicao(data,data,"Eleicao 2", "Descricao 2", deec, "Estudante");
+        adminConsole.criarEleicao(datainicio,datafim,"Eleicao 1", "Descricao 1", dei, "Estudante");
+        adminConsole.criarEleicao(datainicio,datafim,"Eleicao 2", "Descricao 2", deec, "Estudante");
         menu();
 
     }
@@ -52,6 +53,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             System.out.println("3. Gerir Listas de candidatos a uma eleição");
             System.out.println("4. Mesas de Voto");
             System.out.println("5. Alterar propriedades de eleição");
+            System.out.println("6. Saber local de voto de um dado eleitor");
             System.out.print("> ");
             option= myObj.nextLine();
             if(option.equals("1")){
@@ -76,9 +78,23 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                     System.out.println(e);
                 }
             }
+            else if(option.equals("4")){
+                try{
+                    GerirMesa();
+                }catch (RemoteException e){
+                    System.out.println(e);
+                }
+            }
             else if(option.equals("5")){
                 try {
                     AlteraPropriedadesEleicao();
+                }catch (RemoteException e){
+                    System.out.println(e);
+                }
+            }
+            else if (option.equals("6")){
+                try {
+                    LocaisDeVoto();
                 }catch (RemoteException e){
                     System.out.println(e);
                 }
@@ -304,12 +320,26 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         try{
             ArrayList<Eleicao> eleicoes = adminConsole.getListaEleicoes();
             //TODO: DAR PRINT APENAS DAS ELEGIVEIS
+
+            GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
+            int i =0;
             for (Eleicao e: eleicoes) {
-                System.out.println(e.getTitulo());
+                if(e.getData_inicio().compareTo(date) > 0){
+                    System.out.println(e.getTitulo());
+                    i++;
+                }
             }
+            if(i == 0){
+                System.out.println("Nao existe eleicoes elegiveis para alterar");
+                return;
+            }
+
             Scanner s = new Scanner(System.in);
             System.out.println("Selecione a Eleição que deseja alterar");
             String escolha = s.nextLine();
+            //TODO: Verificar escolha
+            //verificar
+            //retornar bool
 
             System.out.println("Data de inicio: ");
             int data_inicio = Integer.parseInt(s.nextLine());
@@ -323,7 +353,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             System.out.println("Descrição: ");
             String descricao= s.nextLine();
 
-            adminConsole.AlteraEleicao(escolha,data_inicio,data_final, titulo,descricao);
+            System.out.println(adminConsole.AlteraEleicao(escolha,data_inicio,data_final, titulo,descricao));
 
         }catch(RemoteException e){
             while (true){
@@ -338,6 +368,23 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
+    public static void GerirMesa() throws RemoteException{
+
+        System.out.println("1. Associar   2. Remover");
+        Scanner s = new Scanner(System.in);
+        System.out.println("Insira a opção: ");
+        //TODO: DEFESA DA OPÇAO
+        int opcao = Integer.parseInt(s.nextLine());
+        if ( opcao == 1){
+                AssociarMesaVoto();
+        }
+        else if(opcao == 2){
+            RemoverMesa();
+        }
+
+    }
+
+
     public void CriaMesaVoto(){
         Scanner s = new Scanner(System.in);
         System.out.println("Em que Departamento pretende criar a Mesa de Voto");
@@ -351,20 +398,77 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     }
 
-    public void AssociarMesaVoto(){
+    public static void AssociarMesaVoto(){
 
-        //Dar display das eleicoes
+        Eleicao e = escolheEleicao();
 
-        //Escolher a eleiçao que desaja associar uma mesa
+        try {
+            ArrayList<Departamento> depts = adminConsole.getListaDepartamentos();
 
-        //Escolher mesa
+            //TODO MOSTRAR APENAS AS QUE NAO ESTAO NA ELEIÇAO
+            int i=1;
+            System.out.println("\nMESAS DISPONÍVEIS");
+            for (Departamento d: depts) {
+                System.out.println(i +". " +d.getNome() +"  " + d.getIp());
+                i++;
+            }
+            Scanner s = new Scanner(System.in);
+            System.out.println("Escolha a mesa que pretende adicionar" );
+            System.out.print("> ");
+            int opcao = Integer.parseInt(s.nextLine());
+            adminConsole.AddMesaVoto(e,depts.get(opcao-1));
 
-        //Ver é possivel adicionar mesa a eleiçao
+
+        }catch (RemoteException e1){
+            while (true){
+                try {
+                    //Thread.sleep(1000);
+                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    break;
+                }catch(NotBoundException  | RemoteException |MalformedURLException m){
+                    System.out.println("nao conectei");
+                }
+            }
+        }
+    }
+
+    public static void RemoverMesa(){
+        Eleicao e = escolheEleicao();
+        try {
+            int i=1;
+            if(e.getDept().isEmpty()){
+                System.out.println("NÃO EXISTEM MESAS PARA REMOVER\n");
+                return;
+            }
+            System.out.println("\nMESAS DISPONÍVEIS");
+            for (Departamento d: e.getDept()) {
+                System.out.println(i +". " +d.getNome() +"  " + d.getIp());
+                i++;
+            }
+            Scanner s = new Scanner(System.in);
+            System.out.println("Escolha a mesa que pretende remover");
+            System.out.print("> ");
+            int opcao = Integer.parseInt(s.nextLine());
+            adminConsole.RemoverMesaVoto(e,e.getDept().get(opcao-1));
+
+
+        }catch (RemoteException e1){
+            while (true){
+                try {
+                    //Thread.sleep(1000);
+                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    break;
+                }catch(NotBoundException  | RemoteException |MalformedURLException m){
+                    System.out.println("nao conectei");
+                }
+            }
+        }
     }
 
     public void ApagarMesaVoto(){
 
     }
+
 
     public static Departamento escolherDept(){
         try{
@@ -403,6 +507,43 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         return null;
     }
 
+    public static Eleicao escolheEleicao(){
+
+        try{
+            ArrayList<Eleicao> eleicoes = adminConsole.getListaEleicoes();
+            if(eleicoes.isEmpty()){
+                System.out.println("NÃO EXISTEM ELEIÇÔES NOS REGISTOS!");
+                return null;
+            }
+            int i = 1;
+            System.out.println("\nELEIÇÔES DISPONIVEIS");
+            for (Eleicao e: eleicoes) {
+                System.out.println(i +". " +e.getTitulo());
+                i++;
+            }
+            //TODO Defesa para numeros e opçao valida
+            Scanner s = new Scanner(System.in);
+            System.out.print("> ");
+            int opcao = Integer.parseInt(s.nextLine());
+
+            return eleicoes.get(opcao-1);
+
+        }catch (RemoteException e){
+            while (true){
+                try {
+                    //Thread.sleep(1000);
+                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    break;
+                }catch(NotBoundException  | RemoteException |MalformedURLException m){
+                    System.out.println("nao conectei");
+                }
+            }
+
+        }
+        //hmmm
+        return null;
+    }
+
     public static Departamento criaDepartamento(){
         //TODO Defesa: ver se o departamento a ser criado ja existe
         Scanner s = new Scanner(System.in);
@@ -415,6 +556,37 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.println("\nDEPARTAMENTO ADICIONADO AOS REGISTOS\n");
         Departamento d = new Departamento(nome,ip);
         return d;
+    }
+
+    public static void LocaisDeVoto() throws RemoteException{
+        Scanner s = new Scanner(System.in);
+        System.out.println("Insira o nome da pessoa:");
+
+        String nome = s.nextLine();
+
+        try {
+            ArrayList<String> locais= adminConsole.LocalVoto(nome);
+            if(locais.isEmpty()){
+                System.out.println("A pessoa em questão ainda nao efectuou nenhuma votação");
+                return;
+            }
+            for (String str:locais
+                 ) {
+                System.out.println(str);
+            }
+
+        }catch (RemoteException e ){
+            while (true){
+                try {
+                    //Thread.sleep(1000);
+                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    break;
+                }catch(NotBoundException  | RemoteException |MalformedURLException m){
+                    System.out.println("nao conectei");
+                }
+            }
+        }
+
     }
 
     @Override

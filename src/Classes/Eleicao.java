@@ -1,6 +1,7 @@
 package Classes;
 
 import java.io.Serializable;
+import java.rmi.Remote;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
@@ -17,6 +18,8 @@ public class Eleicao implements Serializable {
     private ArrayList<ListaCandidata> listaCandidata;
     private ArrayList<Departamento> dept;
 
+    private ArrayList<Pessoa> votantes;
+
     public Eleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, Departamento dept, String tipo_Pessoa) {
         this.data_inicio = data_inicio;
         this.data_final = data_final;
@@ -26,6 +29,7 @@ public class Eleicao implements Serializable {
         this.dept.add(dept);
         this.tipo_Pessoa = tipo_Pessoa;
         this.listaCandidata= new ArrayList<ListaCandidata>();
+        this.votantes = new ArrayList<>();
     }
 
     public GregorianCalendar getData_inicio() {
@@ -60,6 +64,18 @@ public class Eleicao implements Serializable {
         this.descricao = descricao;
     }
 
+    public ArrayList<Departamento> getDept() {
+        return dept;
+    }
+
+    public ArrayList<Pessoa> getVotantes() {
+        return votantes;
+    }
+
+    public void setVotantes(ArrayList<Pessoa> votantes) {
+        this.votantes = votantes;
+    }
+
     public void setDept(Departamento dept) {
         this.dept.add(dept);
     }
@@ -86,6 +102,16 @@ public class Eleicao implements Serializable {
         for (ListaCandidata l: this.listaCandidata) {
             if(nome.equals(l.getNome())){
                 this.listaCandidata.remove(l);
+                return;
+            }
+        }
+    }
+
+    public void removeDepartamento(Departamento d){
+
+        for(Departamento d2: this.getDept()){
+            if(d2.getNome().equals(d.getNome())){
+                this.getDept().remove(d2);
                 return;
             }
         }

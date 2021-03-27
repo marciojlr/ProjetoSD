@@ -1,8 +1,9 @@
 package Classes;
 
 import java.io.Serializable;
+import java.rmi.Remote;
 
-public class Departamento implements Serializable{
+public class Departamento implements Serializable {
     private String nome;
     private String ip;
 
