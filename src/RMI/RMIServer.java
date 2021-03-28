@@ -241,6 +241,30 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return false;
     }
 
+    public ArrayList<String> getElections(int userCC, String departamento){
+        Pessoa eleitor = null;
+        ArrayList<String> eleicoes = new ArrayList<String>();
+
+        //ENCONTRAR ELEITOR
+        for(Pessoa p : this.listaPessoas){
+            if(p.getCC() == userCC){
+                eleitor = p;
+            }
+        }
+
+        //ENCONTRAR ELEIÇÕES COMUNS HÁ MESA E ELEITORES
+        for(Eleicao e : this.listaEleicoes){
+            if(e.getTipo_Pessoa().equals(eleitor.getTipo())){
+                for(Departamento d : e.getDept()){
+                    if(d.getNome().equals(departamento)){
+                        eleicoes.add(e.getTitulo());
+                    }
+                }
+            }
+        }
+        return eleicoes;
+    }
+
     public static void main(String [] args ) throws RemoteException {
 
         boolean failed = true;

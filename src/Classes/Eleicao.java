@@ -80,6 +80,10 @@ public class Eleicao implements Serializable {
         this.dept.add(dept);
     }
 
+    public String getTipo_Pessoa() {
+        return tipo_Pessoa;
+    }
+
     public void setTipo_Pessoa(String tipo_Pessoa) {
         this.tipo_Pessoa = tipo_Pessoa;
     }

@@ -62,11 +62,9 @@ public class MulticastClient extends Thread {
     private String readMessage(MulticastSocket socket) throws IOException {
 
         byte[] buffer = new byte[256];
-
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.receive(packet);
         String message = new String(packet.getData(), 0, packet.getLength());
-
         return message;
     }
 

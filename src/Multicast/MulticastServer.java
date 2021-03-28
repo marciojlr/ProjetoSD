@@ -1,7 +1,6 @@
 package Multicast;
 
 import Classes.Departamento;
-import Classes.Pessoa;
 import RMI.RMI_S_I;
 
 import java.net.*;
@@ -9,6 +8,7 @@ import java.io.IOException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -20,6 +20,7 @@ class DadosPartilhados{
     int pedido;
     String name;
     RMI_S_I RMIserver;
+
     public DadosPartilhados(String name) throws RemoteException, NotBoundException, MalformedURLException {
         this.pedido = 0;
         this.name = name;
@@ -33,6 +34,10 @@ class DadosPartilhados{
 
     public void setPedido() {
         this.pedido = this.pedido + 1;
+    }
+
+    public String getName(){
+        return this.name;
     }
 }
 
@@ -50,7 +55,7 @@ public class MulticastServer extends Thread {
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
 
         DadosPartilhados dados = new DadosPartilhados(args[0]);
-        dados.RMIserver.ping("Ola do lado do multicast");
+        dados.RMIserver.ping("Mesa " + dados.getName() + " ligada.");
         MulticastServer server = new MulticastServer(dados);
         server.start();
         MulticastUserS u = new MulticastUserS(dados);
@@ -149,6 +154,30 @@ class MulticastUserS extends Thread {
         this.dados = dados;
     }
 
+    private int chooseElection(ArrayList<String> eleicoes){
+        Scanner keyboardScanner = new Scanner(System.in);
+        int election;
+        System.out.println("SELECIONE A ELEIÇÃO EM QUE PRETENDE VOTAR");
+        while (true){
+            try{
+
+                int option = 0;
+                for(String titulo : eleicoes){
+                    System.out.println(option + ". " + titulo);
+                    option++;
+                }
+
+                election = Integer.parseInt(keyboardScanner.nextLine());
+                System.out.println(eleicoes.get(election));
+
+                return election;
+
+            } catch (Exception e){
+                System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+            }
+        }
+    }
+
     private void getCC(MulticastSocket socket) throws IOException {
         System.out.println("Inserir número de Identificação: ");
         //READ FROM INPUT
@@ -157,9 +186,10 @@ class MulticastUserS extends Thread {
         //VERIFY IF ELECTOR IS REGISTERED
         int CC = Integer.parseInt(readKeyboard);
 
+        // SE O ELEITOR SE ENCONTRAR REGISTADO
         if(dados.RMIserver.isRegisted(CC)){
-            System.out.println("Está registado");
-            // TODO: listar opçoes de eleições
+            ArrayList<String> eleicoes = dados.RMIserver.getElections(CC, dados.getName());
+            System.out.println(chooseElection(eleicoes));
 
             //SEND DATA TO ALL THE CLIENTS
             String message = "type | free; request | " + dados.getPedido() + "; userCC | " + CC;
@@ -168,6 +198,7 @@ class MulticastUserS extends Thread {
             DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
             socket.send(packet);
         }
+        //SE O ELEITOR NÃO SE ENCONTRAR REGISTADO
         else{
             System.out.println("O utilizador não se encontra nos registos");
         }
