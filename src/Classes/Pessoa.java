@@ -101,6 +101,6 @@ public class Pessoa implements Serializable{
 
     @Override
     public String toString() {
-        return "Nome: " + this.nome + " - Tipo: " + this.tipo + " - CC " + this.CC;
+        return "Nome: " + this.nome + " / Tipo: " + this.tipo + " / CC: " + this.CC + " / Departamento: " + this.departamento;
     }
 }
