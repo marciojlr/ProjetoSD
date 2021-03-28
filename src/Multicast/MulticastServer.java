@@ -113,7 +113,7 @@ public class MulticastServer extends Thread {
             System.out.println("Este terminal esta livre: " + map.get("id"));
             if(Integer.parseInt(map.get("request")) == dados.getPedido()){
                 dados.setPedido();
-                send(socket, "type | chosen; id | " + map.get("id") + "; userCC | " + map.get("userCC"));
+                send(socket, "type | chosen; id | " + map.get("id") + "; userCC | " + map.get("userCC") + "; election | " + map.get("election"));
                 System.out.println("POR FAVOR EFETUE O SEU VOTO NO TERMINAL " + map.get("id"));
             }
         }
@@ -154,24 +154,20 @@ class MulticastUserS extends Thread {
         this.dados = dados;
     }
 
-    private int chooseElection(ArrayList<String> eleicoes){
+    private String chooseElection(ArrayList<String> eleicoes){
         Scanner keyboardScanner = new Scanner(System.in);
         int election;
+
         System.out.println("SELECIONE A ELEIÇÃO EM QUE PRETENDE VOTAR");
         while (true){
             try{
-
                 int option = 0;
                 for(String titulo : eleicoes){
                     System.out.println(option + ". " + titulo);
                     option++;
                 }
-
                 election = Integer.parseInt(keyboardScanner.nextLine());
-                System.out.println(eleicoes.get(election));
-
-                return election;
-
+                return eleicoes.get(election);
             } catch (Exception e){
                 System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
             }
@@ -188,18 +184,24 @@ class MulticastUserS extends Thread {
 
         // SE O ELEITOR SE ENCONTRAR REGISTADO
         if(dados.RMIserver.isRegisted(CC)){
+            //ELEIÇÕES ELEGÍVEIS A VOTAR
             ArrayList<String> eleicoes = dados.RMIserver.getElections(CC, dados.getName());
-            System.out.println(chooseElection(eleicoes));
+            if(eleicoes.size() > 0){
 
-            //SEND DATA TO ALL THE CLIENTS
-            String message = "type | free; request | " + dados.getPedido() + "; userCC | " + CC;
-            byte[] buffer = message.getBytes();
-            InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
-            DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
-            socket.send(packet);
+                String electionName = chooseElection(eleicoes);
+
+                //SEND DATA TO ALL THE CLIENTS
+                String message = "type | free; request | " + dados.getPedido() + "; userCC | " + CC + "; election | " + electionName;
+                byte[] buffer = message.getBytes();
+                InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
+                DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
+                socket.send(packet);
+            }
+            else{ // SE NÃO HOUVER ELEIÇÕES DISPONÍVEIS NESTA MESA
+                System.out.println("NÃO EXISTEM ELEIÇÕES A DECORRER NESTA MESA DE VOTO");
+            }
         }
-        //SE O ELEITOR NÃO SE ENCONTRAR REGISTADO
-        else{
+        else{ // SE O ELEITOR NÃO ESTIVER REGISTADO
             System.out.println("O utilizador não se encontra nos registos");
         }
     }

@@ -80,7 +80,7 @@ public class MulticastClient extends Thread {
         //MESSAGE TO ALL TERMINALS
         if(map.get("type").equals("free")){
             if(free){
-                send(socket, "type | freeTerminal; id | " + this.getName() + "; request | " + map.get("request") + "; userCC | " + map.get("userCC"));
+                send(socket, "type | freeTerminal; id | " + this.getName() + "; request | " + map.get("request") + "; userCC | " + map.get("userCC") + "; election | " + map.get("election"));
             }
         }
         // MESSAGES TO SPECIFIC TERMINAL
@@ -93,6 +93,7 @@ public class MulticastClient extends Thread {
                     int userCC = Integer.parseInt(map.get("userCC"));
                     data.setUserCC(userCC);
                     data.setBlocked();
+                    data.setElectionName(map.get("election"));
                     System.out.println("O user : " + userCC + " tem acesso e a maquina esta " + data.getBlocked());
             }
             // VERIFY IF LOGIN CREDENTIALS ARE CORRECT
@@ -166,6 +167,7 @@ class MulticastUser extends Thread {
                     String password = keyboardScanner.nextLine();
                     send(socket, "type | login; id | " + this.getName() + "; userCC | " + data.getUserCC() + "; username | " + username + "; password | " + password);
                     Thread.sleep(500);
+                    System.out.println("Esta apto a votar na eleição: " + data.getElectionName());
                     sendVote(voteSocket, "Votar");
                     sendVote(voteSocket, "Votar");
                     sendVote(voteSocket, "Votar");
@@ -183,11 +185,13 @@ class Data{
     private int userCC;
     private boolean blocked;
     private boolean loggedIn;
+    private String electionName;
 
     public Data(){
         this.userCC = 0;
         this.blocked = true;
         this.loggedIn = false;
+        this.electionName = "";
     }
 
     public void setUserCC(int userCC){
@@ -216,5 +220,13 @@ class Data{
 
     public void setLoggedIn() {
         this.loggedIn = !this.loggedIn;
+    }
+
+    public void setElectionName(String electionName) {
+        this.electionName = electionName;
+    }
+
+    public String getElectionName() {
+        return electionName;
     }
 }
