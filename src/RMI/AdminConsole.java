@@ -324,13 +324,15 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     public static void AlteraPropriedadesEleicao() throws RemoteException{
         try{
             ArrayList<Eleicao> eleicoes = adminConsole.getListaEleicoes();
-            //TODO: DAR PRINT APENAS DAS ELEGIVEIS
+
+            ArrayList<Eleicao> elegiveis = new ArrayList<>();
 
             GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
             int i =0;
             for (Eleicao e: eleicoes) {
                 if(e.getData_inicio().compareTo(date) > 0){
                     System.out.println(e.getTitulo());
+                    elegiveis.add(e);
                     i++;
                 }
             }
@@ -338,13 +340,24 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 System.out.println("Nao existe eleicoes elegiveis para alterar");
                 return;
             }
-
             Scanner s = new Scanner(System.in);
-            System.out.println("Selecione a Eleição que deseja alterar");
-            String escolha = s.nextLine();
-            //TODO: Verificar escolha, se é eligivel
-            //verificar
-            //retornar bool
+            boolean valido = false;
+            String escolha="";
+            while (!valido){
+
+                System.out.println("Selecione a Eleição que deseja alterar");
+                escolha = s.nextLine();
+                for(Eleicao e1: elegiveis){
+                    if(escolha.equals(e1.getTitulo())){
+
+                        valido = true;
+                    }
+                }
+                if(!valido){
+                    System.out.println("Opçao Invalida\nCertifique-se que escolhe uma opçao valida\n");
+                }
+            }
+
 
             System.out.println("Data de inicio: ");
             int data_inicio = Integer.parseInt(s.nextLine());
@@ -425,11 +438,19 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             ArrayList<Departamento> depts = adminConsole.getListaDepartamentos();
 
             //TODO MOSTRAR APENAS AS QUE NAO ESTAO NA ELEIÇAO
+            //TODO A funcionar mas esta meio estranho e os indices nao vao estar certos
+
             int i=1;
             System.out.println("\nMESAS DISPONÍVEIS");
             for (Departamento d: depts) {
-                System.out.println(i +". " +d.getNome() +"  " + d.getIp());
+                for(Departamento d2 : e.getDept()){
+                    if(d2.getNome().equals(d.getNome())){
+                        System.out.println(i +". " +d.getNome() +"  " + d.getIp());
+
+                    }
+                }
                 i++;
+
             }
             Scanner s = new Scanner(System.in);
             System.out.println("Escolha a mesa que pretende adicionar" );
@@ -586,7 +607,8 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     }
 
     public static Departamento criaDepartamento(){
-        //TODO Defesa: ver se o departamento a ser criado ja
+        //TODO Defesa: ver se o departamento a ser criado
+        //Devia mostrar outra vez a lista
 
         while (true) {
             Scanner s = new Scanner(System.in);

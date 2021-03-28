@@ -76,6 +76,7 @@ public class Eleicao implements Serializable {
         this.votantes = votantes;
     }
 
+
     public void setDept(Departamento dept) {
         this.dept.add(dept);
     }
