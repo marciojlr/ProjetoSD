@@ -29,4 +29,6 @@ public interface RMI_S_I extends Remote {
     public void  RemoverMesaVoto(Eleicao e, Departamento d) throws RemoteException;
 
     public ArrayList<String> LocalVoto(String pessoa) throws RemoteException;
+
+    public boolean checkDepartamentExist(Departamento d) throws RemoteException;
 }

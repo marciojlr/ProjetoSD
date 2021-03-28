@@ -170,6 +170,17 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         listaDepartamentos.add(d);
     }
 
+    public boolean checkDepartamentExist(Departamento d){
+
+        for(Departamento dept : this.listaDepartamentos){
+            if(dept.getNome().equals(d.getNome())){
+                return false;
+            }
+        }
+        return true;
+
+    }
+
 
     //TODO: TESTAR QUANDO A PARTE DOS LOCAIS DE VOTOS ESTIVER FEITA
     public ArrayList<String> LocalVoto(String pessoa){

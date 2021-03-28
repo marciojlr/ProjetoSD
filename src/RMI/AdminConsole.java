@@ -113,18 +113,23 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         while(true){
             System.out.print("1. Docente\n2. Estudante\n3. Funcionário\n");
             System.out.print("> ");
-            int aux = Integer.parseInt(s.nextLine());
-            if(aux == 1){
-                tipo = "Docente";
-                break;
-            }
-            else if(aux == 2){
-                tipo = "Estudante";
-                break;
-            }
-            else if(aux == 3){
-                tipo = "Funcionario";
-                break;
+            try {
+                int aux = Integer.parseInt(s.nextLine());
+                if (aux == 1) {
+                    tipo = "Docente";
+                    break;
+                } else if (aux == 2) {
+                    tipo = "Estudante";
+                    break;
+                } else if (aux == 3) {
+                    tipo = "Funcionario";
+                    break;
+                }
+                else{
+                    System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+                }
+            }catch (NumberFormatException e ){
+                System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
             }
         }
 
@@ -337,7 +342,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             Scanner s = new Scanner(System.in);
             System.out.println("Selecione a Eleição que deseja alterar");
             String escolha = s.nextLine();
-            //TODO: Verificar escolha
+            //TODO: Verificar escolha, se é eligivel
             //verificar
             //retornar bool
 
@@ -373,14 +378,28 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.println("1. Associar   2. Remover");
         Scanner s = new Scanner(System.in);
         System.out.println("Insira a opção: ");
-        //TODO: DEFESA DA OPÇAO
-        int opcao = Integer.parseInt(s.nextLine());
-        if ( opcao == 1){
-                AssociarMesaVoto();
+        boolean valido = false;
+        while(!valido){
+            try{
+                int opcao = Integer.parseInt(s.nextLine());
+
+                if ( opcao == 1){
+                    valido=true;
+                    AssociarMesaVoto();
+                }
+                else if(opcao == 2){
+                    valido=true;
+                    RemoverMesa();
+                }
+                else {
+                    System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+                }
+
+            }catch (Exception e){
+                System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+            }
         }
-        else if(opcao == 2){
-            RemoverMesa();
-        }
+
 
     }
 
@@ -484,15 +503,25 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 i++;
             }
             System.out.println("0. Registar novo departamento");
-            //TODO Defesa para numeros e opçao valida
-            Scanner s = new Scanner(System.in);
-            System.out.print("> ");
-            int opcao = Integer.parseInt(s.nextLine());
-            if(opcao == 0 ){
-                return null;
-            }
+            while (true){
+                try{
+                    Scanner s = new Scanner(System.in);
+                    System.out.print("> ");
+                    int opcao = Integer.parseInt(s.nextLine());
+                    if(opcao == 0 ){
+                        return null;
+                    }
+                    else if(opcao <= i){
+                        return depts.get(opcao-1);
+                    }
+                    else {
+                        System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+                    }
+                }catch (Exception e){
+                    System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+                }
 
-            return depts.get(opcao-1);
+            }
         }catch (RemoteException e){
             while (true){
                 try {
@@ -521,12 +550,24 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 System.out.println(i +". " +e.getTitulo());
                 i++;
             }
-            //TODO Defesa para numeros e opçao valida
-            Scanner s = new Scanner(System.in);
-            System.out.print("> ");
-            int opcao = Integer.parseInt(s.nextLine());
+            while (true){
+                try {
+                    Scanner s = new Scanner(System.in);
+                    System.out.print("> ");
+                    int opcao = Integer.parseInt(s.nextLine());
+                    if(opcao <= i){
+                        return eleicoes.get(opcao-1);
+                    }
+                    else {
+                        System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+                    }
 
-            return eleicoes.get(opcao-1);
+                }catch (Exception e){
+                    System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+                }
+
+            }
+
 
         }catch (RemoteException e){
             while (true){
@@ -545,17 +586,39 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     }
 
     public static Departamento criaDepartamento(){
-        //TODO Defesa: ver se o departamento a ser criado ja existe
-        Scanner s = new Scanner(System.in);
-        System.out.println("Insira nome do departamento");
-        System.out.print("> ");
-        String nome = s.nextLine();
-        System.out.println("Insira ip correspondente ao departamento");
-        System.out.print("> ");
-        String ip = s.nextLine();
-        System.out.println("\nDEPARTAMENTO ADICIONADO AOS REGISTOS\n");
-        Departamento d = new Departamento(nome,ip);
-        return d;
+        //TODO Defesa: ver se o departamento a ser criado ja
+
+        while (true) {
+            Scanner s = new Scanner(System.in);
+            System.out.println("Insira nome do departamento");
+            System.out.print("> ");
+            String nome = s.nextLine();
+            System.out.println("Insira ip correspondente ao departamento");
+            System.out.print("> ");
+            String ip = s.nextLine();
+            Departamento d = new Departamento(nome, ip);
+            try {
+                boolean check = adminConsole.checkDepartamentExist(d);
+                if(check){
+                    System.out.println("\nDEPARTAMENTO ADICIONADO AOS REGISTOS\n");
+                    return d;
+                }
+                else {
+                    System.out.println("\nDEPARTAMENTO JA SE ENCONTRA NO SISTEMA\n");
+                }
+            } catch (RemoteException e) {
+                while (true) {
+                    try {
+                        //Thread.sleep(1000);
+                        adminConsole = (RMI_S_I) Naming.lookup("Server");
+                        break;
+                    } catch (NotBoundException | RemoteException | MalformedURLException m) {
+                        System.out.println("nao conectei");
+                    }
+                }
+            }
+        }
+
     }
 
     public static void LocaisDeVoto() throws RemoteException{
