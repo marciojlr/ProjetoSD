@@ -54,6 +54,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             System.out.println("4. Mesas de Voto");
             System.out.println("5. Alterar propriedades de eleição");
             System.out.println("6. Saber local de voto de um dado eleitor");
+            System.out.println("14. Consultar eleiçoes passadas");
             System.out.print("> ");
             option= myObj.nextLine();
             if(option.equals("1")){
@@ -95,6 +96,13 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             else if (option.equals("6")){
                 try {
                     LocaisDeVoto();
+                }catch (RemoteException e){
+                    System.out.println(e);
+                }
+            }
+            else if(option.equals("10")){
+                try {
+                    ConsultarEleicoesPassadas();
                 }catch (RemoteException e){
                     System.out.println(e);
                 }
@@ -674,6 +682,63 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     }
 
+    public static void ConsultarEleicoesPassadas() throws RemoteException{
+        ArrayList<Eleicao> eleicoes = new ArrayList<>();
+        try{
+             eleicoes = adminConsole.getListaEleicoes();
+        }catch (RemoteException e){
+            while (true){
+                try {
+                    //Thread.sleep(1000);
+                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    break;
+                }catch(NotBoundException  | RemoteException |MalformedURLException m){
+                    System.out.println("nao conectei");
+                }
+            }
+        }
+
+        ArrayList<Eleicao> listaEleicoesPassadas = new ArrayList<Eleicao>();
+
+        if(eleicoes.isEmpty()){
+            System.out.println("Nao ha eleiçoes");
+            return;
+        }
+        GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
+        int i = 1;
+        for (Eleicao e : eleicoes){
+            if(e.getData_final().compareTo(date) < 0){
+                System.out.println(i +". "+ e.getTitulo());
+                listaEleicoesPassadas.add(e);
+                i++;
+            }
+        }
+        if(i==1){
+            System.out.println("Nao existem eleiçoes finalizadas!");
+            return;
+        }
+        System.out.println("Escolha uma das opçoes acima listas");
+        System.out.print(">");
+        Scanner s = new Scanner(System.in);
+        int opcao;
+        while (true){
+            try{
+                opcao = Integer.parseInt(s.nextLine());
+                if(opcao <= i){
+                    //TODO: FAZER O METODO PARA IMPRIMIR, QD HOUVER A INFORMAÇAO
+                    //Dar display da informaçao
+                    //toString
+                    //listaEleicoesPassadas.get(opcao-1).
+                    System.out.println("\nInformaçao\n");
+                    return;
+                }
+            }catch (NumberFormatException e){
+                System.out.println("Insira uma opçao valida!");
+            }
+
+        }
+
+    }
     @Override
     public void newServer() throws RemoteException, NotBoundException, MalformedURLException {
         adminConsole = (RMI_S_I) Naming.lookup("Server");
