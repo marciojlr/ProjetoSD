@@ -1,6 +1,5 @@
 package Multicast;
 
-import Classes.Departamento;
 import RMI.RMI_S_I;
 
 import java.net.*;
@@ -17,15 +16,14 @@ import java.util.Scanner;
  * entre as diferentes threads a correr no servidor Multicast
  */
 class DadosPartilhados{
-    int pedido;
-    String name;
-    RMI_S_I RMIserver;
+    private int pedido;
+    private String name;
+    public RMI_S_I RMIserver;
 
     public DadosPartilhados(String name) throws RemoteException, NotBoundException, MalformedURLException {
         this.pedido = 0;
         this.name = name;
         this.RMIserver = (RMI_S_I) Naming.lookup("Server");
-        System.out.println(this.name);
     }
 
     public int getPedido() {
@@ -50,7 +48,6 @@ public class MulticastServer extends Thread {
     private final String MULTICAST_ADDRESS = "224.0.224.0";
     private final int PORT = 4321;
 
-    private Departamento dept;
     private DadosPartilhados dados;
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
 
@@ -125,9 +122,9 @@ public class MulticastServer extends Thread {
             }
 
         }
+        //MESSAGE TO GET THE LIST OF CANDIDATES
         else if(map.get("type").equals("candidates")){
             System.out.println("[" + map.get("id")+ "]Candidatos da eleicao: " + map.get("election"));
-            //todo: enviar as listar em que pode votar
             ArrayList<String> candidates = dados.RMIserver.getCandidates(map.get("election"));
             System.out.println(candidatesToString(candidates));
             send(socket, "id | " + map.get("id") + "; type | candidateS; " + candidatesToString(candidates));
@@ -143,6 +140,7 @@ public class MulticastServer extends Thread {
         }
         return protocol;
     }
+
     private void send(MulticastSocket socket, String message) throws IOException {
         byte[] buffer = message.getBytes();
         InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
@@ -190,6 +188,7 @@ class MulticastUserS extends Thread {
 
     private void getCC(MulticastSocket socket) throws IOException {
         System.out.println("Inserir número de Identificação: ");
+        System.out.println("> ");
         //READ FROM INPUT
         Scanner keyboardScanner = new Scanner(System.in);
         String readKeyboard = keyboardScanner.nextLine();
@@ -228,6 +227,7 @@ class MulticastUserS extends Thread {
         try {
             socket = new MulticastSocket();  // create socket without binding it (only for sending)
             while (true) {
+                System.out.println("\n- - - - MESA " + dados.getName() + " - - - -");
                 getCC(socket);
                 Thread.sleep(500);
             }
@@ -250,11 +250,28 @@ class Vote extends Thread {
     }
 
     public void receiveVote(MulticastSocket socket) throws IOException {
+
+        //RECEIVE UDP PACKET WHICH CONTAINS THE INFORMATION
         byte[] buffer = new byte[256];
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.receive(packet);
         String message = new String(packet.getData(), 0, packet.getLength());
-        System.out.println(message);
+
+        HashMap<String,String> map = new HashMap();
+        String[] pares =  message.split("; ");
+
+        for(String comandos : pares){
+            String[] a = comandos.split(" \\| ");
+            map.put(a[0],a[1]);
+        }
+
+        if(map.get("type").equals("vote")){
+            int option = Integer.parseInt(map.get("option"));
+            dados.RMIserver.vote(map.get("election"), option);
+        }
+        else if(map.get("type").equals("elector")){
+            //todo: chamar a função que diz que a pessoa votou (pessoa, eleicao)
+        }
     }
 
     public void run() {

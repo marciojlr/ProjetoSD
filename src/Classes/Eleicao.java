@@ -19,6 +19,9 @@ public class Eleicao implements Serializable {
     private ArrayList<Departamento> dept;
 
     private ArrayList<Pessoa> votantes;
+    private int total_votos;
+    private int votos_branco;
+    private int votos_nulos;
 
     public Eleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, Departamento dept, String tipo_Pessoa) {
         this.data_inicio = data_inicio;
@@ -30,6 +33,9 @@ public class Eleicao implements Serializable {
         this.tipo_Pessoa = tipo_Pessoa;
         this.listaCandidata= new ArrayList<ListaCandidata>();
         this.votantes = new ArrayList<>();
+        this.total_votos = 0;
+        this.votos_branco = 0;
+        this.votos_nulos = 0;
     }
 
     public GregorianCalendar getData_inicio() {
@@ -72,10 +78,21 @@ public class Eleicao implements Serializable {
         return votantes;
     }
 
-    public void setVotantes(ArrayList<Pessoa> votantes) {
-        this.votantes = votantes;
+    public void addVotantes(Pessoa votante) {
+        this.votantes.add(votante);
     }
 
+    public void addTotalVotos(){
+        this.total_votos++;
+    }
+
+    public void addVotoBranco(){
+        this.votos_branco++;
+    }
+
+    public void addVotoNulo(){
+        this.votos_nulos++;
+    }
 
     public void setDept(Departamento dept) {
         this.dept.add(dept);

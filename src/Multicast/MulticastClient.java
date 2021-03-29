@@ -24,12 +24,11 @@ import java.util.Scanner;
 public class MulticastClient extends Thread {
     private String MULTICAST_ADDRESS = "224.0.224.0";
     private int PORT = 4321;
-    private boolean free = true;
     private Data data;
 
     public MulticastClient(long number, Data data) {
 
-        super("User " + number);
+        super("TERMINAL " + number);
         this.data = data;
     }
 
@@ -44,7 +43,6 @@ public class MulticastClient extends Thread {
 
     public void run() {
         MulticastSocket socket = null;
-        System.out.println(this.getName());
         try {
             socket = new MulticastSocket(PORT);  // create socket and bind it
             InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
@@ -91,7 +89,7 @@ public class MulticastClient extends Thread {
 
         //MESSAGE TO ALL TERMINALS
         if(map.get("type").equals("free")){
-            if(free){
+            if(data.isFree()){
                 send(socket, "type | freeTerminal; id | " + this.getName() + "; request | " + map.get("request") + "; userCC | " + map.get("userCC") + "; election | " + map.get("election"));
             }
         }
@@ -101,7 +99,7 @@ public class MulticastClient extends Thread {
             // IF THIS WAS THE CHOSEN TERMINAL
             if(map.get("type").equals("chosen")){
                     System.out.println(this.getName() + " foi escolhido");
-                    free = false;
+                    data.setFree();
                     int userCC = Integer.parseInt(map.get("userCC"));
                     data.setUserCC(userCC);
                     data.setBlocked();
@@ -110,21 +108,19 @@ public class MulticastClient extends Thread {
             }
             // VERIFY IF LOGIN CREDENTIALS ARE CORRECT
             else if(map.get("type").equals("status")){
-                System.out.println(message);
                 if(map.get("logged").equals("on")){
                     data.setLoggedIn();
                     System.out.println("Welcome to eVoting");
-                    // TODO: imprimir as listas presentes na candidatura
                     send(socket, "type | candidates; election | " + data.getElectionName() + "; id | " + this.getName());
                 }
                 else{
                     System.out.println("Credenciais erradas");
                 }
             }
+            // TODO: alterar o type
             else if(map.get("type").equals("candidateS")){
                 getCandidatesList(map);
             }
-
         }
 
     }
@@ -143,7 +139,7 @@ class MulticastUser extends Thread {
     private int PORT = 4321;
     private Data data;
     public MulticastUser(long number, Data data) {
-        super("User " + number);
+        super("TERMINAL " + number);
         this.data = data;
     }
 
@@ -164,16 +160,14 @@ class MulticastUser extends Thread {
     public void run() {
         MulticastSocket socket = null;
         MulticastSocket voteSocket = null;
-        System.out.println(this.getName());
         try {
             socket = new MulticastSocket();  // create socket without binding it (only for sending)
             voteSocket = new MulticastSocket(); // create socket to send vote
             Scanner keyboardScanner = new Scanner(System.in);
             while (true) {
-                //String readKeyboard = keyboardScanner.nextLine();
+                System.out.println("- - - - " + this.getName() + " - - - -");
                 System.out.print("Username: ");
                 String username = keyboardScanner.nextLine();
-                //byte[] buffer = readKeyboard.getBytes();
 
                 if(data.getBlocked()){
                     System.out.println("A máquina encontra-se bloqueada, por favor dirija-se à mesa de voto");
@@ -183,12 +177,19 @@ class MulticastUser extends Thread {
                     String password = keyboardScanner.nextLine();
                     send(socket, "type | login; id | " + this.getName() + "; userCC | " + data.getUserCC() + "; username | " + username + "; password | " + password);
                     Thread.sleep(500);
-                    System.out.println("Esta apto a votar na eleição: " + data.getElectionName());
-                    System.out.print("> ");
-                    String vote = keyboardScanner.nextLine();
-                    sendVote(voteSocket, vote);
-                    sendVote(voteSocket, vote);
-                    sendVote(voteSocket, vote);
+                    if(data.isLoggedIn()){
+                        System.out.println("Esta apto a votar na eleição: " + data.getElectionName());
+                        System.out.print("> ");
+                        String vote = keyboardScanner.nextLine();
+                        sendVote(voteSocket, "type | vote; election | " + data.getElectionName() + "; option | " + vote);
+                        sendVote(voteSocket, "type | elector; election | " + data.getElectionName() + "; userCC | " + data.getUserCC());
+                        data.setBlocked();
+                        data.setFree();
+                    }
+                    else{
+                        System.out.println("USERNAME OU PASSWORD INVÁLIDOS");
+                    }
+
                 }
             }
         } catch (IOException | InterruptedException e) {
@@ -201,12 +202,14 @@ class MulticastUser extends Thread {
 
 class Data{
     private int userCC;
+    private boolean free;
     private boolean blocked;
     private boolean loggedIn;
     private String electionName;
 
     public Data(){
         this.userCC = 0;
+        this.free = true;
         this.blocked = true;
         this.loggedIn = false;
         this.electionName = "";
@@ -246,5 +249,13 @@ class Data{
 
     public String getElectionName() {
         return electionName;
+    }
+
+    public boolean isFree() {
+        return free;
+    }
+
+    public void setFree() {
+        this.free = !this.free;
     }
 }
