@@ -67,8 +67,6 @@ public class MulticastServer extends Thread {
     public MulticastServer(DadosPartilhados dados) {
         super("Server " + (long) (Math.random() * 1000));
         this.dados = dados;
-        //todo: Configurar o departamento da mesa
-        //this.dept = dept;
     }
 
     public void run() {
@@ -127,8 +125,24 @@ public class MulticastServer extends Thread {
             }
 
         }
+        else if(map.get("type").equals("candidates")){
+            System.out.println("[" + map.get("id")+ "]Candidatos da eleicao: " + map.get("election"));
+            //todo: enviar as listar em que pode votar
+            ArrayList<String> candidates = dados.RMIserver.getCandidates(map.get("election"));
+            System.out.println(candidatesToString(candidates));
+            send(socket, "id | " + map.get("id") + "; type | candidateS; " + candidatesToString(candidates));
+        }
     }
 
+    private String candidatesToString(ArrayList<String> candidates){
+        String protocol;
+        protocol = "list_item | " + candidates.size();
+
+        for(int i=0; i<candidates.size(); i++){
+            protocol += "; item_" + i + " | " + candidates.get(i);
+        }
+        return protocol;
+    }
     private void send(MulticastSocket socket, String message) throws IOException {
         byte[] buffer = message.getBytes();
         InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);

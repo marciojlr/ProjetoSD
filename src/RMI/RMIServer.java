@@ -276,6 +276,25 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return eleicoes;
     }
 
+    @Override
+    public ArrayList<String> getCandidates(String election) throws RemoteException {
+
+        ArrayList<String> listas = new ArrayList<String>();
+
+        //ENCONTRAR A ELEIÇÃO
+        for(Eleicao e : this.listaEleicoes){
+            if(e.getTitulo().equals(election)){
+                //RETIRA AS LISTAS CANDIDATAS
+                for(ListaCandidata lista : e.getListaCandidata()){
+                    listas.add(lista.getNome());
+                }
+                return listas;
+            }
+        }
+        return listas;
+    }
+
+
     public static void main(String [] args ) throws RemoteException {
 
         boolean failed = true;
