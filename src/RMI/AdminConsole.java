@@ -27,8 +27,8 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         String teste;
         teste = adminConsole.teste((RMI_C_I) client);
         System.out.println(teste);
-        Departamento dei = new Departamento("DEI","123");
-        Departamento deec = new Departamento("DEEC","123");
+        Departamento dei = new Departamento("DEI");
+        Departamento deec = new Departamento("DEEC");
         GregorianCalendar datainicio = new GregorianCalendar(2021,2,26);
         GregorianCalendar datafim = new GregorianCalendar(2021,2,30);
         adminConsole.AddDepartamento(dei);
@@ -453,7 +453,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             for (Departamento d: depts) {
                 for(Departamento d2 : e.getDept()){
                     if(d2.getNome().equals(d.getNome())){
-                        System.out.println(i +". " +d.getNome() +"  " + d.getIp());
+                        System.out.println(i +". " +d.getNome());
 
                     }
                 }
@@ -490,7 +490,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             }
             System.out.println("\nMESAS DISPONÍVEIS");
             for (Departamento d: e.getDept()) {
-                System.out.println(i +". " +d.getNome() +"  " + d.getIp());
+                System.out.println(i +". " +d.getNome());
                 i++;
             }
             Scanner s = new Scanner(System.in);
@@ -626,7 +626,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             System.out.println("Insira ip correspondente ao departamento");
             System.out.print("> ");
             String ip = s.nextLine();
-            Departamento d = new Departamento(nome, ip);
+            Departamento d = new Departamento(nome);
             try {
                 boolean check = adminConsole.checkDepartamentExist(d);
                 if(check){
@@ -663,8 +663,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 System.out.println("A pessoa em questão ainda nao efectuou nenhuma votação");
                 return;
             }
-            for (String str:locais
-                 ) {
+            for (String str:locais) {
                 System.out.println(str);
             }
 

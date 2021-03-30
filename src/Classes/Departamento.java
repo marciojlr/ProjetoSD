@@ -5,27 +5,17 @@ import java.rmi.Remote;
 
 public class Departamento implements Serializable {
     private String nome;
-    private String ip;
 
-    public Departamento(String nome, String ip) {
+    public Departamento(String nomes) {
         this.nome = nome;
-        this.ip = ip;
     }
 
     public String getNome() {
         return nome;
     }
 
-    public String getIp() {
-        return ip;
-    }
-
     public void setNome(String nome) {
         this.nome = nome;
-    }
-
-    public void setIp(String ip) {
-        this.ip = ip;
     }
 
     @Override
