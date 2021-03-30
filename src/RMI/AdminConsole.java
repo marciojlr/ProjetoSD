@@ -197,7 +197,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     private static void setHour(GregorianCalendar date){
         Scanner s = new Scanner(System.in);
-        System.out.println("HORA DE INICIO (HH:MM)");
+        System.out.println("HORA (HH:MM)");
         System.out.print("> ");
         String input = s.nextLine();
 
@@ -316,14 +316,42 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             }
 
             Scanner s = new Scanner(System.in);
-            System.out.println("Insira a eleiçao que pretende: ");
-            System.out.print("> ");
-            //todo:fazer uma defesa para opçao
-            int eleicao = Integer.parseInt(s.nextLine());
+            int eleicao=-1;
+            boolean valido = false;
+              while (!valido){
+                  try {
+                      System.out.println("Insira a eleiçao que pretende: ");
+                      System.out.print("> ");
+                      eleicao = Integer.parseInt(s.nextLine());
+                      if (eleicao < i && eleicao > 0) {
+                          valido = true;
+                      }
+                      else {
+                          System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+                      }
+                  }catch (NumberFormatException e){
+                      System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+                  }
+              }
 
             System.out.println("1-Adicionar  2-Remover");
-            System.out.print("> ");
-            String opcao= s.nextLine();
+            String opcao="";
+            valido = false;
+
+            while (!valido){
+                try {
+                    System.out.print("> ");
+                    opcao = s.nextLine();
+                    if (opcao.equals("1") || opcao.equals("2")) {
+                        valido = true;
+                    }
+                    else {
+                        System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+                    }
+                }catch (Exception e){
+                    System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+                }
+            }
 
             if(opcao.equals("1")){
                 System.out.println("Insira Lista Candidata que deseja inserir: ");
@@ -341,8 +369,23 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 //print listas candidatas
                 elegiveis.get(eleicao-1).printLista();
                 System.out.println("Insira a Lista Candidata que deseja remover:");
-                System.out.print("> ");
-                int nome = Integer.parseInt(s.nextLine());
+                int nome=0;
+                valido= false;
+                while (!valido) {
+                    try {
+                        System.out.print("> ");
+                        nome = Integer.parseInt(s.nextLine());
+                        if (nome <= elegiveis.get(eleicao - 1).getListaCandidata().size() && nome > 0) {
+                            valido = true;
+                        } else {
+                            System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+                        }
+
+                    }catch (Exception e ){
+                        System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+                    }
+                }
+
                 adminConsole.RemoveListaCandidata(elegiveis.get(eleicao-1),elegiveis.get(eleicao-1).getListaCandidata().get(nome-1).getNome());
             }
         }catch (RemoteException e){
