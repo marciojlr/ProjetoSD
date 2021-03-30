@@ -1,12 +1,11 @@
 package Classes;
 
 import java.io.Serializable;
-import java.rmi.Remote;
 
 public class Departamento implements Serializable {
     private String nome;
 
-    public Departamento(String nomes) {
+    public Departamento(String nome) {
         this.nome = nome;
     }
 
@@ -14,9 +13,6 @@ public class Departamento implements Serializable {
         return nome;
     }
 
-    public void setNome(String nome) {
-        this.nome = nome;
-    }
 
     @Override
     public String toString() {

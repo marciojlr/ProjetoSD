@@ -89,7 +89,8 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             else if(option.equals("5")){
                 try {
                     AlteraPropriedadesEleicao();
-                }catch (RemoteException e){
+                    Thread.sleep(50);
+                }catch (RemoteException | InterruptedException e){
                     System.out.println(e);
                 }
             }
@@ -100,7 +101,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                     System.out.println(e);
                 }
             }
-            else if(option.equals("10")){
+            else if(option.equals("14")){
                 try {
                     ConsultarEleicoesPassadas();
                 }catch (RemoteException e){
@@ -215,7 +216,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.print("Ano: ");
         int ano = Integer.parseInt(s.nextLine());
 
-        GregorianCalendar data_inicio = new GregorianCalendar(ano,mes,dia);
+        GregorianCalendar data_inicio = new GregorianCalendar(ano,mes-1,dia);
         setHour(data_inicio);
 
         System.out.println("DATA DE ENCERRAMENTO");
@@ -226,7 +227,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.print("Ano: ");
         int ano2 = Integer.parseInt(s.nextLine());
 
-        GregorianCalendar data_fim = new GregorianCalendar(ano2,mes2,dia2);
+        GregorianCalendar data_fim = new GregorianCalendar(ano2,mes2-1,dia2);
         setHour(data_fim);
 
         System.out.println("Titulo: ");
@@ -246,7 +247,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         String tipo_Pessoa;
         while(true){
             System.out.print("1. Docentes\n2. Estudantes\n3. Funcionários\n");
-            System.out.println("> ");
+            System.out.print("> ");
             int aux = Integer.parseInt(s.nextLine());
             if(aux == 1){
                 tipo_Pessoa = "Docente";
@@ -280,6 +281,8 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     }
 
     public static void gerirListaCandidata() throws RemoteException {
+        //TODO: SE nao houver listas para remover ,fazer defesa
+        //TODO: Adicionar os membros na parte de criar
         try{
             ArrayList<Eleicao> eleicoes = adminConsole.getListaEleicoes();
 
@@ -366,6 +369,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 }
             }
 
+            //todo: datas e -1 no mes;
 
             System.out.println("Data de inicio: ");
             int data_inicio = Integer.parseInt(s.nextLine());
@@ -729,6 +733,8 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                     //toString
                     //listaEleicoesPassadas.get(opcao-1).
                     System.out.println("\nInformaçao\n");
+                    System.out.println(listaEleicoesPassadas.get(opcao-1).getTotal_votos());
+                    System.out.println(listaEleicoesPassadas.get(opcao-1).resultados());
                     return;
                 }
             }catch (NumberFormatException e){
@@ -740,6 +746,14 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     }
     @Override
     public void newServer() throws RemoteException, NotBoundException, MalformedURLException {
-        adminConsole = (RMI_S_I) Naming.lookup("Server");
+        while (true){
+            try {
+                //Thread.sleep(1000);
+                adminConsole = (RMI_S_I) Naming.lookup("Server");
+                break;
+            }catch(NotBoundException  | RemoteException |MalformedURLException m){
+                System.out.println("nao conectei");
+            }
+        }
     }
 }

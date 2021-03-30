@@ -114,6 +114,18 @@ public class Eleicao implements Serializable {
         this.listaCandidata = listaCandidata;
     }
 
+    public int getTotal_votos() {
+        return total_votos;
+    }
+
+    public int getVotos_branco() {
+        return votos_branco;
+    }
+
+    public int getVotos_nulos() {
+        return votos_nulos;
+    }
+
     public void addListaCandidata(String nome){
         ListaCandidata l = new ListaCandidata(nome);
         this.listaCandidata.add(l);
@@ -154,6 +166,26 @@ public class Eleicao implements Serializable {
                 "Data de inicio: " + this.data_inicio.DAY_OF_MONTH + "/" + this.data_inicio.MONTH + "/" + this.data_inicio.YEAR + "\n" +
                 "Data de encerramento: " + this.data_inicio.DAY_OF_MONTH + "/" + this.data_inicio.MONTH + "/" + this.data_inicio.YEAR
                 ;
+    }
+
+    public String resultados(){
+        String out;
+        out = "Tilulo: " + getTitulo()+"\n";
+        try{
+            float perVotosBrancos = ((float)votos_branco/total_votos)*100;
+
+            for(ListaCandidata lc: this.listaCandidata){
+                float per = ((float)lc.getVotes()/total_votos)*100;
+                out += "Lista: " + lc.getNome() +" " +"Numero de Votos: " + lc.getVotes() + "\t"+per +"%\n";
+            }
+            out += "Votos Brancos: " + votos_branco + "\t" + perVotosBrancos + "%\n";
+            out += "Votos Nulos: " + votos_nulos + "\t" + ((float)votos_nulos/(total_votos+votos_nulos))*100 +"%\n";
+        }catch (Exception e){
+            out = "(!) Ninguem votou nesta eleiçao\n";
+        }
+
+        return out;
+
     }
 
 }

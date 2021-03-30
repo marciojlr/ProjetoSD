@@ -25,6 +25,10 @@ public class ListaCandidata implements Serializable {
         this.votes++;
     }
 
+    public int getVotes() {
+        return votes;
+    }
+
     @Override
     public String toString() {
         return "ListaCandidata{" +
