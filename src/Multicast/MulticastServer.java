@@ -40,31 +40,39 @@ class DadosPartilhados{
 
 }
 
+/*
+* Exemplos de ips   224.224.0.0
+*                   224.224.1.0
+*/
 /**
  * Classe que serve para coordenar as ligações entre a mesa de voto
  * e os diferentes terminais de voto
  */
 public class MulticastServer extends Thread {
 
-    private final String MULTICAST_ADDRESS = "224.0.224.0";
+    private String MULTICAST_ADDRESS;
     private final int PORT = 4321;
     private DadosPartilhados dados;
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
 
         DadosPartilhados dados = new DadosPartilhados(args[0]);
+        String ipMesa = args[1];
+        String ipVoto = getVoteIp(args[1]);
+        System.out.println(ipMesa + " " + ipVoto);
         dados.RMIserver.ping("Mesa " + dados.getName() + " ligada.");
-        MulticastServer server = new MulticastServer(dados);
+        MulticastServer server = new MulticastServer(dados,ipMesa);
         server.start();
-        MulticastUserS u = new MulticastUserS(dados);
+        MulticastUserS u = new MulticastUserS(dados, ipMesa);
         u.start();
-        Vote v = new Vote(dados);
+        Vote v = new Vote(dados, ipVoto);
         v.start();
     }
 
-    public MulticastServer(DadosPartilhados dados) {
+    public MulticastServer(DadosPartilhados dados, String ip) {
         super("Server " + (long) (Math.random() * 1000));
         this.dados = dados;
+        this.MULTICAST_ADDRESS = ip;
     }
 
     public void run() {
@@ -84,6 +92,14 @@ public class MulticastServer extends Thread {
         } finally {
             socket.close();
         }
+    }
+
+    public static String getVoteIp(String ip){
+        String[] num = ip.split("\\.");
+        int last = Integer.parseInt(num[3]);
+        last = last+1;
+
+        return num[0] + "." + num[1] + "." + num[2] + "." + last;
     }
 
     private String readMessage(MulticastSocket socket) throws IOException {
@@ -152,14 +168,13 @@ public class MulticastServer extends Thread {
  */
 class MulticastUserS extends Thread {
 
-    private final String MULTICAST_ADDRESS;
-    private final int PORT;
+    private String MULTICAST_ADDRESS;
+    private final int PORT = 4321;
     private DadosPartilhados dados;
 
-    public MulticastUserS(DadosPartilhados dados) {
+    public MulticastUserS(DadosPartilhados dados, String ip) {
         super("Server" + (long) (Math.random() * 1000));
-        this.MULTICAST_ADDRESS = "224.0.224.0";
-        this.PORT = 4321;
+        this.MULTICAST_ADDRESS = ip;
         this.dados = dados;
     }
 
@@ -240,13 +255,14 @@ class MulticastUserS extends Thread {
 }
 
 class Vote extends Thread {
-    private final String MULTICAST_ADDRESS = "224.1.224.0";
+    private String MULTICAST_ADDRESS;
     private final int PORT = 4321;
     private DadosPartilhados dados;
 
-    public Vote(DadosPartilhados dados) {
+    public Vote(DadosPartilhados dados, String ip) {
         super("VoteThread " + (long) (Math.random() * 1000));
         this.dados = dados;
+        this.MULTICAST_ADDRESS = ip;
     }
 
     public void receiveVote(MulticastSocket socket) throws IOException {

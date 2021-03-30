@@ -21,22 +21,26 @@ import java.util.Scanner;
  * @version 1.0
  */
 public class MulticastClient extends Thread {
-    private String MULTICAST_ADDRESS = "224.0.224.0";
+    private String MULTICAST_ADDRESS;
     private int PORT = 4321;
     private Data data;
 
-    public MulticastClient(long number, Data data) {
+    public MulticastClient(long number, Data data, String ipMesa) {
 
         super("TERMINAL " + number);
         this.data = data;
+        this.MULTICAST_ADDRESS = ipMesa;
     }
 
     public static void main(String[] args) {
         long number = (long) (Math.random() * 1000);
         Data data = new Data();
-        MulticastClient client = new MulticastClient(number, data);
+        String ipMesa = args[0];
+        String ipVoto = getVoteIp(args[0]);
+        System.out.println(ipMesa + " " + ipVoto);
+        MulticastClient client = new MulticastClient(number, data, ipMesa);
         client.start();
-        MulticastUser user = new MulticastUser(number, data);
+        MulticastUser user = new MulticastUser(number, data, ipMesa, ipVoto);
         user.start();
     }
 
@@ -55,6 +59,14 @@ public class MulticastClient extends Thread {
         } finally {
             socket.close();
         }
+    }
+
+    public static String getVoteIp(String ip){
+        String[] num = ip.split("\\.");
+        int last = Integer.parseInt(num[3]);
+        last = last+1;
+
+        return num[0] + "." + num[1] + "." + num[2] + "." + last;
     }
 
     private String readMessage(MulticastSocket socket) throws IOException {
@@ -132,13 +144,16 @@ public class MulticastClient extends Thread {
 }
 
 class MulticastUser extends Thread {
-    private String VOTE_ADDRESS = "224.1.224.0";
-    private String MULTICAST_ADDRESS = "224.0.224.0";
+    private String VOTE_ADDRESS;
+    private String MULTICAST_ADDRESS;
     private int PORT = 4321;
     private Data data;
-    public MulticastUser(long number, Data data) {
+
+    public MulticastUser(long number, Data data, String ipMesa, String ipVoto) {
         super("TERMINAL " + number);
         this.data = data;
+        this.VOTE_ADDRESS = ipVoto;
+        this.MULTICAST_ADDRESS = ipMesa;
     }
 
     private void send(MulticastSocket socket, String message) throws IOException {
@@ -253,13 +268,5 @@ class Data{
 
     public void setFree(boolean free) {
         this.free = free;
-    }
-
-    public synchronized void espera() throws InterruptedException {
-        wait();
-    }
-
-    public synchronized void anda() throws InterruptedException {
-        notify();
     }
 }
