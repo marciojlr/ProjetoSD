@@ -8,6 +8,7 @@ Registar eleitor e mandar servidor a baixo a meio                   |
 2.
 Criar eleição                                                       |
 Criar eleição e mandar servidor a baixo a meio                      |
+Nao permitir criar com o mesmo nome                                 |
 
 3.
 Adicionar listas de candidatos                                      |
