@@ -2,7 +2,6 @@ package RMI;
 
 import Classes.Departamento;
 import Classes.Eleicao;
-import Classes.Pessoa;
 
 import java.net.MalformedURLException;
 import java.rmi.Naming;
@@ -297,7 +296,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             ArrayList<Eleicao> elegiveis = new ArrayList<>();
 
             if(eleicoes.isEmpty()){
-                System.out.println("Nao ha nenhuma eleiçao a decorrer");
+                System.out.println("(!) NAO HÁ NENHUMA ELEIÇÃO A DECORRER");
                 return;
             }
             GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
@@ -401,6 +400,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
+    // TODO: talvez seja melhor uma função de get eleições elegiveis
     public static void AlteraPropriedadesEleicao() throws RemoteException{
         try{
             ArrayList<Eleicao> eleicoes = adminConsole.getListaEleicoes();
@@ -678,10 +678,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 }catch (Exception e){
                     System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
                 }
-
             }
-
-
         }catch (RemoteException e){
             while (true){
                 try {
@@ -692,7 +689,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                     System.out.println("nao conectei");
                 }
             }
-
         }
         //hmmm
         return null;
@@ -705,9 +701,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             System.out.println("Insira nome do departamento");
             System.out.print("> ");
             String nome = s.nextLine();
-            System.out.println("Insira ip correspondente ao departamento");
-            System.out.print("> ");
-            String ip = s.nextLine();
             Departamento d = new Departamento(nome);
             try {
                 boolean check = adminConsole.checkDepartamentExist(d);
@@ -716,7 +709,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                     return d;
                 }
                 else {
-                    System.out.println("\nDEPARTAMENTO JA SE ENCONTRA NO SISTEMA\n");
+                    System.out.println("\n(!) DEPARTAMENTO JA SE ENCONTRA NO SISTEMA\n");
                     return null;
                 }
             } catch (RemoteException e) {
@@ -764,14 +757,15 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     }
 
     public static void ConsultarEleicoesPassadas() throws RemoteException{
-        ArrayList<Eleicao> eleicoes = new ArrayList<>();
+        ArrayList<Eleicao> listaEleicoesPassadas;
         try{
-             eleicoes = adminConsole.getListaEleicoes();
+            listaEleicoesPassadas = adminConsole.getEleicoesPassadas();
         }catch (RemoteException e){
             while (true){
                 try {
                     //Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    listaEleicoesPassadas = adminConsole.getEleicoesPassadas();
                     break;
                 }catch(NotBoundException  | RemoteException |MalformedURLException m){
                     System.out.println("nao conectei");
@@ -779,26 +773,18 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             }
         }
 
-        ArrayList<Eleicao> listaEleicoesPassadas = new ArrayList<Eleicao>();
-
-        if(eleicoes.isEmpty()){
-            System.out.println("Nao ha eleiçoes");
+        if(listaEleicoesPassadas.isEmpty()){
+            System.out.println("(!) NÃO EXISTEM ELEIÇÕES PASSADAS NO HISTÓRICO");
             return;
         }
-        GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
+        //PRINT DAS OPÇÕES DISPONÍVEIS
         int i = 1;
-        for (Eleicao e : eleicoes){
-            if(e.getData_final().compareTo(date) < 0){
-                System.out.println(i +". "+ e.getTitulo());
-                listaEleicoesPassadas.add(e);
-                i++;
-            }
+        for (Eleicao e : listaEleicoesPassadas){
+            System.out.println(i +". "+ e.getTitulo());
+            i++;
         }
-        if(i==1){
-            System.out.println("Nao existem eleiçoes finalizadas!");
-            return;
-        }
-        System.out.println("Escolha uma das opçoes acima listas");
+
+        System.out.println("Escolha a opção que pretende visitar");
         System.out.print(">");
         Scanner s = new Scanner(System.in);
         int opcao;
@@ -814,10 +800,9 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             }catch (NumberFormatException e){
                 System.out.println("Insira uma opçao valida!");
             }
-
         }
-
     }
+
     @Override
     public void newServer() throws RemoteException, NotBoundException, MalformedURLException {
         while (true){

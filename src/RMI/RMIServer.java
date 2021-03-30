@@ -301,6 +301,18 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     }
 
+
+    public ArrayList<Eleicao> getEleicoesPassadas(){
+        ArrayList<Eleicao> listaEleicoesPassadas = new ArrayList<>();
+        GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
+        for (Eleicao e : this.getListaEleicoes()){
+            if(e.getData_final().compareTo(date) < 0){
+                listaEleicoesPassadas.add(e);
+            }
+        }
+        return listaEleicoesPassadas;
+    }
+
     //TODO: TESTAR QUANDO A PARTE DOS LOCAIS DE VOTOS ESTIVER FEITA
     public ArrayList<String> LocalVoto(String pessoa){
         ArrayList<String> locais = new ArrayList<>();
@@ -314,6 +326,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
         return locais;
     }
+
+
 
     //MÉTODOS CHAMADOS PELO SERVIDOR MULTICAST
     public boolean isRegistered(int CC){
