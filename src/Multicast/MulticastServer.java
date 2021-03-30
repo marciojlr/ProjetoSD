@@ -17,7 +17,7 @@ import java.util.Scanner;
  */
 class DadosPartilhados{
     private int pedido;
-    private String name;
+    private final String name;
     public RMI_S_I RMIserver;
 
     public DadosPartilhados(String name) throws RemoteException, NotBoundException, MalformedURLException {
@@ -37,6 +37,7 @@ class DadosPartilhados{
     public String getName(){
         return this.name;
     }
+
 }
 
 /**
@@ -47,8 +48,8 @@ public class MulticastServer extends Thread {
 
     private final String MULTICAST_ADDRESS = "224.0.224.0";
     private final int PORT = 4321;
-
     private DadosPartilhados dados;
+
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
 
         DadosPartilhados dados = new DadosPartilhados(args[0]);
@@ -105,11 +106,10 @@ public class MulticastServer extends Thread {
 
         //MESSAGE TO GET A FREE TERMINAL
         if(map.get("type").equals("freeTerminal")){
-            System.out.println("Este terminal esta livre: " + map.get("id"));
             if(Integer.parseInt(map.get("request")) == dados.getPedido()){
                 dados.setPedido();
                 send(socket, "type | chosen; id | " + map.get("id") + "; userCC | " + map.get("userCC") + "; election | " + map.get("election"));
-                System.out.println("POR FAVOR EFETUE O SEU VOTO NO TERMINAL " + map.get("id"));
+                System.out.println("POR FAVOR EFETUE O SEU VOTO: " + map.get("id"));
             }
         }
         //MESSAGE TO VERIFY LOGIN CREDENTIALS
@@ -124,9 +124,7 @@ public class MulticastServer extends Thread {
         }
         //MESSAGE TO GET THE LIST OF CANDIDATES
         else if(map.get("type").equals("candidates")){
-            System.out.println("[" + map.get("id")+ "]Candidatos da eleicao: " + map.get("election"));
             ArrayList<String> candidates = dados.RMIserver.getCandidates(map.get("election"));
-            System.out.println(candidatesToString(candidates));
             send(socket, "id | " + map.get("id") + "; type | candidateS; " + candidatesToString(candidates));
         }
     }
@@ -168,41 +166,47 @@ class MulticastUserS extends Thread {
 
     private String chooseElection(ArrayList<String> eleicoes){
         Scanner keyboardScanner = new Scanner(System.in);
-        int election;
 
-        System.out.println("SELECIONE A ELEIÇÃO EM QUE PRETENDE VOTAR");
+        System.out.println("\nSELECIONE A ELEIÇÃO EM QUE PRETENDE VOTAR");
         while (true){
             try{
-                int option = 0;
+                int option = 1;
                 for(String titulo : eleicoes){
                     System.out.println(option + ". " + titulo);
                     option++;
                 }
-                election = Integer.parseInt(keyboardScanner.nextLine());
+                System.out.print("> ");
+                int election = Integer.parseInt(keyboardScanner.nextLine());
+                election = election - 1;
                 return eleicoes.get(election);
             } catch (Exception e){
-                System.out.println("\nOPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+                System.out.println("\n(!) OPÇÃO INVÁLIDA, ESCOLHA OUTRA");
             }
         }
     }
 
     private void getCC(MulticastSocket socket) throws IOException {
+
         System.out.println("Inserir número de Identificação: ");
-        System.out.println("> ");
-        //READ FROM INPUT
+        System.out.print("> ");
+        //INPUT
         Scanner keyboardScanner = new Scanner(System.in);
         String readKeyboard = keyboardScanner.nextLine();
-        //VERIFY IF ELECTOR IS REGISTERED
-        int CC = Integer.parseInt(readKeyboard);
+        int CC;
+        //VERIFICAR SE O ELEITOR SE ENCONTRA REGISTADO
+        try{
+            CC = Integer.parseInt(readKeyboard);
+        }
+        catch(Exception e){
+            System.out.println("(!) FORMATO INVÁLIDO DE NÚMERO DE IDENTIFICAÇÃO");
+            return;
+        }
 
-        // SE O ELEITOR SE ENCONTRAR REGISTADO
-        if(dados.RMIserver.isRegisted(CC)){
-            //ELEIÇÕES ELEGÍVEIS A VOTAR
-            ArrayList<String> eleicoes = dados.RMIserver.getElections(CC, dados.getName());
-            if(eleicoes.size() > 0){
+        if(dados.RMIserver.isRegisted(CC)){ //REGISTADO
 
-                String electionName = chooseElection(eleicoes);
-
+            ArrayList<String> elections = dados.RMIserver.getElections(CC, dados.getName());
+            if(elections.size() > 0){ //EXISTEM ELEIÇÕES DISPONÍVEIS NESTA MESA
+                String electionName = chooseElection(elections);
                 //SEND DATA TO ALL THE CLIENTS
                 String message = "type | free; request | " + dados.getPedido() + "; userCC | " + CC + "; election | " + electionName;
                 byte[] buffer = message.getBytes();
@@ -210,12 +214,12 @@ class MulticastUserS extends Thread {
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
                 socket.send(packet);
             }
-            else{ // SE NÃO HOUVER ELEIÇÕES DISPONÍVEIS NESTA MESA
-                System.out.println("NÃO EXISTEM ELEIÇÕES A DECORRER NESTA MESA DE VOTO");
+            else{ //NÃO HÁ ELEIÇÕES DISPONÍVEIS NESTA MESA
+                System.out.println("(!) NÃO EXISTEM ELEIÇÕES A DECORRER NESTA MESA DE VOTO");
             }
         }
-        else{ // SE O ELEITOR NÃO ESTIVER REGISTADO
-            System.out.println("O utilizador não se encontra nos registos");
+        else{ //SE O ELEITOR NÃO ESTIVER REGISTADO
+            System.out.println("(!) O UTILIZADOR NÃO SE ENCONTRA REGISTADO");
         }
     }
 
@@ -227,9 +231,9 @@ class MulticastUserS extends Thread {
         try {
             socket = new MulticastSocket();  // create socket without binding it (only for sending)
             while (true) {
-                System.out.println("\n- - - - MESA " + dados.getName() + " - - - -");
+                System.out.println("\n----------< MESA " + dados.getName() + " >----------");
                 getCC(socket);
-                Thread.sleep(500);
+                Thread.sleep(100);
             }
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
@@ -266,7 +270,7 @@ class Vote extends Thread {
         }
 
         if(map.get("type").equals("vote")){
-            int option = Integer.parseInt(map.get("option"));
+            String option = map.get("option");
             dados.RMIserver.vote(map.get("election"), option);
         }
         else if(map.get("type").equals("elector")){

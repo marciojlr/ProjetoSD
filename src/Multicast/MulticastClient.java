@@ -69,12 +69,12 @@ public class MulticastClient extends Thread {
 
     private void getCandidatesList(HashMap<String, String> map){
         int size = Integer.parseInt(map.get("list_item"));
-        System.out.println(size);
         System.out.println("LISTAS CANDIDATAS");
         for(int i=0; i<size; i++){
             String key = "item_" + i;
             System.out.println(i + ". " + map.get(key));
         }
+        //OPÇÃO DE VOTO EM BRANCO
         System.out.println(size + ". Voto Branco");
     }
 
@@ -98,23 +98,22 @@ public class MulticastClient extends Thread {
 
             // IF THIS WAS THE CHOSEN TERMINAL
             if(map.get("type").equals("chosen")){
-                    System.out.println(this.getName() + " foi escolhido");
-                    data.setFree();
                     int userCC = Integer.parseInt(map.get("userCC"));
+                    data.setFree(false);
                     data.setUserCC(userCC);
-                    data.setBlocked();
+                    data.setBlocked(false);
                     data.setElectionName(map.get("election"));
-                    System.out.println("O user : " + userCC + " tem acesso e a maquina esta " + data.getBlocked());
             }
             // VERIFY IF LOGIN CREDENTIALS ARE CORRECT
             else if(map.get("type").equals("status")){
                 if(map.get("logged").equals("on")){
-                    data.setLoggedIn();
+                    data.setLoggedIn(true);
                     System.out.println("Welcome to eVoting");
                     send(socket, "type | candidates; election | " + data.getElectionName() + "; id | " + this.getName());
                 }
                 else{
-                    System.out.println("Credenciais erradas");
+                    data.setLoggedIn(false);
+                    System.out.println("\n(!) CREDENCIAIS ERRADAS\n");
                 }
             }
             // TODO: alterar o type
@@ -165,12 +164,12 @@ class MulticastUser extends Thread {
             voteSocket = new MulticastSocket(); // create socket to send vote
             Scanner keyboardScanner = new Scanner(System.in);
             while (true) {
-                System.out.println("- - - - " + this.getName() + " - - - -");
+                System.out.println("----------< " + this.getName() + " >----------");
                 System.out.print("Username: ");
                 String username = keyboardScanner.nextLine();
 
                 if(data.getBlocked()){
-                    System.out.println("A máquina encontra-se bloqueada, por favor dirija-se à mesa de voto");
+                    System.out.println("\n(!) A MÁQUINA ENCONTRA-SE BLOQUEADA, DIRIJA-SE À MESA DE VOTO\n");
                 }
                 else{
                     System.out.print("Password: ");
@@ -178,18 +177,15 @@ class MulticastUser extends Thread {
                     send(socket, "type | login; id | " + this.getName() + "; userCC | " + data.getUserCC() + "; username | " + username + "; password | " + password);
                     Thread.sleep(500);
                     if(data.isLoggedIn()){
-                        System.out.println("Esta apto a votar na eleição: " + data.getElectionName());
                         System.out.print("> ");
+                        //INPUT COM OPÇÃO DE VOTO
                         String vote = keyboardScanner.nextLine();
                         sendVote(voteSocket, "type | vote; election | " + data.getElectionName() + "; option | " + vote);
                         sendVote(voteSocket, "type | elector; election | " + data.getElectionName() + "; userCC | " + data.getUserCC());
-                        data.setBlocked();
-                        data.setFree();
+                        data.setBlocked(true);
+                        data.setFree(true);
+                        data.setLoggedIn(false);
                     }
-                    else{
-                        System.out.println("USERNAME OU PASSWORD INVÁLIDOS");
-                    }
-
                 }
             }
         } catch (IOException | InterruptedException e) {
@@ -227,8 +223,8 @@ class Data{
         this.userCC = 0;
     }
 
-    public void setBlocked(){
-        this.blocked = !this.blocked;
+    public void setBlocked(boolean blocked){
+        this.blocked = blocked;
     }
 
     public boolean getBlocked(){
@@ -239,8 +235,8 @@ class Data{
         return loggedIn;
     }
 
-    public void setLoggedIn() {
-        this.loggedIn = !this.loggedIn;
+    public void setLoggedIn(boolean loggedIn) {
+        this.loggedIn = loggedIn;
     }
 
     public void setElectionName(String electionName) {
@@ -255,7 +251,7 @@ class Data{
         return free;
     }
 
-    public void setFree() {
-        this.free = !this.free;
+    public void setFree(boolean free) {
+        this.free = free;
     }
 }

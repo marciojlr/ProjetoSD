@@ -295,21 +295,32 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     @Override
-    public void vote(String election, int vote) throws RemoteException {
+    public void vote(String election, String option) throws RemoteException {
+        int vote;
+        try{
+            vote = Integer.parseInt(option);
+        }catch(Exception e){
+            vote = -1;
+        }
         for(Eleicao e : this.listaEleicoes){
             if(e.getTitulo().equals(election)){
+
                 //SE FOR UMA OPÇÃO INVÁLIDA CONSIDERA VOTO NULO
                 if( vote > e.getListaCandidata().size() || vote < 0 ){
                     e.addVotoNulo();
+                    System.out.println("Voto Nulo");
+
                 } // SE A OPÇÃO FOR IGUAL AO TAMANHO DO ARRAY, ESCOLHEU A OPÇÃO DE VOTO EM BRANCO
                 else if( vote == e.getListaCandidata().size() ){
                     e.addVotoBranco();
+                    System.out.println("Voto em branco");
                 }
+
                 else{
                     e.getListaCandidata().get(vote).addVote();
+                    System.out.println(e.getListaCandidata().get(vote));
                 }
                 e.addTotalVotos();
-                System.out.println(e.getListaCandidata().get(vote));
                 return;
             }
         }

@@ -25,7 +25,7 @@ public interface RMI_S_I extends Remote {
     public boolean acceptLogin(int userCC, String name, String password) throws RemoteException;
     public ArrayList<String> getElections(int userCC, String departamento) throws RemoteException;
     public ArrayList<String> getCandidates(String election) throws  RemoteException;
-    public void vote(String election, int vote) throws RemoteException;
+    public void vote(String election, String option) throws RemoteException;
     public void addElector(String election, int userCC, String department) throws RemoteException;
     public void  AddMesaVoto(Eleicao e, Departamento d) throws RemoteException;
     public void  RemoverMesaVoto(Eleicao e, Departamento d) throws RemoteException;
