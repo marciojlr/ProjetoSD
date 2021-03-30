@@ -68,7 +68,6 @@ public class MulticastServer extends Thread {
     }
 
     public void run() {
-        System.out.println(this.getName() + " running...");
         MulticastSocket socket = null;
 
         try {
@@ -202,7 +201,7 @@ class MulticastUserS extends Thread {
             return;
         }
 
-        if(dados.RMIserver.isRegisted(CC)){ //REGISTADO
+        if(dados.RMIserver.isRegistered(CC)){ //REGISTADO
 
             ArrayList<String> elections = dados.RMIserver.getElections(CC, dados.getName());
             if(elections.size() > 0){ //EXISTEM ELEIÇÕES DISPONÍVEIS NESTA MESA
@@ -224,10 +223,7 @@ class MulticastUserS extends Thread {
     }
 
     public void run() {
-
         MulticastSocket socket = null;
-
-        System.out.println(this.getName() + " ready...");
         try {
             socket = new MulticastSocket();  // create socket without binding it (only for sending)
             while (true) {
@@ -280,7 +276,6 @@ class Vote extends Thread {
 
     public void run() {
         MulticastSocket socket = null;
-        System.out.println(this.getName() + " running...");
         try {
             socket = new MulticastSocket(PORT);  // recebe e envia
             InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);

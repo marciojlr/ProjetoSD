@@ -18,17 +18,52 @@ import java.util.GregorianCalendar;
 
 public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
-    public ArrayList<Pessoa> listaPessoas = new ArrayList<Pessoa>();
-    public ArrayList<Eleicao> listaEleicoes = new ArrayList<Eleicao>();
-    public ArrayList<Departamento> listaDepartamentos = new ArrayList<Departamento>();
-    public ArrayList<MulticastServer> listaMesasVoto = new ArrayList<MulticastServer>();
+    public ArrayList<Pessoa> listaPessoas;
+    public ArrayList<Eleicao> listaEleicoes;
+    public ArrayList<Departamento> listaDepartamentos;
     static RMI_C_I client;
 
 
     protected RMIServer() throws RemoteException {
         super();
+        this.listaPessoas = new ArrayList<Pessoa>();
+        this.listaEleicoes = new ArrayList<Eleicao>();
+        this.listaDepartamentos = new ArrayList<Departamento>();
     }
 
+    //LEITURA E ESCRITA DE FICHEIROS OBJETO
+    public void escreveFicheiro(RMIServer server){
+
+        File f = new File("objeto.obj");
+
+        try{
+            FileOutputStream os = new FileOutputStream(f);
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+
+            oos.writeObject(server);
+
+            oos.close();
+
+        }catch(FileNotFoundException e){
+            System.out.println("Erro a criar ficheiro");
+        }
+        catch(IOException e){
+            System.out.println("Erro a escrever para ficheiro");
+        }
+    }
+
+    public RMIServer leFicheiro() throws IOException, ClassNotFoundException {
+        File f = new File("objeto.obj");
+        FileInputStream fis = new FileInputStream(f);
+        ObjectInputStream ois = new ObjectInputStream(fis);
+
+        RMIServer server = (RMIServer) ois.readObject();
+        ois.close();
+
+        return server;
+    }
+
+    //MÉTODOS CHAMADOS PELA CONSOLA DE ADMINISTRAÇÃO
     public String teste (RMI_C_I c){
         client = c;
         System.out.println("olaaaa");
@@ -123,6 +158,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         System.out.println("Mesa adicionada com sucesso");
 
     }
+
     public void  RemoverMesaVoto(Eleicao e, Departamento d) {
 
         //TODO Multicast receber o departamento
@@ -145,8 +181,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
 
     }
-
-
 
     public String AlteraEleicao(String eleicao, int data_inicio,int data_fim,String titulo, String descricao){
 
@@ -181,7 +215,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     }
 
-
     //TODO: TESTAR QUANDO A PARTE DOS LOCAIS DE VOTOS ESTIVER FEITA
     public ArrayList<String> LocalVoto(String pessoa){
         ArrayList<String> locais = new ArrayList<>();
@@ -196,8 +229,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return locais;
     }
 
-    @Override
-    public boolean isRegisted(int CC) throws RemoteException {
+    //MÉTODOS CHAMADOS PELO SERVIDOR MULTICAST
+    public boolean isRegistered(int CC){
 
         for(Pessoa pessoa : this.listaPessoas){
             if(pessoa.getCC() == CC){
@@ -207,40 +240,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return false;
     }
 
-    @Override
-    public void ping(String message) throws RemoteException {
+    public void ping(String message){
         System.out.println(message);
-    }
-
-    public void escreveFicheiro(RMIServer server){
-
-        File f = new File("objeto.obj");
-
-        try{
-            FileOutputStream os = new FileOutputStream(f);
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-
-            oos.writeObject(server);
-
-            oos.close();
-
-        }catch(FileNotFoundException e){
-            System.out.println("Erro a criar ficheiro");
-        }
-        catch(IOException e){
-            System.out.println("Erro a escrever para ficheiro");
-        }
-    }
-
-    public RMIServer leFicheiro() throws IOException, ClassNotFoundException {
-        File f = new File("objeto.obj");
-        FileInputStream fis = new FileInputStream(f);
-        ObjectInputStream ois = new ObjectInputStream(fis);
-
-        RMIServer server = (RMIServer) ois.readObject();
-        ois.close();
-
-        return server;
     }
 
     public boolean acceptLogin(int userCC, String name, String password){
@@ -276,8 +277,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return eleicoes;
     }
 
-    @Override
-    public ArrayList<String> getCandidates(String election) throws RemoteException {
+    public ArrayList<String> getCandidates(String election){
 
         ArrayList<String> listas = new ArrayList<String>();
 
@@ -294,8 +294,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return listas;
     }
 
-    @Override
-    public void vote(String election, String option) throws RemoteException {
+    public void vote(String election, String option){
         int vote;
         try{
             vote = Integer.parseInt(option);
@@ -326,11 +325,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
     }
 
-    @Override
-    public void addElector(String election, int userCC, String department) throws RemoteException {
+    public void addElector(String election, int userCC, String department){
         //todo: ter em atenção que aqui se mudarmos um, mudamos todos porque não é copia
     }
-
 
     public static void main(String [] args ) throws RemoteException {
 
