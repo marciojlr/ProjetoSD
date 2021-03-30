@@ -50,9 +50,9 @@ class DadosPartilhados{
  */
 public class MulticastServer extends Thread {
 
-    private String MULTICAST_ADDRESS;
+    private final String MULTICAST_ADDRESS;
     private final int PORT = 4321;
-    private DadosPartilhados dados;
+    private final DadosPartilhados dados;
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
 
@@ -106,8 +106,7 @@ public class MulticastServer extends Thread {
         byte[] buffer = new byte[256];
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.receive(packet);
-        String message = new String(packet.getData(), 0, packet.getLength());
-        return message;
+        return new String(packet.getData(), 0, packet.getLength());
     }
 
     private void readComands(MulticastSocket socket, String message) throws IOException {
@@ -168,9 +167,9 @@ public class MulticastServer extends Thread {
  */
 class MulticastUserS extends Thread {
 
-    private String MULTICAST_ADDRESS;
+    private final String MULTICAST_ADDRESS;
     private final int PORT = 4321;
-    private DadosPartilhados dados;
+    private final DadosPartilhados dados;
 
     public MulticastUserS(DadosPartilhados dados, String ip) {
         super("Server" + (long) (Math.random() * 1000));
@@ -255,9 +254,9 @@ class MulticastUserS extends Thread {
 }
 
 class Vote extends Thread {
-    private String MULTICAST_ADDRESS;
+    private final String MULTICAST_ADDRESS;
     private final int PORT = 4321;
-    private DadosPartilhados dados;
+    private final DadosPartilhados dados;
 
     public Vote(DadosPartilhados dados, String ip) {
         super("VoteThread " + (long) (Math.random() * 1000));

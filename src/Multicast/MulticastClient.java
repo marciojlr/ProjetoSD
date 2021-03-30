@@ -21,9 +21,9 @@ import java.util.Scanner;
  * @version 1.0
  */
 public class MulticastClient extends Thread {
-    private String MULTICAST_ADDRESS;
-    private int PORT = 4321;
-    private Data data;
+    private final String MULTICAST_ADDRESS;
+    private final int PORT = 4321;
+    private final Data data;
 
     public MulticastClient(long number, Data data, String ipMesa) {
 
@@ -74,8 +74,7 @@ public class MulticastClient extends Thread {
         byte[] buffer = new byte[256];
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length);
         socket.receive(packet);
-        String message = new String(packet.getData(), 0, packet.getLength());
-        return message;
+        return new String(packet.getData(), 0, packet.getLength());
     }
 
     private void getCandidatesList(HashMap<String, String> map){
@@ -144,10 +143,10 @@ public class MulticastClient extends Thread {
 }
 
 class MulticastUser extends Thread {
-    private String VOTE_ADDRESS;
-    private String MULTICAST_ADDRESS;
-    private int PORT = 4321;
-    private Data data;
+    private final String VOTE_ADDRESS;
+    private final String MULTICAST_ADDRESS;
+    private final int PORT = 4321;
+    private final Data data;
 
     public MulticastUser(long number, Data data, String ipMesa, String ipVoto) {
         super("TERMINAL " + number);
@@ -205,7 +204,9 @@ class MulticastUser extends Thread {
         } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
+            assert socket != null;
             socket.close();
+            assert voteSocket != null;
             voteSocket.close();
         }
     }
