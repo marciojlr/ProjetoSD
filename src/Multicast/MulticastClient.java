@@ -4,7 +4,6 @@ import java.net.MulticastSocket;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.io.IOException;
-import java.sql.SQLOutput;
 import java.util.HashMap;
 import java.util.Scanner;
 
@@ -163,11 +162,11 @@ class MulticastUser extends Thread {
             socket = new MulticastSocket();  // create socket without binding it (only for sending)
             voteSocket = new MulticastSocket(); // create socket to send vote
             Scanner keyboardScanner = new Scanner(System.in);
+
             while (true) {
                 System.out.println("----------< " + this.getName() + " >----------");
                 System.out.print("Username: ");
                 String username = keyboardScanner.nextLine();
-
                 if(data.getBlocked()){
                     System.out.println("\n(!) A MÁQUINA ENCONTRA-SE BLOQUEADA, DIRIJA-SE À MESA DE VOTO\n");
                 }
@@ -192,6 +191,7 @@ class MulticastUser extends Thread {
             e.printStackTrace();
         } finally {
             socket.close();
+            voteSocket.close();
         }
     }
 }
@@ -253,5 +253,13 @@ class Data{
 
     public void setFree(boolean free) {
         this.free = free;
+    }
+
+    public synchronized void espera() throws InterruptedException {
+        wait();
+    }
+
+    public synchronized void anda() throws InterruptedException {
+        notify();
     }
 }
