@@ -27,7 +27,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         String teste;
         teste = adminConsole.teste((RMI_C_I) client);
         System.out.println(teste);
-        Departamento dei = new Departamento("DEI");
+        /*Departamento dei = new Departamento("DEI");
         Departamento deec = new Departamento("DEEC");
         GregorianCalendar datainicio = new GregorianCalendar(2021,2,26);
         GregorianCalendar datafim = new GregorianCalendar(2021,2,30);
@@ -38,6 +38,9 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
         adminConsole.criarEleicao(datainicio,datafim,"Eleicao 1", "Descricao 1", dei, "Estudante");
         adminConsole.criarEleicao(datainicio,datafim,"Eleicao 2", "Descricao 2", deec, "Estudante");
+        */
+
+
         menu();
 
     }
@@ -145,11 +148,16 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.print("Password: ");
         String password = s.nextLine();
 
-        Departamento departamento = escolherDept();
-        if(departamento == null){
-            departamento = criaDepartamento();
-            adminConsole.AddDepartamento(departamento);
+        Departamento departamento= null;
+        while (departamento == null){
+            departamento = escolherDept();
+            if(departamento == null){
+                departamento = criaDepartamento();
+
+            }
         }
+
+        adminConsole.AddDepartamento(departamento);
 
         System.out.print("CC: ");
         int CC=Integer.parseInt(s.nextLine());
@@ -281,43 +289,61 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     }
 
     public static void gerirListaCandidata() throws RemoteException {
-        //TODO: SE nao houver listas para remover ,fazer defesa
         //TODO: Adicionar os membros na parte de criar
         try{
+            //TODO: FAZER UM TRY CACTH PARA ESTA CHAMADA
             ArrayList<Eleicao> eleicoes = adminConsole.getListaEleicoes();
+
+            ArrayList<Eleicao> elegiveis = new ArrayList<>();
 
             if(eleicoes.isEmpty()){
                 System.out.println("Nao ha nenhuma eleiçao a decorrer");
                 return;
             }
+            GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
+            int i= 1;
             for( Eleicao e : eleicoes){
-                //verificar q nao acabou
-                System.out.println(e.getTitulo());
+                if(e.getData_inicio().compareTo(date) > 0){
+                    System.out.println(i + ". " + e.getTitulo());
+                    elegiveis.add(e);
+                    i++;
+                }
+
             }
+            if(elegiveis.isEmpty()){
+                System.out.println("Nao ha eleiçoes");
+                return;
+            }
+
             Scanner s = new Scanner(System.in);
             System.out.println("Insira a eleiçao que pretende: ");
-            //fazer uma defesa para verificar se é valida ou entao obrigar a escolher um indice
-            String eleicao = s.nextLine();
+            System.out.print("> ");
+            //todo:fazer uma defesa para opçao
+            int eleicao = Integer.parseInt(s.nextLine());
+
             System.out.println("1-Adicionar  2-Remover");
+            System.out.print("> ");
             String opcao= s.nextLine();
+
             if(opcao.equals("1")){
                 System.out.println("Insira Lista Candidata que deseja inserir: ");
+                System.out.print("> ");
                 String nome = s.nextLine();
-                adminConsole.AddListaCandidata(eleicao,nome);
+                adminConsole.AddListaCandidata(elegiveis.get(eleicao-1),nome);
             }
             else if(opcao.equals("2")){
-                //Display das listas Candidatas;
-                //eleicoes = adminConsole.getListaEleicoes();
-                for (Eleicao e2:eleicoes
-                     ) {
-                    if(e2.getTitulo().equals(eleicao)){
-                        System.out.println(e2.getListaCandidata());
-                        e2.printLista();
-                    }
+
+                if(elegiveis.get(eleicao-1).getListaCandidata().isEmpty()){
+                    System.out.println("Nao ha listas para remover");
+                    return;
                 }
+
+                //print listas candidatas
+                elegiveis.get(eleicao-1).printLista();
                 System.out.println("Insira a Lista Candidata que deseja remover:");
-                String nome = s.nextLine();
-                adminConsole.RemoveListaCandidata(eleicao,nome);
+                System.out.print("> ");
+                int nome = Integer.parseInt(s.nextLine());
+                adminConsole.RemoveListaCandidata(elegiveis.get(eleicao-1),elegiveis.get(eleicao-1).getListaCandidata().get(nome-1).getNome());
             }
         }catch (RemoteException e){
             while (true){
@@ -403,6 +429,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.println("1. Associar   2. Remover");
         Scanner s = new Scanner(System.in);
         System.out.println("Insira a opção: ");
+        System.out.print("> ");
         boolean valido = false;
         while(!valido){
             try{
@@ -429,6 +456,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     }
 
 
+    // Todo: Ja faz sentido talvez
     public void CriaMesaVoto(){
         Scanner s = new Scanner(System.in);
         System.out.println("Em que Departamento pretende criar a Mesa de Voto");
@@ -449,26 +477,35 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         try {
             ArrayList<Departamento> depts = adminConsole.getListaDepartamentos();
 
-            //TODO MOSTRAR APENAS AS QUE NAO ESTAO NA ELEIÇAO
-            //TODO A funcionar mas esta meio estranho e os indices nao vao estar certos
+            ArrayList<Departamento> deptsElegiveis = new ArrayList<>();
 
             int i=1;
             System.out.println("\nMESAS DISPONÍVEIS");
+            boolean encontrou = false;
             for (Departamento d: depts) {
                 for(Departamento d2 : e.getDept()){
                     if(d2.getNome().equals(d.getNome())){
-                        System.out.println(i +". " +d.getNome());
-
+                       encontrou= true;
                     }
                 }
-                i++;
-
+                if(encontrou == false){
+                    System.out.println(i +". " + d.getNome());
+                    deptsElegiveis.add(d);
+                    i++;
+                }
+                else{
+                    encontrou= false;
+                }
+            }
+            if(deptsElegiveis.isEmpty()){
+                System.out.println("(!) Nao existem.");
+                return;
             }
             Scanner s = new Scanner(System.in);
             System.out.println("Escolha a mesa que pretende adicionar" );
             System.out.print("> ");
             int opcao = Integer.parseInt(s.nextLine());
-            adminConsole.AddMesaVoto(e,depts.get(opcao-1));
+            adminConsole.AddMesaVoto(e,deptsElegiveis.get(opcao-1));
 
 
         }catch (RemoteException e1){
@@ -619,8 +656,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     }
 
     public static Departamento criaDepartamento(){
-        //TODO Defesa: ver se o departamento a ser criado
-        //Devia mostrar outra vez a lista
 
         while (true) {
             Scanner s = new Scanner(System.in);
@@ -639,6 +674,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 }
                 else {
                     System.out.println("\nDEPARTAMENTO JA SE ENCONTRA NO SISTEMA\n");
+                    return null;
                 }
             } catch (RemoteException e) {
                 while (true) {
@@ -652,7 +688,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 }
             }
         }
-
     }
 
     public static void LocaisDeVoto() throws RemoteException{
@@ -728,10 +763,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             try{
                 opcao = Integer.parseInt(s.nextLine());
                 if(opcao <= i){
-                    //TODO: FAZER O METODO PARA IMPRIMIR, QD HOUVER A INFORMAÇAO
-                    //Dar display da informaçao
-                    //toString
-                    //listaEleicoesPassadas.get(opcao-1).
                     System.out.println("\nInformaçao\n");
                     System.out.println(listaEleicoesPassadas.get(opcao-1).getTotal_votos());
                     System.out.println(listaEleicoesPassadas.get(opcao-1).resultados());

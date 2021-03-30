@@ -152,8 +152,10 @@ public class Eleicao implements Serializable {
     }
 
     public void printLista(){
+        int i= 1;
         for(ListaCandidata l: this.listaCandidata){
-            System.out.println(l.toString());
+            System.out.println(i+ ". " +l.toString());
+            i++;
         }
     }
 

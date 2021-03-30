@@ -184,11 +184,11 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     }
 
-    public void AddListaCandidata(String e, String nome){
+    public void AddListaCandidata(Eleicao e, String nome){
         int i=0;
         Eleicao aux=null;
         for (Eleicao e2: this.listaEleicoes) {
-            if(e2.getTitulo().equals(e)){
+            if(e2.getTitulo().equals(e.getTitulo())){
                 System.out.println("Entrei aqui");
                 e2.addListaCandidata(nome);
                 System.out.println(e2.getListaCandidata());
@@ -201,9 +201,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     }
 
-    public void RemoveListaCandidata(String e, String nome){
+    public void RemoveListaCandidata(Eleicao e, String nome){
         for (Eleicao el: this.listaEleicoes ) {
-            if(el.getTitulo().equals(e)){
+            if(el.getTitulo().equals(e.getTitulo())){
                 System.out.println("Entrei aqui");
                 System.out.println(el.getListaCandidata());
 
@@ -228,7 +228,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
              ) {
             if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
                 el.getDept().add(d);
-
             }
         }
         for (Eleicao el: this.listaEleicoes

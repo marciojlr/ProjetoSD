@@ -15,8 +15,8 @@ public interface RMI_S_I extends Remote {
     boolean registarPessoa(String nome, String tipo, String password, Departamento departamento, int CC, GregorianCalendar CC_val, int telemovel, String morada) throws RemoteException;
     String criarEleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, Departamento dept, String tipo_Pessoa) throws RemoteException;
     ArrayList<Eleicao> getListaEleicoes() throws RemoteException;
-    void AddListaCandidata(String e, String nome) throws RemoteException;
-    void RemoveListaCandidata(String e, String nome) throws RemoteException;
+    void AddListaCandidata(Eleicao e, String nome) throws RemoteException;
+    void RemoveListaCandidata(Eleicao e, String nome) throws RemoteException;
     String AlteraEleicao(String eleicao, int data_inicio,int data_fim,String titulo, String descricao) throws RemoteException;
     ArrayList<Departamento> getListaDepartamentos() throws RemoteException;
     void AddDepartamento(Departamento d) throws RemoteException;

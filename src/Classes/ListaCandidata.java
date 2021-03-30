@@ -31,10 +31,7 @@ public class ListaCandidata implements Serializable {
 
     @Override
     public String toString() {
-        return "ListaCandidata{" +
-                "nome='" + nome + '\'' +
-                "votos='" + this.votes + '\'' +
-                '}';
+        return "Lista: " + this.nome;
     }
 
 }
