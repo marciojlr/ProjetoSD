@@ -18,8 +18,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     public static  ArrayList<Pessoa> listaPessoas;
     public static ArrayList<Eleicao> listaEleicoes;
     public static ArrayList<Departamento> listaDepartamentos;
-    static RMI_C_I client;
-
+    public static ArrayList<RMI_C_I> client= new ArrayList<>();
 
     protected RMIServer() throws RemoteException {
         super();
@@ -27,7 +26,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     //****************************************** MÉTODOS CHAMADOS PELA CONSOLA DE ADMINISTRAÇÃO *******************************************
     public String teste (RMI_C_I c){
-        client = c;
+        client.add(c);
         System.out.println("olaaaa");
 
         return "olaaaaaa";
@@ -193,7 +192,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return listaEleicoesPassadas;
     }
 
-    //TODO: TESTAR QUANDO A PARTE DOS LOCAIS DE VOTOS ESTIVER FEITA
+
     public ArrayList<String> LocalVoto(String pessoa){
         ArrayList<String> locais = new ArrayList<>();
         for (Eleicao e: listaEleicoes) {
@@ -209,6 +208,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
 
 
+
+
     //******************************************** MÉTODOS CHAMADOS PELO SERVIDOR MULTICAST **************************************************
     public boolean isRegistered(int CC){
 
@@ -220,13 +221,27 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return false;
     }
 
-    public void ping(String message){
-        System.out.println(message);
+    public void ping(String dept){
+        for (Departamento d: listaDepartamentos) {
+            if(d.getNome().equals(dept)){
+                d.setMesaOn(true);
+                System.out.println(d.getNome() +": On");
+                break;
+            }
+        }
     }
 
     public boolean acceptLogin(int userCC, String name, String password){
         for(Pessoa pessoa : listaPessoas){
             if(pessoa.getCC() == userCC && pessoa.getNome().equals(name) && pessoa.getPassword().equals(password)){
+                for(RMI_C_I c : client){
+                    try{
+                        c.loginNotification(userCC, name);
+                    }catch (RemoteException e){
+                        System.out.println("Notificaçao nao enviada!");
+                    }
+
+                }
                 return true;
             }
         }

@@ -17,8 +17,12 @@ import java.util.Scanner;
 public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     private static RMI_S_I adminConsole;
+    private static boolean notifications;
 
-    public AdminConsole() throws RemoteException {super();}
+    public AdminConsole() throws RemoteException {
+        super();
+        notifications= false;
+    }
 
     public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException{
         adminConsole = (RMI_S_I) Naming.lookup("Server");
@@ -50,62 +54,71 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             System.out.println("1. Registar");
             System.out.println("2. Criar Eleição");
             System.out.println("3. Gerir Listas de candidatos a uma eleição");
-            System.out.println("4. Mesas de Voto");
+            System.out.println("4. Gerir Mesas de Voto");
             System.out.println("5. Alterar propriedades de eleição");
             System.out.println("6. Saber local de voto de um dado eleitor");
+            System.out.println("7. Estado das mesas de voto / Votos em tempo real");
             System.out.println("14. Consultar eleiçoes passadas");
             System.out.print("> ");
             option= myObj.nextLine();
-            if(option.equals("1")){
-                try{
-                    RegistoPessoa();
-                }catch (RemoteException e){
-                    System.out.println(e);
-                }
+            switch (option) {
+                case "1":
+                    try {
+                        RegistoPessoa();
+                    } catch (RemoteException e) {
+                        System.out.println(e);
+                    }
 
-            }
-            else if(option.equals("2")){
-                try {
-                    criaEleicao();
-                }catch (RemoteException e){
-                    System.out.println(e);
-                }
-            }
-            else if(option.equals("3")){
-                try {
-                    gerirListaCandidata();
-                }catch (RemoteException e){
-                    System.out.println(e);
-                }
-            }
-            else if(option.equals("4")){
-                try{
-                    GerirMesa();
-                }catch (RemoteException e){
-                    System.out.println(e);
-                }
-            }
-            else if(option.equals("5")){
-                try {
-                    AlteraPropriedadesEleicao();
-                    Thread.sleep(50);
-                }catch (RemoteException | InterruptedException e){
-                    System.out.println(e);
-                }
-            }
-            else if (option.equals("6")){
-                try {
-                    LocaisDeVoto();
-                }catch (RemoteException e){
-                    System.out.println(e);
-                }
-            }
-            else if(option.equals("14")){
-                try {
-                    ConsultarEleicoesPassadas();
-                }catch (RemoteException e){
-                    System.out.println(e);
-                }
+                    break;
+                case "2":
+                    try {
+                        criaEleicao();
+                    } catch (RemoteException e) {
+                        System.out.println(e);
+                    }
+                    break;
+                case "3":
+                    try {
+                        gerirListaCandidata();
+                    } catch (RemoteException e) {
+                        System.out.println(e);
+                    }
+                    break;
+                case "4":
+                    try {
+                        GerirMesa();
+                    } catch (RemoteException e) {
+                        System.out.println(e);
+                    }
+                    break;
+                case "5":
+                    try {
+                        AlteraPropriedadesEleicao();
+                        Thread.sleep(50);
+                    } catch (RemoteException | InterruptedException e) {
+                        System.out.println(e);
+                    }
+                    break;
+                case "6":
+                    try {
+                        LocaisDeVoto();
+                    } catch (RemoteException e) {
+                        System.out.println(e);
+                    }
+                    break;
+                case "7":
+
+                    notifications();
+                    break;
+                case "14":
+                    try {
+                        ConsultarEleicoesPassadas();
+                    } catch (RemoteException e) {
+                        System.out.println(e);
+                    }
+                    break;
+                default:
+                    System.out.println("opçao invalida");
             }
         }
     }
@@ -152,6 +165,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
             }
         }
+
 
         adminConsole.AddDepartamento(departamento);
 
@@ -793,6 +807,36 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             }catch (NumberFormatException e){
                 System.out.println("Insira uma opçao valida!");
             }
+        }
+    }
+
+    //todo: Informaçao em falta
+    public static void notifications(){
+        notifications=true;
+        boolean valido = false;
+        Scanner s = new Scanner(System.in);
+        String opcao;
+        System.out.println("- - - INSIRA 0 PARA SAIR - - -");
+        System.out.println("Notificações: ");
+        while (!valido){
+            opcao = s.nextLine();
+            if(opcao.equals("0")){
+                valido = true;
+                notifications = false;
+            }
+        }
+    }
+    //==================================================================
+
+    public void mesaNotification(String mesa){
+        if(notifications){
+            System.out.println("Mesa: " + mesa + " is On ");
+        }
+    }
+
+    public void loginNotification(int userCC, String mesa){
+        if(notifications){
+            System.out.println("Novo eleitor chegou à mesa " + mesa);
         }
     }
 
