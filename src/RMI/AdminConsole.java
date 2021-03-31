@@ -139,16 +139,18 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             departamento = escolherDept();
             if(departamento == null){
                 departamento = criaDepartamento();
-                try{
-                    adminConsole.AddDepartamento(departamento);
-                }catch (RemoteException e){
-                    while (true){
-                        try{
-                            adminConsole = (RMI_S_I) Naming.lookup("Server");
-                            adminConsole.AddDepartamento(departamento);
-                            break;
-                        }catch (NotBoundException  | RemoteException | MalformedURLException m){
-                            System.out.println("nao conectei");
+                if(departamento !=null){
+                    try{
+                        adminConsole.AddDepartamento(departamento);
+                    }catch (RemoteException e){
+                        while (true){
+                            try{
+                                adminConsole = (RMI_S_I) Naming.lookup("Server");
+                                adminConsole.AddDepartamento(departamento);
+                                break;
+                            }catch (NotBoundException  | RemoteException | MalformedURLException m){
+                                System.out.println("nao conectei");
+                            }
                         }
                     }
                 }
@@ -246,19 +248,22 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             departamento = escolherDept();
             if(departamento == null){
                 departamento = criaDepartamento();
-                try{
-                    adminConsole.AddDepartamento(departamento);
-                }catch (RemoteException e){
-                    while (true){
-                        try{
-                            adminConsole = (RMI_S_I) Naming.lookup("Server");
-                            adminConsole.AddDepartamento(departamento);
-                            break;
-                        }catch (NotBoundException  | RemoteException | MalformedURLException m){
-                            System.out.println("nao conectei");
+                if(departamento !=null){
+                    try{
+                        adminConsole.AddDepartamento(departamento);
+                    }catch (RemoteException e){
+                        while (true){
+                            try{
+                                adminConsole = (RMI_S_I) Naming.lookup("Server");
+                                adminConsole.AddDepartamento(departamento);
+                                break;
+                            }catch (NotBoundException  | RemoteException | MalformedURLException m){
+                                System.out.println("nao conectei");
+                            }
                         }
                     }
                 }
+
             }
         }
 
