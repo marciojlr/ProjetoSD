@@ -28,8 +28,8 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.println(teste);
         Departamento dei = new Departamento("DEI");
         Departamento deec = new Departamento("DEEC");
-        GregorianCalendar datainicio = new GregorianCalendar(2021,2,26);
-        GregorianCalendar datafim = new GregorianCalendar(2021,2,30);
+        GregorianCalendar datainicio = new GregorianCalendar(2021, Calendar.MARCH,26);
+        GregorianCalendar datafim = new GregorianCalendar(2021, Calendar.MARCH,30);
         adminConsole.AddDepartamento(dei);
         adminConsole.AddDepartamento(deec);
         adminConsole.registarPessoa("Marcio","Estudante", "123", dei, 12345678, null,910,"Coimbra");
@@ -38,8 +38,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         adminConsole.criarEleicao(datainicio,datafim,"Eleicao 1", "Descricao 1", dei, "Estudante");
         adminConsole.criarEleicao(datainicio,datafim,"Eleicao 2", "Descricao 2", deec, "Estudante");
 
-
-
         menu();
 
     }
@@ -47,7 +45,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     public static void menu(){
         Scanner myObj = new Scanner(System.in);
         String option;
-
         while (true){
             System.out.println("====== Bem vindo! ======");
             System.out.println("1. Registar");
@@ -166,7 +163,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.print("Ano: ");
         int ano = Integer.parseInt(s.nextLine());
 
-        GregorianCalendar CC_val = new GregorianCalendar(ano,mes,1);
+        GregorianCalendar CC_val = new GregorianCalendar(ano,mes-1,1);
         System.out.print("Telemovel: ");
         int telemovel =Integer.parseInt(s.nextLine());
 
@@ -428,9 +425,9 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 System.out.println("Selecione a Eleição que deseja alterar");
                 escolha = s.nextLine();
                 for(Eleicao e1: elegiveis){
-                    if(escolha.equals(e1.getTitulo())){
-
+                    if (escolha.equals(e1.getTitulo())) {
                         valido = true;
+                        break;
                     }
                 }
                 if(!valido){
@@ -596,11 +593,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             }
         }
     }
-
-    public void ApagarMesaVoto(){
-
-    }
-
 
     public static Departamento escolherDept(){
         try{

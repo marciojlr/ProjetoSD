@@ -25,7 +25,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         super();
     }
 
-    //MÉTODOS CHAMADOS PELA CONSOLA DE ADMINISTRAÇÃO
+    //****************************************** MÉTODOS CHAMADOS PELA CONSOLA DE ADMINISTRAÇÃO *******************************************
     public String teste (RMI_C_I c){
         client = c;
         System.out.println("olaaaa");
@@ -124,7 +124,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         escreveFicheiroEleicoes();
     }
 
-
     public void  RemoverMesaVoto(Eleicao e, Departamento d) {
 
         //TODO Multicast receber o departamento
@@ -183,7 +182,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     }
 
-
     public ArrayList<Eleicao> getEleicoesPassadas(){
         ArrayList<Eleicao> listaEleicoesPassadas = new ArrayList<>();
         GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
@@ -211,7 +209,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
 
 
-    //MÉTODOS CHAMADOS PELO SERVIDOR MULTICAST
+    //******************************************** MÉTODOS CHAMADOS PELO SERVIDOR MULTICAST **************************************************
     public boolean isRegistered(int CC){
 
         for(Pessoa pessoa : listaPessoas){
@@ -245,10 +243,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
                 eleitor = p;
             }
         }
-
+        GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
         //ENCONTRAR ELEIÇÕES COMUNS HÁ MESA E ELEITORES
         for(Eleicao e : listaEleicoes){
-            if(e.getTipo_Pessoa().equals(eleitor.getTipo())){
+            if(e.getTipo_Pessoa().equals(eleitor.getTipo()) && e.getData_inicio().compareTo(date) < 0 && e.getData_final().compareTo(date) > 0){
                 for(Departamento d : e.getDept()){
                     if(d.getNome().equals(departamento)){
                         eleicoes.add(e.getTitulo());

@@ -38,6 +38,9 @@ class DadosPartilhados{
         return this.name;
     }
 
+    public void setRMIserver() throws RemoteException, NotBoundException, MalformedURLException {
+        this.RMIserver = (RMI_S_I) Naming.lookup("Server");
+    }
 }
 
 /*
@@ -87,7 +90,7 @@ public class MulticastServer extends Thread {
                 String message = readMessage(socket);
                 readComands(socket, message);
             }
-        } catch (IOException e) {
+        } catch (IOException | NotBoundException e) {
             e.printStackTrace();
         } finally {
             socket.close();
@@ -109,7 +112,7 @@ public class MulticastServer extends Thread {
         return new String(packet.getData(), 0, packet.getLength());
     }
 
-    private void readComands(MulticastSocket socket, String message) throws IOException {
+    private void readComands(MulticastSocket socket, String message) throws IOException, NotBoundException {
         HashMap<String,String> map = new HashMap();
         String[] pares =  message.split("; ");
 
@@ -128,7 +131,16 @@ public class MulticastServer extends Thread {
         }
         //MESSAGE TO VERIFY LOGIN CREDENTIALS
         else if(map.get("type").equals("login")){
-            if(dados.RMIserver.acceptLogin(Integer.parseInt(map.get("userCC")), map.get("username"), map.get("password"))){
+            boolean accept;
+            while(true){
+                try{
+                    accept = dados.RMIserver.acceptLogin(Integer.parseInt(map.get("userCC")), map.get("username"), map.get("password"));
+                    break;
+                }catch(Exception e){
+                    dados.setRMIserver();
+                }
+            }
+            if(accept){
                 send(socket, "type | status; logged | on; id | " + map.get("id"));
             }
             else{
@@ -138,7 +150,15 @@ public class MulticastServer extends Thread {
         }
         //MESSAGE TO GET THE LIST OF CANDIDATES
         else if(map.get("type").equals("candidates")){
-            ArrayList<String> candidates = dados.RMIserver.getCandidates(map.get("election"));
+            ArrayList<String> candidates;
+            while(true){
+                try{
+                    candidates = dados.RMIserver.getCandidates(map.get("election"));
+                    break;
+                }catch(Exception e){
+                    dados.setRMIserver();
+                }
+            }
             send(socket, "id | " + map.get("id") + "; type | candidateS; " + candidatesToString(candidates));
         }
     }
@@ -198,7 +218,7 @@ class MulticastUserS extends Thread {
         }
     }
 
-    private void getCC(MulticastSocket socket) throws IOException {
+    private void getCC(MulticastSocket socket) throws IOException, NotBoundException {
 
         System.out.println("Inserir número de Identificação: ");
         System.out.print("> ");
@@ -214,10 +234,28 @@ class MulticastUserS extends Thread {
             System.out.println("(!) FORMATO INVÁLIDO DE NÚMERO DE IDENTIFICAÇÃO");
             return;
         }
+        boolean registered;
+        //VERIFICA SE O ELEITOR SE ENCONTRA REGISTADO
+        while(true){
+            try{
+                registered = dados.RMIserver.isRegistered(CC);
+                break;
+            }catch(Exception e){
+                dados.setRMIserver();
+            }
+        }
 
-        if(dados.RMIserver.isRegistered(CC)){ //REGISTADO
+        if(registered){ //REGISTADO
 
-            ArrayList<String> elections = dados.RMIserver.getElections(CC, dados.getName());
+            ArrayList<String> elections;
+            while(true){
+                try{
+                    elections = dados.RMIserver.getElections(CC, dados.getName());
+                    break;
+                }catch(Exception e){
+                    dados.setRMIserver();
+                }
+            }
             if(elections.size() > 0){ //EXISTEM ELEIÇÕES DISPONÍVEIS NESTA MESA
                 String electionName = chooseElection(elections);
                 //SEND DATA TO ALL THE CLIENTS
@@ -245,7 +283,7 @@ class MulticastUserS extends Thread {
                 getCC(socket);
                 Thread.sleep(100);
             }
-        } catch (IOException | InterruptedException e) {
+        } catch (IOException | InterruptedException | NotBoundException e) {
             e.printStackTrace();
         } finally {
             socket.close();
@@ -264,7 +302,7 @@ class Vote extends Thread {
         this.MULTICAST_ADDRESS = ip;
     }
 
-    public void receiveVote(MulticastSocket socket) throws IOException {
+    public void receiveVote(MulticastSocket socket) throws IOException, NotBoundException {
 
         //RECEIVE UDP PACKET WHICH CONTAINS THE INFORMATION
         byte[] buffer = new byte[256];
@@ -282,13 +320,27 @@ class Vote extends Thread {
 
         if(map.get("type").equals("vote")){
             String option = map.get("option");
-            dados.RMIserver.vote(map.get("election"), option);
+            while(true){
+                try{
+                    dados.RMIserver.vote(map.get("election"), option);
+                    break;
+                }catch(Exception e){
+                    dados.setRMIserver();
+                }
+            }
         }
         else if(map.get("type").equals("elector")){
             String election = map.get("election");
             String userCC = map.get("userCC");
             System.out.println(userCC + " votou em " + election);
-            dados.RMIserver.addElector(election,Integer.parseInt(userCC),dados.getName());
+            while(true){
+                try{
+                    dados.RMIserver.addElector(election,Integer.parseInt(userCC),dados.getName());
+                    break;
+                }catch(Exception e){
+                    dados.setRMIserver();
+                }
+            }
         }
     }
 
@@ -302,7 +354,7 @@ class Vote extends Thread {
             while (true) {
                 receiveVote(socket);
             }
-        } catch (IOException e) {
+        } catch (IOException | NotBoundException e) {
             e.printStackTrace();
         } finally {
             socket.close();
