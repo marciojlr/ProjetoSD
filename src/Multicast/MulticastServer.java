@@ -126,7 +126,7 @@ public class MulticastServer extends Thread {
             if(Integer.parseInt(map.get("request")) == dados.getPedido()){
                 dados.setPedido();
                 send(socket, "type | chosen; id | " + map.get("id") + "; userCC | " + map.get("userCC") + "; election | " + map.get("election"));
-                System.out.println("POR FAVOR EFETUE O SEU VOTO: " + map.get("id"));
+                System.out.println("\n- - - - POR FAVOR EFETUE O SEU VOTO: " + map.get("id") + " - - - -");
             }
         }
         //MESSAGE TO VERIFY LOGIN CREDENTIALS
@@ -141,9 +141,11 @@ public class MulticastServer extends Thread {
                 }
             }
             if(accept){
+                // type | status; logged | on; id | 123;
                 send(socket, "type | status; logged | on; id | " + map.get("id"));
             }
             else{
+                // type | status; logged | of; id | 123;
                 send(socket, "type | status; logged | off; id | " + map.get("id"));
             }
 
@@ -159,7 +161,7 @@ public class MulticastServer extends Thread {
                     dados.setRMIserver();
                 }
             }
-            send(socket, "id | " + map.get("id") + "; type | candidateS; " + candidatesToString(candidates));
+            send(socket, "id | " + map.get("id") + "; type | candidatesList; " + candidatesToString(candidates));
         }
     }
 
@@ -246,7 +248,6 @@ class MulticastUserS extends Thread {
         }
 
         if(registered){ //REGISTADO
-
             ArrayList<String> elections;
             while(true){
                 try{
@@ -281,7 +282,7 @@ class MulticastUserS extends Thread {
             while (true) {
                 System.out.println("\n----------< MESA " + dados.getName() + " >----------");
                 getCC(socket);
-                Thread.sleep(100);
+                Thread.sleep(200);
             }
         } catch (IOException | InterruptedException | NotBoundException e) {
             e.printStackTrace();

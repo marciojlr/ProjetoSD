@@ -103,10 +103,9 @@ public class MulticastClient extends Thread {
                 send(socket, "type | freeTerminal; id | " + this.getName() + "; request | " + map.get("request") + "; userCC | " + map.get("userCC") + "; election | " + map.get("election"));
             }
         }
-        // MESSAGES TO SPECIFIC TERMINAL
+        //MESSAGES TO SPECIFIC TERMINAL
         else if(map.get("id").equals(this.getName())){
-
-            // IF THIS WAS THE CHOSEN TERMINAL
+            //IF THIS WAS THE CHOSEN TERMINAL
             if(map.get("type").equals("chosen")){
                     int userCC = Integer.parseInt(map.get("userCC"));
                     data.setFree(false);
@@ -114,12 +113,12 @@ public class MulticastClient extends Thread {
                     data.setBlocked(false);
                     data.setElectionName(map.get("election"));
             }
-            // VERIFY IF LOGIN CREDENTIALS ARE CORRECT
+            //VERIFY IF LOGIN CREDENTIALS ARE CORRECT
             else if(map.get("type").equals("status")){
                 if(map.get("logged").equals("on")){
-                    data.setLoggedIn(true);
                     System.out.println("Welcome to eVoting");
                     send(socket, "type | candidates; election | " + data.getElectionName() + "; id | " + this.getName());
+                    data.setLoggedIn(true);
                 }
                 else{
                     data.setLoggedIn(false);
@@ -127,7 +126,7 @@ public class MulticastClient extends Thread {
                 }
             }
             // TODO: alterar o type
-            else if(map.get("type").equals("candidateS")){
+            else if(map.get("type").equals("candidatesList")){
                 getCandidatesList(map);
             }
         }
@@ -188,16 +187,27 @@ class MulticastUser extends Thread {
                     System.out.print("Password: ");
                     String password = keyboardScanner.nextLine();
                     send(socket, "type | login; id | " + this.getName() + "; userCC | " + data.getUserCC() + "; username | " + username + "; password | " + password);
-                    Thread.sleep(500);
-                    if(data.isLoggedIn()){
-                        System.out.print("> ");
-                        //INPUT COM OPÇÃO DE VOTO
-                        String vote = keyboardScanner.nextLine();
-                        sendVote(voteSocket, "type | vote; election | " + data.getElectionName() + "; option | " + vote);
-                        sendVote(voteSocket, "type | elector; election | " + data.getElectionName() + "; userCC | " + data.getUserCC());
-                        data.setBlocked(true);
-                        data.setFree(true);
-                        data.setLoggedIn(false);
+                    int contador = 0;
+                    while(contador < 60){
+                        if(data.isLoggedIn()){
+                            System.out.print("> ");
+                            //INPUT COM OPÇÃO DE VOTO
+                            String vote = keyboardScanner.nextLine();
+                            sendVote(voteSocket, "type | vote; election | " + data.getElectionName() + "; option | " + vote);
+                            sendVote(voteSocket, "type | elector; election | " + data.getElectionName() + "; userCC | " + data.getUserCC());
+                            data.setBlocked(true);
+                            data.setFree(true);
+                            data.setLoggedIn(false);
+                            break;
+                        }
+                        contador++;
+                        if(contador == 59){
+                            data.setBlocked(true);
+                            data.setFree(true);
+                            data.setLoggedIn(false);
+                            System.out.println("(!) OS SERVIDORES FORAM A BAIXO, POR FAVOR DIRIJA-SE À MESA DE VOTO");
+                        }
+                        Thread.sleep(500);
                     }
                 }
             }
