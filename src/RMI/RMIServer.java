@@ -240,6 +240,18 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
 
     //******************************************** MÉTODOS CHAMADOS PELO SERVIDOR MULTICAST **************************************************
+    public void sendNotification(String message){
+        //ENVIAR MENSAGEM AOS CLIENTES
+        for(RMI_C_I c : client){
+            try {
+                c.notification(message);
+            } catch (RemoteException e) {
+                client.remove(c);
+                System.out.println("Notificaçao nao enviada!");
+            }
+        }
+    }
+
     public boolean isRegistered(int CC){
 
         for(Pessoa pessoa : listaPessoas){
@@ -258,19 +270,15 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
                 break;
             }
         }
+        String message = "A mesa " + dept + "encontra-se em funcionamento!";
+        sendNotification(message);
     }
 
     public boolean acceptLogin(int userCC, String name, String password){
         for(Pessoa pessoa : listaPessoas){
             if(pessoa.getCC() == userCC && pessoa.getNome().equals(name) && pessoa.getPassword().equals(password)){
-                for(RMI_C_I c : client){
-                    try{
-                        c.loginNotification(userCC, name);
-                    }catch (RemoteException e){
-                        System.out.println("Notificaçao nao enviada!");
-                    }
-
-                }
+                String message = "Eleitor com o nome " + name + "e CC " + userCC + ", efetuou login num terminal.";
+                sendNotification(message);
                 return true;
             }
         }

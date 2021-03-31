@@ -867,28 +867,9 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     }
     //==================================================================
 
-    public void mesaNotification(String mesa){
+    public void notification(String message){
         if(notifications){
-            System.out.println("Mesa: " + mesa + " is On ");
-        }
-    }
-
-    public void loginNotification(int userCC, String mesa){
-        if(notifications){
-            System.out.println("Novo eleitor chegou à mesa " + mesa);
-        }
-    }
-
-    @Override
-    public void newServer() throws RemoteException, NotBoundException, MalformedURLException {
-        while (true){
-            try {
-                //Thread.sleep(1000);
-                adminConsole = (RMI_S_I) Naming.lookup("Server");
-                break;
-            }catch(NotBoundException  | RemoteException |MalformedURLException m){
-                System.out.println("nao conectei");
-            }
+            System.out.println(message);
         }
     }
 }
