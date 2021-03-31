@@ -25,6 +25,8 @@ public interface RMI_S_I extends Remote {
     ArrayList<String> LocalVoto(String pessoa) throws RemoteException;
     boolean checkDepartamentExist(Departamento d) throws RemoteException;
     ArrayList<Eleicao> getEleicoesPassadas() throws RemoteException;
+    public ArrayList<Eleicao> getEleicoesElegiveis() throws RemoteException;
+    public ArrayList<Departamento> getDepartamentosElegiveis(Eleicao e) throws RemoteException;
 
     //MÉTODOS CHAMADAS PELO SERVIDOR MULTICAST
     boolean isRegistered(int CC) throws RemoteException;

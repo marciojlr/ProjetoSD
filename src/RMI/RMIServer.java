@@ -192,6 +192,35 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return listaEleicoesPassadas;
     }
 
+    public ArrayList<Eleicao> getEleicoesElegiveis(){
+        ArrayList<Eleicao> elegieis = new ArrayList<>();
+        GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
+        for(Eleicao e : this.getListaEleicoes()){
+           if(e.getData_inicio().compareTo(date) > 0){
+               elegieis.add(e);
+           }
+        }
+        return elegieis;
+    }
+
+    public ArrayList<Departamento> getDepartamentosElegiveis(Eleicao e){
+        ArrayList<Departamento> deptsElegiveis = new ArrayList<>();
+        boolean encontrou = false;
+        for (Departamento d: this.getListaDepartamentos()) {
+            for(Departamento d2 : e.getDept()){
+                if(d2.getNome().equals(d.getNome())){
+                    encontrou= true;
+                }
+            }
+            if(encontrou == false){
+                deptsElegiveis.add(d);
+            }
+            else{
+                encontrou= false;
+            }
+        }
+        return deptsElegiveis;
+    }
 
     public ArrayList<String> LocalVoto(String pessoa){
         ArrayList<String> locais = new ArrayList<>();
