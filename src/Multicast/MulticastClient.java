@@ -54,7 +54,7 @@ public class MulticastClient extends Thread {
                 String message = readMessage(socket);
                 readComands(socket,message);
             }
-        } catch (IOException e) {
+        } catch (IOException | InterruptedException e) {
             e.printStackTrace();
         } finally {
             socket.close();
@@ -86,9 +86,10 @@ public class MulticastClient extends Thread {
         }
         //OPÇÃO DE VOTO EM BRANCO
         System.out.println(size + ". Voto Branco");
+        System.out.print("> ");
     }
 
-    private void readComands(MulticastSocket socket, String message) throws IOException {
+    private void readComands(MulticastSocket socket, String message) throws IOException, InterruptedException {
         HashMap<String,String> map = new HashMap();
         String[] pares =  message.split("; ");
 
@@ -124,8 +125,8 @@ public class MulticastClient extends Thread {
                     data.setLoggedIn(false);
                     System.out.println("\n(!) CREDENCIAIS ERRADAS\n");
                 }
+                data.go();
             }
-            // TODO: alterar o type
             else if(map.get("type").equals("candidatesList")){
                 getCandidatesList(map);
             }
@@ -187,10 +188,8 @@ class MulticastUser extends Thread {
                     System.out.print("Password: ");
                     String password = keyboardScanner.nextLine();
                     send(socket, "type | login; id | " + this.getName() + "; userCC | " + data.getUserCC() + "; username | " + username + "; password | " + password);
-                    int contador = 0;
-                    while(contador < 60){
+                    data.stop();
                         if(data.isLoggedIn()){
-                            System.out.print("> ");
                             //INPUT COM OPÇÃO DE VOTO
                             String vote = keyboardScanner.nextLine();
                             sendVote(voteSocket, "type | vote; election | " + data.getElectionName() + "; option | " + vote);
@@ -198,17 +197,8 @@ class MulticastUser extends Thread {
                             data.setBlocked(true);
                             data.setFree(true);
                             data.setLoggedIn(false);
-                            break;
-                        }
-                        contador++;
-                        if(contador == 59){
-                            data.setBlocked(true);
-                            data.setFree(true);
-                            data.setLoggedIn(false);
-                            System.out.println("(!) OS SERVIDORES FORAM A BAIXO, POR FAVOR DIRIJA-SE À MESA DE VOTO");
                         }
                         Thread.sleep(500);
-                    }
                 }
             }
         } catch (IOException | InterruptedException e) {
@@ -237,6 +227,13 @@ class Data{
         this.electionName = "";
     }
 
+    synchronized void stop() throws InterruptedException {
+        wait(30000);
+    }
+
+    synchronized void go() throws InterruptedException {
+        notify();
+    }
     public void setUserCC(int userCC){
         this.userCC = userCC;
     }

@@ -290,10 +290,18 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
         //ENCONTRAR ELEIÇÕES COMUNS HÁ MESA E ELEITORES
         for(Eleicao e : listaEleicoes){
+            boolean voted = false;
             if(e.getTipo_Pessoa().equals(eleitor.getTipo()) && e.getData_inicio().compareTo(date) < 0 && e.getData_final().compareTo(date) > 0){
+                for(Pessoa p : e.getVotantes()){
+                    if(p.getCC() == userCC){
+                        voted = true;
+                        break;
+                    }
+                }
                 for(Departamento d : e.getDept()){
-                    if(d.getNome().equals(departamento)){
+                    if(d.getNome().equals(departamento) && voted == false){
                         eleicoes.add(e.getTitulo());
+                        break;
                     }
                 }
             }
