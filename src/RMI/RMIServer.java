@@ -146,7 +146,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         escreveFicheiroEleicoes();
     }
 
-    public String AlteraEleicao(String eleicao, int data_inicio,int data_fim,String titulo, String descricao){
+    public String AlteraEleicao(String eleicao, GregorianCalendar data_inicio ,GregorianCalendar data_fim,String titulo, String descricao){
 
         GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
         for(Eleicao e : listaEleicoes){
@@ -154,8 +154,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
                 if(e.getData_inicio().compareTo(date) < 0){
                     return "NAO É POSSIVEL";
                 }
-                e.setData_inicio(null);
-                e.setData_final(null);
+                e.setData_inicio(data_inicio);
+                e.setData_final(data_fim);
                 e.setTitulo(titulo);
                 e.setDescricao(descricao);
             }
