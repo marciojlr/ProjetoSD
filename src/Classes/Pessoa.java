@@ -27,6 +27,12 @@ public class Pessoa implements Serializable{
         this.morada = morada;
     }
 
+    public Pessoa(String nome, int CC, String localVoto) {
+        this.nome = nome;
+        this.CC = CC;
+        this.localVoto = localVoto;
+    }
+
     public String getLocalVoto() {
         return localVoto;
     }

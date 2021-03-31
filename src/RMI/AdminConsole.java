@@ -728,20 +728,22 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     public static void LocaisDeVoto() throws RemoteException{
         Scanner s = new Scanner(System.in);
-        System.out.println("Insira o nome da pessoa:");
-
+        System.out.println("Insira o nome do eleitor");
+        System.out.print("> ");
         String nome = s.nextLine();
 
         try {
             ArrayList<String> locais= adminConsole.LocalVoto(nome);
             if(locais.isEmpty()){
-                System.out.println("A pessoa em questão ainda nao efectuou nenhuma votação");
-                return;
+                System.out.println("\n(!) A PESSOA EM QUESTÃO AINDA NÃO EFETUOU NENHUMA VOTAÇÃO\n");
             }
-            for (String str:locais) {
-                System.out.println(str);
+            else{
+                System.out.println("\nLista de locais onde " + nome + " votou:");
+                for (String str:locais) {
+                    System.out.println(str);
+                }
+                System.out.print("\n");
             }
-
         }catch (RemoteException e ){
             while (true){
                 try {
@@ -753,7 +755,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 }
             }
         }
-
     }
 
     public static void ConsultarEleicoesPassadas() throws RemoteException{

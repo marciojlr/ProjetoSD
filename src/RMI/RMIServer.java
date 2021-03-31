@@ -4,11 +4,8 @@ import Classes.ListaCandidata;
 import Classes.Pessoa;
 import Classes.Eleicao;
 import Classes.Departamento;
-import Multicast.MulticastServer;
 
 import java.io.*;
-import java.net.MalformedURLException;
-import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
 import java.rmi.server.UnicastRemoteObject;
@@ -27,121 +24,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     protected RMIServer() throws RemoteException {
         super();
     }
-
-    //LEITURA E ESCRITA DE FICHEIROS OBJETO
-    public  void escreveFicheiroPessoas(){
-
-        File f = new File("Pessoas.obj");
-
-        try{
-            FileOutputStream os = new FileOutputStream(f);
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-
-            oos.writeObject(this.listaPessoas);
-
-            oos.close();
-
-        }catch(FileNotFoundException e){
-            System.out.println("Erro a criar ficheiro");
-        }
-        catch(IOException e){
-            System.out.println("Erro a escrever para ficheiro");
-        }
-    }
-    public void escreveFicheiroEleicoes(){
-
-        File f = new File("Eleicoes.obj");
-
-        try{
-            FileOutputStream os = new FileOutputStream(f);
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-
-            oos.writeObject(this.listaEleicoes);
-
-            oos.close();
-
-        }catch(FileNotFoundException e){
-            System.out.println("Erro a criar ficheiro");
-        }
-        catch(IOException e){
-            System.out.println("Erro a escrever para ficheiro");
-        }
-    }
-    public void escreveFicheiroDepartamentos(){
-
-        File f = new File("Departamentos.obj");
-
-        try{
-            FileOutputStream os = new FileOutputStream(f);
-            ObjectOutputStream oos = new ObjectOutputStream(os);
-
-            oos.writeObject(this.listaDepartamentos);
-
-            oos.close();
-
-        }catch(FileNotFoundException e){
-            System.out.println("Erro a criar ficheiro");
-        }
-        catch(IOException e){
-            System.out.println("Erro a escrever para ficheiro");
-        }
-    }
-
-
-    public  static void leFicheiroPessoas() throws IOException, ClassNotFoundException {
-
-        File f = new File("Pessoas.obj");
-        try {
-            FileInputStream fis = new FileInputStream(f);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-
-            listaPessoas = (ArrayList<Pessoa>) ois.readObject();
-            ois.close();
-        }catch (FileNotFoundException e){
-            System.out.println("Erro ao abrir o ficheiro");
-            listaPessoas = new ArrayList<Pessoa>();
-        } catch(IOException e){
-            System.out.println("Erro a escrever para ficheiro");
-        }
-
-    }
-
-    public  static void leFicheiroEleicoes() throws IOException, ClassNotFoundException {
-
-        File f = new File("Eleicoes.obj");
-        try {
-            FileInputStream fis = new FileInputStream(f);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-
-             listaEleicoes= (ArrayList<Eleicao>) ois.readObject();
-            ois.close();
-        }catch (FileNotFoundException e){
-            System.out.println("Erro ao abrir o ficheiro");
-            listaEleicoes = new ArrayList<Eleicao>();
-        } catch(IOException e){
-            System.out.println("Erro a escrever para ficheiro");
-        }
-
-    }
-
-    public  static void leFicheiroDepartamentos() throws IOException, ClassNotFoundException {
-
-        File f = new File("Departamentos.obj");
-        try {
-            FileInputStream fis = new FileInputStream(f);
-            ObjectInputStream ois = new ObjectInputStream(fis);
-
-            listaDepartamentos = (ArrayList<Departamento>) ois.readObject();
-            ois.close();
-        }catch (FileNotFoundException e){
-            System.out.println("Erro ao abrir o ficheiro");
-            listaDepartamentos = new ArrayList<Departamento>();
-        } catch(IOException e){
-            System.out.println("Erro a escrever para ficheiro");
-        }
-
-    }
-
 
     //MÉTODOS CHAMADOS PELA CONSOLA DE ADMINISTRAÇÃO
     public String teste (RMI_C_I c){
@@ -187,7 +69,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     public void AddListaCandidata(Eleicao e, String nome){
         int i=0;
         Eleicao aux=null;
-        for (Eleicao e2: this.listaEleicoes) {
+        for (Eleicao e2: listaEleicoes) {
             if(e2.getTitulo().equals(e.getTitulo())){
                 System.out.println("Entrei aqui");
                 e2.addListaCandidata(nome);
@@ -202,7 +84,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     public void RemoveListaCandidata(Eleicao e, String nome){
-        for (Eleicao el: this.listaEleicoes ) {
+        for (Eleicao el: listaEleicoes ) {
             if(el.getTitulo().equals(e.getTitulo())){
                 System.out.println("Entrei aqui");
                 System.out.println(el.getListaCandidata());
@@ -224,13 +106,13 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         //listaMesasVoto.add(s);
 
 
-       for (Eleicao el: this.listaEleicoes
+       for (Eleicao el: listaEleicoes
              ) {
             if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
                 el.getDept().add(d);
             }
         }
-        for (Eleicao el: this.listaEleicoes
+        for (Eleicao el: listaEleicoes
         ) {
             if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
                 System.out.println(el.toString());
@@ -248,7 +130,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         //TODO Multicast receber o departamento
         //MulticastServer s = new MulticastServer(d);
         //listaMesasVoto.remove(s);
-        for (Eleicao el: this.listaEleicoes
+        for (Eleicao el: listaEleicoes
         ) {
             if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
                 el.removeDepartamento(d);
@@ -256,7 +138,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
 
         System.out.println("Mesa removida com sucesso");
-        for (Eleicao el: this.listaEleicoes
+        for (Eleicao el: listaEleicoes
         ) {
             if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
                 System.out.println(el.toString());
@@ -292,7 +174,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     public boolean checkDepartamentExist(Departamento d){
 
-        for(Departamento dept : this.listaDepartamentos){
+        for(Departamento dept : listaDepartamentos){
             if(dept.getNome().equals(d.getNome())){
                 return false;
             }
@@ -316,7 +198,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     //TODO: TESTAR QUANDO A PARTE DOS LOCAIS DE VOTOS ESTIVER FEITA
     public ArrayList<String> LocalVoto(String pessoa){
         ArrayList<String> locais = new ArrayList<>();
-        for (Eleicao e: this.listaEleicoes) {
+        for (Eleicao e: listaEleicoes) {
             for(Pessoa p: e.getVotantes()){
                 if(p.getNome().equals(pessoa)){
                     String s = "Eleiçao: " + e.getTitulo() + "  " + "Local: " + p.getLocalVoto();
@@ -332,7 +214,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     //MÉTODOS CHAMADOS PELO SERVIDOR MULTICAST
     public boolean isRegistered(int CC){
 
-        for(Pessoa pessoa : this.listaPessoas){
+        for(Pessoa pessoa : listaPessoas){
             if(pessoa.getCC() == CC){
                 return true;
             }
@@ -355,17 +237,17 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     public ArrayList<String> getElections(int userCC, String departamento){
         Pessoa eleitor = null;
-        ArrayList<String> eleicoes = new ArrayList<String>();
+        ArrayList<String> eleicoes = new ArrayList<>();
 
         //ENCONTRAR ELEITOR
-        for(Pessoa p : this.listaPessoas){
+        for(Pessoa p : listaPessoas){
             if(p.getCC() == userCC){
                 eleitor = p;
             }
         }
 
         //ENCONTRAR ELEIÇÕES COMUNS HÁ MESA E ELEITORES
-        for(Eleicao e : this.listaEleicoes){
+        for(Eleicao e : listaEleicoes){
             if(e.getTipo_Pessoa().equals(eleitor.getTipo())){
                 for(Departamento d : e.getDept()){
                     if(d.getNome().equals(departamento)){
@@ -382,7 +264,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         ArrayList<String> listas = new ArrayList<String>();
 
         //ENCONTRAR A ELEIÇÃO
-        for(Eleicao e : this.listaEleicoes){
+        for(Eleicao e : listaEleicoes){
             if(e.getTitulo().equals(election)){
                 //RETIRA AS LISTAS CANDIDATAS
                 for(ListaCandidata lista : e.getListaCandidata()){
@@ -401,7 +283,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }catch(Exception e){
             vote = -1;
         }
-        for(Eleicao e : this.listaEleicoes){
+        for(Eleicao e : listaEleicoes){
             if(e.getTitulo().equals(election)){
 
                 //SE FOR UMA OPÇÃO INVÁLIDA CONSIDERA VOTO NULO
@@ -429,7 +311,136 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     public void addElector(String election, int userCC, String department){
-        //todo: ter em atenção que aqui se mudarmos um, mudamos todos porque não é copia
+        Pessoa eleitor = null;
+        Pessoa pessoa = null;
+        //PROCURAR PESSOA
+        for(Pessoa p : this.getListaPessoas()){
+            if(userCC == p.getCC()){
+                pessoa = p;
+                break;
+            }
+        }
+        //FAZER COPIA DOS DADOS
+        if(pessoa != null){
+            eleitor = new Pessoa(pessoa.getNome(), userCC, department);
+        }
+        //ADICIONAR VOTANTE
+        for(Eleicao e : this.getListaEleicoes()){
+            if(e.getTitulo().equals(election)){
+                e.getVotantes().add(eleitor);
+                break;
+            }
+        }
+    }
+
+    //LEITURA E ESCRITA DE FICHEIROS OBJETO
+    public  void escreveFicheiroPessoas(){
+
+        File f = new File("Pessoas.obj");
+
+        try{
+            FileOutputStream os = new FileOutputStream(f);
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+
+            oos.writeObject(listaPessoas);
+
+            oos.close();
+
+        }catch(FileNotFoundException e){
+            System.out.println("Erro a criar ficheiro");
+        }
+        catch(IOException e){
+            System.out.println("Erro a escrever para ficheiro");
+        }
+    }
+    public void escreveFicheiroEleicoes(){
+
+        File f = new File("Eleicoes.obj");
+
+        try{
+            FileOutputStream os = new FileOutputStream(f);
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+
+            oos.writeObject(listaEleicoes);
+
+            oos.close();
+
+        }catch(FileNotFoundException e){
+            System.out.println("Erro a criar ficheiro");
+        }
+        catch(IOException e){
+            System.out.println("Erro a escrever para ficheiro");
+        }
+    }
+    public void escreveFicheiroDepartamentos(){
+
+        File f = new File("Departamentos.obj");
+
+        try{
+            FileOutputStream os = new FileOutputStream(f);
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+
+            oos.writeObject(listaDepartamentos);
+
+            oos.close();
+
+        }catch(FileNotFoundException e){
+            System.out.println("Erro a criar ficheiro");
+        }
+        catch(IOException e){
+            System.out.println("Erro a escrever para ficheiro");
+        }
+    }
+    public  static void leFicheiroPessoas() throws ClassNotFoundException {
+
+        File f = new File("Pessoas.obj");
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            listaPessoas = (ArrayList<Pessoa>) ois.readObject();
+            ois.close();
+        }catch (FileNotFoundException e){
+            System.out.println("Erro ao abrir o ficheiro");
+            listaPessoas = new ArrayList<>();
+        } catch(IOException e){
+            System.out.println("Erro a escrever para ficheiro");
+        }
+
+    }
+    public  static void leFicheiroEleicoes() throws ClassNotFoundException {
+
+        File f = new File("Eleicoes.obj");
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            listaEleicoes= (ArrayList<Eleicao>) ois.readObject();
+            ois.close();
+        }catch (FileNotFoundException e){
+            System.out.println("Erro ao abrir o ficheiro");
+            listaEleicoes = new ArrayList<>();
+        } catch(IOException e){
+            System.out.println("Erro a escrever para ficheiro");
+        }
+
+    }
+    public  static void leFicheiroDepartamentos() throws ClassNotFoundException {
+
+        File f = new File("Departamentos.obj");
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            listaDepartamentos = (ArrayList<Departamento>) ois.readObject();
+            ois.close();
+        }catch (FileNotFoundException e){
+            System.out.println("Erro ao abrir o ficheiro");
+            listaDepartamentos = new ArrayList<>();
+        } catch(IOException e){
+            System.out.println("Erro a escrever para ficheiro");
+        }
+
     }
 
     public static void main(String [] args ) throws IOException, ClassNotFoundException {
@@ -441,18 +452,14 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         leFicheiroEleicoes();
 
 
-        try
-        {
+        try {
             LocateRegistry.createRegistry(1099).rebind("Server",server);
             System.out.println("RMI Server ready...!");
-        }
-        catch (RemoteException exception){
-            System.out.println(exception);
+        } catch (RemoteException exception){
             System.out.println("O server principal já se encontra ligado");
 
             while(failed){
-                try
-                {
+                try {
                     Thread.sleep(5000);
                     System.out.println("A tentar de novo");
                     LocateRegistry.createRegistry(1099).rebind("Server",server);
@@ -461,8 +468,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
                     leFicheiroPessoas();
                     leFicheiroEleicoes();
                     leFicheiroDepartamentos();
-                }
-                catch (InterruptedException | RemoteException exception2) {
+
+                } catch (InterruptedException | RemoteException exception2) {
                     System.out.println(exception2);
                 }
             }

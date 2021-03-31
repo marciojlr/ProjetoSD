@@ -285,7 +285,10 @@ class Vote extends Thread {
             dados.RMIserver.vote(map.get("election"), option);
         }
         else if(map.get("type").equals("elector")){
-            //todo: chamar a função que diz que a pessoa votou (pessoa, eleicao)
+            String election = map.get("election");
+            String userCC = map.get("userCC");
+            System.out.println(userCC + " votou em " + election);
+            dados.RMIserver.addElector(election,Integer.parseInt(userCC),dados.getName());
         }
     }
 
