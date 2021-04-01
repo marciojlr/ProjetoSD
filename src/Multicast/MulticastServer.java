@@ -240,7 +240,7 @@ class MulticastUserS extends Thread {
         //VERIFICA SE O ELEITOR SE ENCONTRA REGISTADO
         while(true){
             try{
-                registered = dados.RMIserver.isRegistered(CC);
+                registered = dados.RMIserver.isRegistered(CC, dados.getName());
                 break;
             }catch(Exception e){
                 dados.setRMIserver();

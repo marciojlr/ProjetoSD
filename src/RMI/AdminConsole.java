@@ -574,8 +574,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             }
         }
 
-
-
         if(deptsElegiveis.isEmpty()){
             System.out.println("(!) Nao existem.");
             return;

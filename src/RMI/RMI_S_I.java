@@ -29,7 +29,7 @@ public interface RMI_S_I extends Remote {
     public ArrayList<Departamento> getDepartamentosElegiveis(Eleicao e) throws RemoteException;
 
     //MÉTODOS CHAMADAS PELO SERVIDOR MULTICAST
-    boolean isRegistered(int CC) throws RemoteException;
+    boolean isRegistered(int CC, String department) throws RemoteException;
     void ping(String dept) throws RemoteException;
     boolean acceptLogin(int userCC, String name, String password) throws RemoteException;
     ArrayList<String> getElections(int userCC, String departamento) throws RemoteException;

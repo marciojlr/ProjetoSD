@@ -252,10 +252,12 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
     }
 
-    public boolean isRegistered(int CC){
+    public boolean isRegistered(int CC, String department){
 
         for(Pessoa pessoa : listaPessoas){
             if(pessoa.getCC() == CC){
+                String message = "Eleitor com o nome " + pessoa.getNome() + " e CC " + CC + ", chegou à mesa " + department + ".";
+                sendNotification(message);
                 return true;
             }
         }
@@ -277,7 +279,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     public boolean acceptLogin(int userCC, String name, String password){
         for(Pessoa pessoa : listaPessoas){
             if(pessoa.getCC() == userCC && pessoa.getNome().equals(name) && pessoa.getPassword().equals(password)){
-                String message = "Eleitor com o nome " + name + "e CC " + userCC + ", efetuou login num terminal.";
+                String message = "Eleitor com o nome " + name + " e CC " + userCC + ", efetuou login num terminal.";
                 sendNotification(message);
                 return true;
             }
@@ -389,6 +391,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
                 break;
             }
         }
+        String message = "Eleitor com o nome " + pessoa.getNome() + " e CC " + userCC + ", efetuou o voto na mesa " + department;
+        sendNotification(message);
     }
 
     //LEITURA E ESCRITA DE FICHEIROS OBJETO
