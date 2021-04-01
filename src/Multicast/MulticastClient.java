@@ -33,10 +33,10 @@ public class MulticastClient extends Thread {
     }
 
     public static void main(String[] args) {
-        long number = (long) (Math.random() * 1000);
+        long number = Integer.parseInt(args[0]);
         Data data = new Data();
-        String ipMesa = args[0];
-        String ipVoto = getVoteIp(args[0]);
+        String ipMesa = args[1];
+        String ipVoto = getVoteIp(args[1]);
         System.out.println(ipMesa + " " + ipVoto);
         MulticastClient client = new MulticastClient(number, data, ipMesa);
         client.start();
@@ -50,6 +50,7 @@ public class MulticastClient extends Thread {
             socket = new MulticastSocket(PORT);  // create socket and bind it
             InetAddress group = InetAddress.getByName(MULTICAST_ADDRESS);
             socket.joinGroup(group);
+            send(socket, "type | terminalCrash; id | " + this.getName());
             while (true) {
                 String message = readMessage(socket);
                 readComands(socket,message);
@@ -179,12 +180,14 @@ class MulticastUser extends Thread {
 
             while (true) {
                 System.out.println("----------< " + this.getName() + " >----------");
-                System.out.print("Username: ");
-                String username = keyboardScanner.nextLine();
+                System.out.println("Prima Enter para continuar...");
+                keyboardScanner.nextLine();
                 if(data.getBlocked()){
                     System.out.println("\n(!) A MÁQUINA ENCONTRA-SE BLOQUEADA, DIRIJA-SE À MESA DE VOTO\n");
                 }
                 else{
+                    System.out.print("Username: ");
+                    String username = keyboardScanner.nextLine();
                     System.out.print("Password: ");
                     String password = keyboardScanner.nextLine();
                     send(socket, "type | login; id | " + this.getName() + "; userCC | " + data.getUserCC() + "; username | " + username + "; password | " + password);
@@ -192,13 +195,13 @@ class MulticastUser extends Thread {
                         if(data.isLoggedIn()){
                             //INPUT COM OPÇÃO DE VOTO
                             String vote = keyboardScanner.nextLine();
-                            sendVote(voteSocket, "type | vote; election | " + data.getElectionName() + "; option | " + vote);
+                            sendVote(voteSocket, "type | vote; election | " + data.getElectionName() + "; option | " + vote + "; id | " + this.getName());
                             sendVote(voteSocket, "type | elector; election | " + data.getElectionName() + "; userCC | " + data.getUserCC());
                             data.setBlocked(true);
                             data.setFree(true);
                             data.setLoggedIn(false);
                         }
-                        Thread.sleep(500);
+                        Thread.sleep(1000);
                 }
             }
         } catch (IOException | InterruptedException e) {

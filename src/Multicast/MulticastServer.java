@@ -19,11 +19,13 @@ class DadosPartilhados{
     private int pedido;
     private final String name;
     public RMI_S_I RMIserver;
+    private HashMap<String,String> terminalState;
 
     public DadosPartilhados(String name) throws RemoteException, NotBoundException, MalformedURLException {
         this.pedido = 0;
         this.name = name;
         this.RMIserver = (RMI_S_I) Naming.lookup("Server");
+        this.terminalState = new HashMap();
     }
 
     public int getPedido() {
@@ -40,6 +42,14 @@ class DadosPartilhados{
 
     public void setRMIserver() throws RemoteException, NotBoundException, MalformedURLException {
         this.RMIserver = (RMI_S_I) Naming.lookup("Server");
+    }
+
+    public String getTerminalState(String key) {
+        return this.terminalState.get(key);
+    }
+
+    public void setTerminalState(String key, String value) {
+        this.terminalState.put(key,value);
     }
 }
 
@@ -126,6 +136,7 @@ public class MulticastServer extends Thread {
             if(Integer.parseInt(map.get("request")) == dados.getPedido()){
                 dados.setPedido();
                 send(socket, "type | chosen; id | " + map.get("id") + "; userCC | " + map.get("userCC") + "; election | " + map.get("election"));
+                dados.setTerminalState(map.get("id"),map.get("userCC") + ";" + map.get("election"));
                 System.out.println("\n- - - - POR FAVOR EFETUE O SEU VOTO: " + map.get("id") + " - - - -");
             }
         }
@@ -162,6 +173,15 @@ public class MulticastServer extends Thread {
                 }
             }
             send(socket, "id | " + map.get("id") + "; type | candidatesList; " + candidatesToString(candidates));
+        }
+        //RECOVER FROM TERMINAL CRASH
+        else if(map.get("type").equals("terminalCrash")){
+            String key = map.get("id");
+            String value = dados.getTerminalState(key);
+            if(value != null && !value.equals("0")){
+                String[] keys = value.split(";");
+                send(socket, "type | chosen; id | " + map.get("id") + "; userCC | " + keys[0] + "; election | " + keys[1]);
+            }
         }
     }
 
@@ -329,11 +349,11 @@ class Vote extends Thread {
                     dados.setRMIserver();
                 }
             }
+            dados.setTerminalState(map.get("id"),"0");
         }
         else if(map.get("type").equals("elector")){
             String election = map.get("election");
             String userCC = map.get("userCC");
-            System.out.println(userCC + " votou em " + election);
             while(true){
                 try{
                     dados.RMIserver.addElector(election,Integer.parseInt(userCC),dados.getName());
