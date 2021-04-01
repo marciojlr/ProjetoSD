@@ -14,7 +14,7 @@ public interface RMI_S_I extends Remote {
     void RemoveListaCandidata(Eleicao e, String nome) throws RemoteException;
     public String AlteraEleicao(String eleicao, GregorianCalendar data_inicio ,GregorianCalendar data_fim,String titulo, String descricao) throws RemoteException;
     ArrayList<Departamento> getListaDepartamentos() throws RemoteException;
-    void AddDepartamento(Departamento d) throws RemoteException;
+    boolean AddDepartamento(Departamento d) throws RemoteException;
     void  RemoverMesaVoto(Eleicao e, Departamento d) throws RemoteException;
     void  AddMesaVoto(Eleicao e, Departamento d) throws RemoteException;
     ArrayList<String> LocalVoto(String pessoa) throws RemoteException;
@@ -30,6 +30,5 @@ public interface RMI_S_I extends Remote {
     ArrayList<String> getElections(int userCC, String departamento) throws RemoteException;
     ArrayList<String> getCandidates(String election) throws  RemoteException;
     void vote(String election, String option) throws RemoteException;
-    //TODO: IMPLEMENTAR MÉTODO DE ADICIONAR VOTANTE
     void addElector(String election, int userCC, String department) throws RemoteException;
 }

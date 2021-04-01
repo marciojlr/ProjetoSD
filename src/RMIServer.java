@@ -93,21 +93,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     public void  AddMesaVoto(Eleicao e, Departamento d) {
-        //TODO Multicast receber o departamento
-        //MulticastServer s = new MulticastServer(d);
-        //listaMesasVoto.add(s);
 
-
-       for (Eleicao el: listaEleicoes
-             ) {
+       for (Eleicao el: listaEleicoes) {
             if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
                 el.getDept().add(d);
-            }
-        }
-        for (Eleicao el: listaEleicoes
-        ) {
-            if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
-                System.out.println(el.toString());
             }
         }
 
@@ -118,24 +107,13 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     public void  RemoverMesaVoto(Eleicao e, Departamento d) {
 
-        //TODO Multicast receber o departamento
-        //MulticastServer s = new MulticastServer(d);
-        //listaMesasVoto.remove(s);
-        for (Eleicao el: listaEleicoes
-        ) {
+        for (Eleicao el: listaEleicoes) {
             if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
                 el.removeDepartamento(d);
             }
         }
 
         System.out.println("Mesa removida com sucesso");
-        for (Eleicao el: listaEleicoes
-        ) {
-            if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
-                System.out.println(el.toString());
-            }
-        }
-
         escreveFicheiroEleicoes();
     }
 
@@ -157,14 +135,21 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return "Propriedades Alteradas com sucesso";
     }
 
-    public void AddDepartamento(Departamento d){
+    public boolean AddDepartamento(Departamento d){
         System.out.println("Novo departamento adicionado: " + d);
-        listaDepartamentos.add(d);
-        escreveFicheiroDepartamentos();
+
+        if(checkDepartamentExist(d)){
+            listaDepartamentos.add(d);
+            escreveFicheiroDepartamentos();
+
+            System.out.println(listaDepartamentos);
+            return true;
+        }
+        System.out.println(listaDepartamentos);
+        return false;
     }
 
     public boolean checkDepartamentExist(Departamento d){
-
         for(Departamento dept : listaDepartamentos){
             if(dept.getNome().equals(d.getNome())){
                 return false;
