@@ -28,7 +28,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     public String teste (RMI_C_I c){
         client.add(c);
         System.out.println("olaaaa");
-
+        escreveFicheiroClients();
         return "olaaaaaa";
     }
 
@@ -242,13 +242,21 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     //******************************************** MÉTODOS CHAMADOS PELO SERVIDOR MULTICAST **************************************************
     public void sendNotification(String message){
         //ENVIAR MENSAGEM AOS CLIENTES
+        System.out.println(client);
+        ArrayList<Integer> indices = new ArrayList<>();
+        int i = 0;
         for(RMI_C_I c : client){
             try {
                 c.notification(message);
             } catch (RemoteException e) {
-                client.remove(c);
+                indices.add(i);
                 System.out.println("Notificaçao nao enviada!");
+
             }
+            i++;
+        }
+        for (int j = indices.size()-1 ; j >= 0 ; j--){
+            client.remove(client.get(indices.get(j)));
         }
     }
 
@@ -453,6 +461,44 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             System.out.println("Erro a escrever para ficheiro");
         }
     }
+    public void escreveFicheiroClients(){
+
+        File f = new File("Clients.obj");
+
+        try{
+            FileOutputStream os = new FileOutputStream(f);
+            ObjectOutputStream oos = new ObjectOutputStream(os);
+
+            oos.writeObject(client);
+
+            oos.close();
+
+        }catch(FileNotFoundException e){
+            System.out.println("Erro a criar ficheiro");
+        }
+        catch(IOException e){
+            System.out.println("Erro a escrever para ficheiro");
+        }
+    }
+
+    public static void lerFicheiroClients(){
+        File f = new File("Clients.obj");
+        try {
+            FileInputStream fis = new FileInputStream(f);
+            ObjectInputStream ois = new ObjectInputStream(fis);
+
+            client = (ArrayList<RMI_C_I>) ois.readObject();
+            ois.close();
+
+        }catch (FileNotFoundException e){
+            System.out.println("Erro ao abrir o ficheiro");
+            listaPessoas = new ArrayList<>();
+        } catch(IOException e){
+            System.out.println("Erro a escrever para ficheiro");
+        } catch (ClassNotFoundException e) {
+            e.printStackTrace();
+        }
+    }
     public  static void leFicheiroPessoas() throws ClassNotFoundException {
 
         File f = new File("Pessoas.obj");
@@ -512,7 +558,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         leFicheiroPessoas();
         leFicheiroDepartamentos();
         leFicheiroEleicoes();
-
+        lerFicheiroClients();
 
         try {
             LocateRegistry.createRegistry(1099).rebind("Server",server);
@@ -530,6 +576,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
                     leFicheiroPessoas();
                     leFicheiroEleicoes();
                     leFicheiroDepartamentos();
+                    lerFicheiroClients();
 
                 } catch (InterruptedException | RemoteException exception2) {
                     System.out.println(exception2);

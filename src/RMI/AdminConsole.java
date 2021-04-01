@@ -30,7 +30,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         String teste;
         teste = adminConsole.teste((RMI_C_I) client);
         System.out.println(teste);
-        Departamento dei = new Departamento("DEI");
+        /*Departamento dei = new Departamento("DEI");
         Departamento deec = new Departamento("DEEC");
         GregorianCalendar datainicio = new GregorianCalendar(2021, Calendar.MARCH,26);
         GregorianCalendar datafim = new GregorianCalendar(2021, Calendar.MARCH,30);
@@ -40,7 +40,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         adminConsole.registarPessoa("Filipe","Estudante", "123", deec, 123456789, null,910,"Coimbra");
 
         adminConsole.criarEleicao(datainicio,datafim,"Eleicao 1", "Descricao 1", dei, "Estudante");
-        adminConsole.criarEleicao(datainicio,datafim,"Eleicao 2", "Descricao 2", deec, "Estudante");
+        adminConsole.criarEleicao(datainicio,datafim,"Eleicao 2", "Descricao 2", deec, "Estudante");*/
 
         menu();
 
@@ -126,6 +126,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         return tipo;
     }
 
+    //Todo alterar o while
     public static void  RegistoPessoa(){
 
         Scanner s = new Scanner(System.in);
@@ -148,13 +149,19 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                     try{
                         adminConsole.AddDepartamento(departamento);
                     }catch (RemoteException e){
-                        while (true){
+                        int time=0;
+                        while (time < 30){
                             try{
+                                Thread.sleep(1000);
                                 adminConsole = (RMI_S_I) Naming.lookup("Server");
                                 adminConsole.AddDepartamento(departamento);
                                 break;
-                            }catch (NotBoundException  | RemoteException | MalformedURLException m){
+                            }catch (NotBoundException  | RemoteException | MalformedURLException | InterruptedException m){
                                 System.out.println("nao conectei");
+                                time++;
+                                if(time == 30){
+                                    System.exit(-1);
+                                }
                             }
                         }
                     }
@@ -185,14 +192,19 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 System.out.println("\nELEITOR REGISTADO COM SUCESSO!\n");
             }
         }catch (RemoteException e){
-            while (true){
+            int time=0;
+            while (time < 30){
                 try {
-                    //Thread.sleep(1000);
+                    Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
                     adminConsole.registarPessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada);
                     break;
-                }catch(NotBoundException  | RemoteException | MalformedURLException m){
+                }catch(NotBoundException  | RemoteException | MalformedURLException | InterruptedException m){
                     System.out.println("nao conectei");
+                    time++;
+                    if(time == 30){
+                        System.exit(-1);
+                    }
                 }
             }
         }
@@ -257,13 +269,19 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                     try{
                         adminConsole.AddDepartamento(departamento);
                     }catch (RemoteException e){
-                        while (true){
+                        int time = 0;
+                        while (time < 30){
                             try{
+                                Thread.sleep(1000);
                                 adminConsole = (RMI_S_I) Naming.lookup("Server");
                                 adminConsole.AddDepartamento(departamento);
                                 break;
-                            }catch (NotBoundException  | RemoteException | MalformedURLException m){
-                                System.out.println("nao conectei");
+                            }catch (NotBoundException  | RemoteException | MalformedURLException | InterruptedException m){
+                                time++;
+                                if(time == 30){
+                                    System.exit(-1);
+                                }
+
                             }
                         }
                     }
@@ -280,14 +298,18 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             r = adminConsole.criarEleicao(data_inicio, data_fim , titulo, descricao, departamento, tipo_Pessoa);
             System.out.println(r);
         }catch (RemoteException e){
-            while (true){
+            int time = 0;
+            while (time < 30){
                 try {
-                    //Thread.sleep(1000);
+                    Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
                     adminConsole.criarEleicao(data_inicio, data_fim, titulo, descricao, departamento, tipo_Pessoa);
                     break;
-                }catch(NotBoundException  | RemoteException | MalformedURLException m){
-                    System.out.println("nao conectei");
+                }catch(NotBoundException  | RemoteException | MalformedURLException |InterruptedException m){
+                    time++;
+                    if(time == 30){
+                        System.exit(-1);
+                    }
                 }
             }
         }
@@ -296,18 +318,22 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     public static void gerirListaCandidata(){
         //TODO: Adicionar os membros na parte de criar
-        ArrayList<Eleicao> elegiveis;
+        ArrayList<Eleicao> elegiveis= new ArrayList<>();
         try {
             elegiveis = adminConsole.getEleicoesElegiveis();
         }catch (RemoteException e) {
-            while (true){
+            int time = 0;
+            while (time < 30){
                 try {
-                    //Thread.sleep(1000);
+                    Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
                     elegiveis = adminConsole.getEleicoesElegiveis();
                     break;
-                }catch(NotBoundException  | RemoteException | MalformedURLException m){
-                    System.out.println("nao conectei");
+                }catch(NotBoundException  | RemoteException | MalformedURLException |InterruptedException m){
+                    time++;
+                    if(time == 30){
+                        System.exit(-1);
+                    }
                 }
             }
         }
@@ -375,14 +401,18 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         try{
             adminConsole.AddListaCandidata(elegiveis.get(eleicao-1),nome);
         }catch (RemoteException e){
-            while (true){
+            int time = 0;
+            while (time < 30){
                 try {
-                    //Thread.sleep(1000);
+                    Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
                     adminConsole.AddListaCandidata(elegiveis.get(eleicao-1),nome);
                     break;
-                }catch(NotBoundException  | RemoteException | MalformedURLException m){
-                    System.out.println("nao conectei");
+                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                    time++;
+                    if(time == 30){
+                        System.exit(-1);
+                    }
                 }
             }
         }
@@ -418,14 +448,18 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         try {
             adminConsole.RemoveListaCandidata(elegiveis.get(eleicao-1),elegiveis.get(eleicao-1).getListaCandidata().get(nome-1).getNome());
         }catch (RemoteException e){
-            while (true){
+            int time = 0;
+            while (time < 30){
                 try {
-                    //Thread.sleep(1000);
+                    Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
                     adminConsole.RemoveListaCandidata(elegiveis.get(eleicao-1),elegiveis.get(eleicao-1).getListaCandidata().get(nome-1).getNome());
                     break;
-                }catch(NotBoundException  | RemoteException | MalformedURLException m){
-                    System.out.println("nao conectei");
+                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                    time++;
+                    if(time == 30){
+                        System.exit(-1);
+                    }
                 }
             }
         }
@@ -434,18 +468,22 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     public static void AlteraPropriedadesEleicao(){
 
-        ArrayList<Eleicao> elegiveis;
+        ArrayList<Eleicao> elegiveis = new ArrayList<>();
         try {
             elegiveis = adminConsole.getEleicoesElegiveis();
         }catch (RemoteException e) {
-            while (true){
+            int time = 0;
+            while (time < 30){
                 try {
-                    //Thread.sleep(1000);
+                    Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
                     elegiveis = adminConsole.getEleicoesElegiveis();
                     break;
-                }catch(NotBoundException  | RemoteException |MalformedURLException m){
-                    System.out.println("nao conectei");
+                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                    time++;
+                    if(time == 30){
+                        System.exit(-1);
+                    }
                 }
             }
         }
@@ -495,14 +533,18 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.println(adminConsole.AlteraEleicao(escolha,data_inicio,data_final, titulo,descricao));
 
         }catch(RemoteException e){
-            while (true){
+            int time = 0;
+            while (time < 30){
                 try {
-                    //Thread.sleep(1000);
+                    Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
                     System.out.println(adminConsole.AlteraEleicao(escolha,data_inicio,data_final, titulo,descricao));
                     break;
-                }catch(NotBoundException  | RemoteException |MalformedURLException m){
-                    System.out.println("nao conectei");
+                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                    time++;
+                    if(time == 30){
+                        System.exit(-1);
+                    }
                 }
             }
         }
@@ -557,7 +599,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     public static void AssociarMesaVoto(){
 
         Eleicao e = escolheEleicao();
-        ArrayList<Departamento> deptsElegiveis;
+        ArrayList<Departamento> deptsElegiveis=new ArrayList<>();
 
         try {
             deptsElegiveis = adminConsole.getDepartamentosElegiveis(e);
@@ -579,27 +621,66 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             return;
         }
 
-        int i=1;
-        System.out.println("\nMESAS DISPONÍVEIS");
-        for(Departamento d : deptsElegiveis) {
-            System.out.println(i +". " + d.getNome());
-            i++;
+        boolean valido = false;
+        int opcao= -1;
+        Departamento dept = null;
+        while (!valido){
+            int i=1;
+            System.out.println("\nMESAS DISPONÍVEIS");
+            for(Departamento d : deptsElegiveis) {
+                System.out.println(i +". " + d.getNome());
+                i++;
+            }
+            System.out.println("0. Criar Mesa");
+            Scanner s = new Scanner(System.in);
+            System.out.println("Escolha a mesa que pretende adicionar" );
+            System.out.print("> ");
+            opcao = Integer.parseInt(s.nextLine());
+
+            if( opcao <= deptsElegiveis.size() && opcao > 0 ){
+                valido= true;
+            }
+
+            else if(opcao == 0){
+                dept=criaDepartamento();
+               if(dept!=null){
+                   try {
+                       adminConsole.AddDepartamento(dept);
+                   }catch (RemoteException m){
+                       System.out.println("llllll");
+                   }
+
+                   valido= true;
+               }
+               else{
+                   System.out.println("Verifique a lista");
+               }
+
+            }
+            else {
+                System.out.println("(!) OPÇAO NAO VALIDA");
+            }
         }
 
-
-        Scanner s = new Scanner(System.in);
-        System.out.println("Escolha a mesa que pretende adicionar" );
-        System.out.print("> ");
-        int opcao = Integer.parseInt(s.nextLine());
-
         try {
-            adminConsole.AddMesaVoto(e, deptsElegiveis.get(opcao - 1));
+            if(opcao == 0){
+                adminConsole.AddMesaVoto(e, dept);
+            }
+            else {
+                adminConsole.AddMesaVoto(e, deptsElegiveis.get(opcao - 1));
+            }
+
         } catch (RemoteException e1){
             while (true){
                 try {
                     //Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
-                    adminConsole.AddMesaVoto(e, deptsElegiveis.get(opcao - 1));
+                    if(opcao == 0){
+                        adminConsole.AddMesaVoto(e, dept);
+                    }
+                    else {
+                        adminConsole.AddMesaVoto(e, deptsElegiveis.get(opcao - 1));
+                    }
                     break;
                 }catch(NotBoundException  | RemoteException |MalformedURLException m){
                     System.out.println("nao conectei");
@@ -607,6 +688,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             }
         }
     }
+
 
     public static void RemoverMesa(){
         Eleicao e = escolheEleicao();
@@ -629,14 +711,18 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             adminConsole.RemoverMesaVoto(e,e.getDept().get(opcao-1));
 
         }catch (RemoteException e1){
-            while (true){
+            int time = 0;
+            while (time < 30){
                 try {
-                    //Thread.sleep(1000);
+                    Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
                     adminConsole.RemoverMesaVoto(e,e.getDept().get(opcao-1));
                     break;
-                }catch(NotBoundException  | RemoteException |MalformedURLException m){
-                    System.out.println("nao conectei");
+                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                    time++;
+                    if(time == 30){
+                        System.exit(-1);
+                    }
                 }
             }
         }
@@ -644,18 +730,22 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     public static Departamento escolherDept(){
 
-        ArrayList<Departamento> depts;
+        ArrayList<Departamento> depts = new ArrayList<>();
         try{
             depts = adminConsole.getListaDepartamentos();
         }catch (RemoteException e){
-            while (true){
+            int time = 0;
+            long sTime = System.currentTimeMillis();
+            while ( System.currentTimeMillis() - sTime < 30000){
                 try {
-                    //Thread.sleep(1000);
+                    Thread.sleep(500);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
                     depts = adminConsole.getListaDepartamentos();
                     break;
-                }catch(NotBoundException  | RemoteException |MalformedURLException m){
-                    System.out.println("nao conectei");
+                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                    if(System.currentTimeMillis() - sTime >= 30000){
+                        System.exit(-1);
+                    }
                 }
             }
         }
@@ -693,18 +783,22 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     }
 
     public static Eleicao escolheEleicao(){
-        ArrayList<Eleicao> eleicoes;
+        ArrayList<Eleicao> eleicoes = new ArrayList<>();
         try{
             eleicoes = adminConsole.getListaEleicoes();
         }catch (RemoteException e){
-            while (true){
+            int time = 0;
+            while (time < 30){
                 try {
-                    //Thread.sleep(1000);
+                    Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
                     eleicoes = adminConsole.getListaEleicoes();
                     break;
-                }catch(NotBoundException  | RemoteException |MalformedURLException m){
-                    System.out.println("nao conectei");
+                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                    time++;
+                    if(time == 30){
+                        System.exit(-1);
+                    }
                 }
             }
         }
@@ -739,34 +833,40 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     public static Departamento criaDepartamento(){
 
-        while (true) {
+
             Scanner s = new Scanner(System.in);
             System.out.println("Insira nome do departamento");
             System.out.print("> ");
             String nome = s.nextLine();
             Departamento d = new Departamento(nome);
+            boolean check = false;
             try {
-                boolean check = adminConsole.checkDepartamentExist(d);
-                if(check){
-                    System.out.println("\nDEPARTAMENTO ADICIONADO AOS REGISTOS\n");
-                    return d;
-                }
-                else {
-                    System.out.println("\n(!) DEPARTAMENTO JA SE ENCONTRA NO SISTEMA\n");
-                    return null;
-                }
+                check = adminConsole.checkDepartamentExist(d);
             } catch (RemoteException e) {
-                while (true) {
+
+                int time = 0;
+                while (time < 30) {
                     try {
-                        //Thread.sleep(1000);
+                        Thread.sleep(1000);
                         adminConsole = (RMI_S_I) Naming.lookup("Server");
                         break;
-                    } catch (NotBoundException | RemoteException | MalformedURLException m) {
-                        System.out.println("nao conectei");
+                    } catch (NotBoundException | RemoteException | MalformedURLException | InterruptedException m) {
+                        time++;
+                        if(time == 30){
+                            System.exit(-1);
+                        }
                     }
                 }
             }
-        }
+            if(check){
+                System.out.println("\nDEPARTAMENTO ADICIONADO AOS REGISTOS\n");
+                return d;
+            }
+            else {
+                System.out.println("\n(!) DEPARTAMENTO JA SE ENCONTRA NO SISTEMA\n");
+                return null;
+            }
+
     }
 
     public static void LocaisDeVoto(){
@@ -774,45 +874,54 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         System.out.println("Insira o nome do eleitor");
         System.out.print("> ");
         String nome = s.nextLine();
-
+        ArrayList<String> locais = new ArrayList<>();
         try {
-            ArrayList<String> locais= adminConsole.LocalVoto(nome);
-            if(locais.isEmpty()){
-                System.out.println("\n(!) A PESSOA EM QUESTÃO AINDA NÃO EFETUOU NENHUMA VOTAÇÃO\n");
-            }
-            else{
-                System.out.println("\nLista de locais onde " + nome + " votou:");
-                for (String str:locais) {
-                    System.out.println(str);
-                }
-                System.out.print("\n");
-            }
+            locais= adminConsole.LocalVoto(nome);
         }catch (RemoteException e ){
-            while (true){
+            int time = 0;
+            while (time < 30){
                 try {
-                    //Thread.sleep(1000);
+                    Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    locais= adminConsole.LocalVoto(nome);
                     break;
-                }catch(NotBoundException  | RemoteException |MalformedURLException m){
-                    System.out.println("nao conectei");
+                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                    time++;
+                    if(time == 30){
+                        System.exit(-1);
+                    }
                 }
             }
+        }
+        if(locais.isEmpty()){
+            System.out.println("\n(!) A PESSOA EM QUESTÃO AINDA NÃO EFETUOU NENHUMA VOTAÇÃO\n");
+        }
+        else{
+            System.out.println("\nLista de locais onde " + nome + " votou:");
+            for (String str:locais) {
+                System.out.println(str);
+            }
+            System.out.print("\n");
         }
     }
 
     public static void ConsultarEleicoesPassadas(){
-        ArrayList<Eleicao> listaEleicoesPassadas;
+        ArrayList<Eleicao> listaEleicoesPassadas = new ArrayList<>();
         try{
             listaEleicoesPassadas = adminConsole.getEleicoesPassadas();
         }catch (RemoteException e){
-            while (true){
+            int time = 0;
+            while (time < 30){
                 try {
-                    //Thread.sleep(1000);
+                    Thread.sleep(1000);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
                     listaEleicoesPassadas = adminConsole.getEleicoesPassadas();
                     break;
-                }catch(NotBoundException  | RemoteException |MalformedURLException m){
-                    System.out.println("nao conectei");
+                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                    time++;
+                    if(time == 30){
+                        System.exit(-1);
+                    }
                 }
             }
         }
@@ -829,15 +938,14 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
 
         System.out.println("Escolha a opção que pretende visitar");
-        System.out.print(">");
+        System.out.print("> ");
         Scanner s = new Scanner(System.in);
         int opcao;
         while (true){
             try{
                 opcao = Integer.parseInt(s.nextLine());
                 if(opcao <= i){
-                    System.out.println("\nInformaçao\n");
-                    System.out.println(listaEleicoesPassadas.get(opcao-1).getTotal_votos());
+                    System.out.print("\n- - - Resultados da Eleição - - -\n");
                     System.out.println(listaEleicoesPassadas.get(opcao-1).resultados());
                     return;
                 }
@@ -853,13 +961,15 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         boolean valido = false;
         Scanner s = new Scanner(System.in);
         String opcao;
-        System.out.println("- - - INSIRA 0 PARA SAIR - - -");
+        System.out.println("- - - PRESSIONE ENTER PARA SAIR - - -");
         System.out.println("Notificações: ");
         while (!valido){
             opcao = s.nextLine();
-            if(opcao.equals("0")){
-                valido = true;
-                notifications = false;
+            switch (opcao) {
+                default -> {
+                    valido = true;
+                    notifications = false;
+                }
             }
         }
     }
