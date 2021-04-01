@@ -1,9 +1,5 @@
-package Classes;
-
 import java.io.Serializable;
-import java.rmi.Remote;
 import java.util.ArrayList;
-import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class Eleicao implements Serializable {

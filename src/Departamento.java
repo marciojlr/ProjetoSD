@@ -1,5 +1,3 @@
-package Classes;
-
 import java.io.Serializable;
 
 public class Departamento implements Serializable {
