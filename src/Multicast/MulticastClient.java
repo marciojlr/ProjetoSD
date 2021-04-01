@@ -1,5 +1,7 @@
 package Multicast;
 
+import jdk.swing.interop.SwingInterOpUtils;
+
 import java.net.MulticastSocket;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
@@ -169,7 +171,24 @@ class MulticastUser extends Thread {
         DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
         socket.send(packet);
     }
+    
+    private String getInput(Scanner keyboardScanner) throws IOException {
 
+        long sTime = System.currentTimeMillis();
+        while (System.currentTimeMillis() - sTime < 60000)
+        {
+            if (System.in.available() > 0)
+            {
+                data.setBlocked(false);
+                return keyboardScanner.nextLine();
+            }
+        }
+        data.setBlocked(true);
+        data.setFree(true);
+        data.setLoggedIn(false);
+        return null;
+    }
+    
     public void run() {
         MulticastSocket socket = null;
         MulticastSocket voteSocket = null;
@@ -186,22 +205,36 @@ class MulticastUser extends Thread {
                     System.out.println("\n(!) A MÁQUINA ENCONTRA-SE BLOQUEADA, DIRIJA-SE À MESA DE VOTO\n");
                 }
                 else{
+                    String username;
+                    String password = null;
                     System.out.print("Username: ");
-                    String username = keyboardScanner.nextLine();
-                    System.out.print("Password: ");
-                    String password = keyboardScanner.nextLine();
-                    send(socket, "type | login; id | " + this.getName() + "; userCC | " + data.getUserCC() + "; username | " + username + "; password | " + password);
-                    data.stop();
-                        if(data.isLoggedIn()){
-                            //INPUT COM OPÇÃO DE VOTO
-                            String vote = keyboardScanner.nextLine();
+                    username = getInput(keyboardScanner);
+                    if(!data.getBlocked()){
+                        System.out.print("Password: ");
+                        password = getInput(keyboardScanner);
+                    }
+                    if(!data.getBlocked()){
+                        send(socket, "type | login; id | " + this.getName() + "; userCC | " + data.getUserCC() + "; username | " + username + "; password | " + password);
+                        data.stop();
+                    }
+                    else{
+                        System.out.println("(!) MÁQUINA BLOQUEADA, PASSARAM 60 SEGUNDOS");
+                    }
+                    if(data.isLoggedIn()){
+                        //INPUT COM OPÇÃO DE VOTO
+                        String vote = getInput(keyboardScanner);
+                        if(!data.getBlocked()){
                             sendVote(voteSocket, "type | vote; election | " + data.getElectionName() + "; option | " + vote + "; id | " + this.getName());
                             sendVote(voteSocket, "type | elector; election | " + data.getElectionName() + "; userCC | " + data.getUserCC());
                             data.setBlocked(true);
                             data.setFree(true);
                             data.setLoggedIn(false);
                         }
-                        Thread.sleep(1000);
+                        else{
+                            System.out.println("(!) MÁQUINA BLOQUEADA, PASSARAM 60 SEGUNDOS");
+                        }
+                    }
+                    Thread.sleep(1000);
                 }
             }
         } catch (IOException | InterruptedException e) {
