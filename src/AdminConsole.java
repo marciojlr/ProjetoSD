@@ -263,7 +263,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
-
     public static void gerirListaCandidata(){
         //TODO: Adicionar os membros na parte de criar
         //TODO ESCOLHE ELEICAO
@@ -340,7 +339,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
-
     public static void  adicionaListaCandidata(ArrayList<Eleicao> elegiveis, int eleicao){
         Scanner s = new Scanner(System.in);
         System.out.println("Insira Lista Candidata que deseja inserir: ");
@@ -411,118 +409,79 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
-
     public static void AlteraPropriedadesEleicao(){
 
-        //TODO: escolheEleiçao
-        ArrayList<Eleicao> elegiveis = new ArrayList<>();
-        try {
-            elegiveis = adminConsole.getEleicoesElegiveis();
-        }catch (RemoteException e) {
-            long sTime = System.currentTimeMillis();
-            while ( System.currentTimeMillis() - sTime < 30000){
-                try {
-                    Thread.sleep(500);
-                    adminConsole = (RMI_S_I) Naming.lookup("Server");
-                    elegiveis = adminConsole.getEleicoesElegiveis();
-                    break;
-                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
-                    if(System.currentTimeMillis() - sTime >= 30000){
-                        System.exit(-1);
-                    }
-                }
-            }
-        }
-        if(elegiveis.isEmpty()) {
-            System.out.println("Nao ha eleicoes elegiveis");
-            return;
-        }
-        int i =1;
-        for (Eleicao e: elegiveis) {
-            System.out.println(i+". " + e.getTitulo());
-            i++;
-        }
-
         Scanner s = new Scanner(System.in);
-        boolean valido = false;
-        int escolha = -1;
-        String nome="";
-        while (!valido){
-            try{
-                System.out.println("Selecione a Eleicao que deseja alterar");
-                System.out.print("> ");
-                escolha = Integer.parseInt(s.nextLine());
-                nome = elegiveis.get(escolha-1).getTitulo();
-                valido= true;
+        Eleicao elegivel = escolheEleicao();
 
-            }catch (Exception e){
-                System.out.println("Opçao Invalida\nCertifique-se que escolhe uma opçao valida\n");
+        if(elegivel != null){
+            String nome = elegivel.getTitulo();
+            GregorianCalendar data_inicio= elegivel.getData_inicio();
+            GregorianCalendar data_final = elegivel.getData_inicio();
+            String titulo= elegivel.getTitulo();
+            String descricao= elegivel.getDescricao();
+            boolean sair = false;
+            while (!sair){
+                System.out.println("Escolha a propriedade que deseja alterar");
+                System.out.println("1. Data de inicio");
+                System.out.println("2. Data de final");
+                System.out.println("3. Titulo");
+                System.out.println("4. Descricao");
+                System.out.println("5. Sair");
+                System.out.print("> ");
+                String opcao = s.nextLine();
+                switch (opcao){
+                    case "1":
+                        System.out.println("Data: "+ data_inicio.get(5) + "/" + (data_inicio.get(2)+1) + "/" + data_inicio.get(1) +" Horas: " + data_inicio.get(11)+":"+data_inicio.get(12));
+                        System.out.println("Nova data de inicio:");
+                        data_inicio=pedeData();
+                        setHour(data_inicio);
+                        break;
+                    case "2":
+                        System.out.println("Data: "+ data_final.get(5) + "/" + (data_final.get(2) + 1) + "/" + data_final.get(1) +" Horas: " + data_final.get(11)+":"+data_final.get(12));
+                        System.out.println("Nova data final:");
+                        data_final=pedeData();
+                        setHour(data_final);
+                        break;
+                    case "3":
+                        System.out.println("Titulo: "+ titulo);
+                        System.out.println("Novo titulo: ");
+                        System.out.print("> ");
+                        titulo=s.nextLine();
+                        break;
+                    case "4":
+                        System.out.println("Descricao: "+ descricao);
+                        System.out.println("Nova Descricao");
+                        System.out.print("> ");
+                        descricao=s.nextLine();
+                        break;
+                    case "5":
+                        sair = true;
+                        break;
+                    default:
+                        System.out.println("Opcao nao valida");
+                        break;
+                }
             }
-        }
-        GregorianCalendar data_inicio= elegiveis.get(escolha-1).getData_inicio();
-        GregorianCalendar data_final = elegiveis.get(escolha-1).getData_inicio();
-        String titulo= elegiveis.get(escolha-1).getTitulo();
-        String descricao= elegiveis.get(escolha-1).getDescricao();
-        boolean sair = false;
-        while (!sair){
-            System.out.println("Escolha a propriedade que deseja alterar");
-            System.out.println("1. Data de inicio");
-            System.out.println("2. Data de final");
-            System.out.println("3. Titulo");
-            System.out.println("4. Descricao");
-            System.out.println("5. Sair");
-            System.out.print("> ");
-            String opcao = s.nextLine();
-            switch (opcao){
-                case "1":
-                    System.out.println("Data: "+ data_inicio.get(5) + "/" + (data_inicio.get(2)+1) + "/" + data_inicio.get(1) +" Horas: " + data_inicio.get(11)+":"+data_inicio.get(12));
-                    System.out.println("Nova data de inicio:");
-                    data_inicio=pedeData();
-                    setHour(data_inicio);
-                    break;
-                case "2":
-                    System.out.println("Data: "+ data_final.get(5) + "/" + (data_final.get(2) + 1) + "/" + data_final.get(1) +" Horas: " + data_final.get(11)+":"+data_final.get(12));
-                    System.out.println("Nova data final:");
-                    data_final=pedeData();
-                    setHour(data_final);
-                    break;
-                case "3":
-                    System.out.println("Titulo: "+ titulo);
-                    System.out.println("Novo titulo: ");
-                    System.out.print("> ");
-                    titulo=s.nextLine();
-                    break;
-                case "4":
-                    System.out.println("Descricao: "+ descricao);
-                    System.out.println("Nova Descricao");
-                    System.out.print("> ");
-                    descricao=s.nextLine();
-                    break;
-                case "5":
-                    sair = true;
-                    break;
-                default:
-                    System.out.println("Opcao nao valida");
-                    break;
-            }
-        }
-        try {
-            System.out.println(adminConsole.AlteraEleicao(nome,data_inicio,data_final, titulo,descricao));
-        }catch(RemoteException e){
-            long sTime = System.currentTimeMillis();
-            while ( System.currentTimeMillis() - sTime < 30000){
-                try {
-                    Thread.sleep(500);
-                    adminConsole = (RMI_S_I) Naming.lookup("Server");
-                    System.out.println(adminConsole.AlteraEleicao(nome,data_inicio,data_final, titulo,descricao));
-                    break;
-                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
-                    if(System.currentTimeMillis() - sTime >= 30000){
-                        System.exit(-1);
+            try {
+                System.out.println(adminConsole.AlteraEleicao(nome,data_inicio,data_final, titulo,descricao));
+            }catch(RemoteException e){
+                long sTime = System.currentTimeMillis();
+                while ( System.currentTimeMillis() - sTime < 30000){
+                    try {
+                        Thread.sleep(500);
+                        adminConsole = (RMI_S_I) Naming.lookup("Server");
+                        System.out.println(adminConsole.AlteraEleicao(nome,data_inicio,data_final, titulo,descricao));
+                        break;
+                    }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                        if(System.currentTimeMillis() - sTime >= 30000){
+                            System.exit(-1);
+                        }
                     }
                 }
             }
         }
+
     }
 
     public static void GerirMesa(){
@@ -556,7 +515,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             }
         }
     }
-
 
     public static void AssociarMesaVoto(){
 
@@ -764,16 +722,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 Scanner s = new Scanner(System.in);
                 System.out.print("> ");
                 int opcao = Integer.parseInt(s.nextLine());
-                if(opcao <= i && opcao > 0){
-                    return eleicoes.get(opcao-1);
-                }
-                else {
-                    System.out.println("\nOPCAO INVALIDA, ESCOLHA OUTRA");
-                }
+                return eleicoes.get(opcao-1);
 
             }catch (Exception e){
-                System.out.println("\nOPCAO INVALIDA, ESCOLHA OUTRA");
-                }
+                System.out.println("\nOPCAO INVALIDA, ESCOLHA OUTRA!");
+            }
         }
     }
 

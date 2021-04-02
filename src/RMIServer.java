@@ -83,7 +83,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
                 //Outra alternativa
                 //el.getListaCandidata().removeIf(l -> l.getNome().equals(nome));
-
                 el.removeListaCandidata(nome);
 
             }
