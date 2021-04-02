@@ -264,95 +264,47 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     }
 
     public static void gerirListaCandidata(){
-        //TODO: Adicionar os membros na parte de criar
-        //TODO ESCOLHE ELEICAO
-        ArrayList<Eleicao> elegiveis= new ArrayList<>();
-        try {
-            elegiveis = adminConsole.getEleicoesElegiveis();
-        }catch (RemoteException e) {
-            long sTime = System.currentTimeMillis();
-            while ( System.currentTimeMillis() - sTime < 30000){
-                try {
-                    Thread.sleep(500);
-                    adminConsole = (RMI_S_I) Naming.lookup("Server");
-                    elegiveis = adminConsole.getEleicoesElegiveis();
-                    break;
-                }catch(NotBoundException  | RemoteException | MalformedURLException |InterruptedException m){
-                    if(System.currentTimeMillis() - sTime >= 30000){
-                        System.exit(-1);
-                    }
-                }
-            }
-        }
-
-        if(elegiveis.isEmpty()){
-            System.out.println("(!) NAO HA ELEICOES ELEGIVEIS");
-            return;
-        }
-        //Posso fazer uma funCao para o print
-        int i= 1;
-        for( Eleicao e : elegiveis){
-            System.out.println(i + ". " + e.getTitulo());
-            i++;
-        }
 
         Scanner s = new Scanner(System.in);
-        int eleicao=-1;
+        String opcao;
         boolean valido = false;
-        while (!valido){
-            try {
-                System.out.println("Insira a eleicao que pretende: ");
-                System.out.print("> ");
-                eleicao = Integer.parseInt(s.nextLine());
-                if (eleicao < i && eleicao > 0) {
-                    valido = true;
-                }
-                else {
-                    System.out.println("\nOPCAO INVALIDA, ESCOLHA OUTRA");
-                }
-            }catch (NumberFormatException e){
-                System.out.println("\nOPCAO INVALIDA, ESCOLHA OUTRA");
-            }
-        }
-        System.out.println("1. Adicionar  2. Remover");
-        String opcao="";
-        valido = false;
 
-        while (!valido){
-            try {
+        Eleicao elegivel = escolheEleicao();
+
+        if(elegivel != null){
+            System.out.println("1. Adicionar  2. Remover");
+            while (!valido){
                 System.out.print("> ");
                 opcao = s.nextLine();
                 if (opcao.equals("1")) {
-                    adicionaListaCandidata(elegiveis,eleicao);
+                    adicionaListaCandidata(elegivel);
                     valido = true;
                 }
                 else if(opcao.equals("2")){
-                    removeListaCandidata(elegiveis,eleicao);
+                    removeListaCandidata(elegivel);
                     valido = true;
                 }
                 else {
                     System.out.println("\nOPCAO INVALIDA, ESCOLHA OUTRA");
                 }
-            }catch (Exception e){
-                System.out.println("\nOPCAO INVALIDA, ESCOLHA OUTRA");
             }
         }
     }
 
-    public static void  adicionaListaCandidata(ArrayList<Eleicao> elegiveis, int eleicao){
+    public static void  adicionaListaCandidata(Eleicao elegivel){
         Scanner s = new Scanner(System.in);
         System.out.println("Insira Lista Candidata que deseja inserir: ");
         System.out.print("> ");
         String nome = s.nextLine();
         try{
-            adminConsole.AddListaCandidata(elegiveis.get(eleicao-1),nome);
+            adminConsole.AddListaCandidata(elegivel,nome);
         }catch (RemoteException e){
             long sTime = System.currentTimeMillis();
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
-                    adminConsole.AddListaCandidata(elegiveis.get(eleicao-1),nome);
+                    adminConsole.AddListaCandidata(elegivel,nome);
                     break;
                 }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
                     if(System.currentTimeMillis() - sTime >= 30000){
@@ -363,15 +315,15 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
-    public static void removeListaCandidata(ArrayList<Eleicao> elegiveis, int eleicao){
+    public static void removeListaCandidata(Eleicao elegivel){
         Scanner s = new Scanner(System.in);
-        if(elegiveis.get(eleicao-1).getListaCandidata().isEmpty()){
+        if(elegivel.getListaCandidata().isEmpty()){
             System.out.println("(!) NAO HA LISTAS PARA REMOVER");
             return;
         }
 
         //print listas candidatas
-        elegiveis.get(eleicao-1).printLista();
+        elegivel.printLista();
 
         System.out.println("Insira a Lista Candidata que deseja remover:");
         int nome=0;
@@ -380,7 +332,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             try {
                 System.out.print("> ");
                 nome = Integer.parseInt(s.nextLine());
-                if (nome <= elegiveis.get(eleicao - 1).getListaCandidata().size() && nome > 0) {
+                if (nome <= elegivel.getListaCandidata().size() && nome > 0) {
                     valido = true;
                 } else {
                     System.out.println("\nOPCAO INVALIDA, ESCOLHA OUTRA");
@@ -391,14 +343,14 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             }
         }
         try {
-            adminConsole.RemoveListaCandidata(elegiveis.get(eleicao-1),elegiveis.get(eleicao-1).getListaCandidata().get(nome-1).getNome());
+            adminConsole.RemoveListaCandidata(elegivel,elegivel.getListaCandidata().get(nome-1).getNome());
         }catch (RemoteException e){
             long sTime = System.currentTimeMillis();
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
-                    adminConsole.RemoveListaCandidata(elegiveis.get(eleicao-1),elegiveis.get(eleicao-1).getListaCandidata().get(nome-1).getNome());
+                    adminConsole.RemoveListaCandidata(elegivel,elegivel.getListaCandidata().get(nome-1).getNome());
                     break;
                 }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
                     if(System.currentTimeMillis() - sTime >= 30000){
@@ -706,11 +658,12 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 }
             }
         }
-
+        //VERIFICAR SE EXISTEM ELEICOES
         if(eleicoes.isEmpty()){
             System.out.println("NAO EXISTEM ELEICOES NOS REGISTOS!");
             return null;
         }
+        //PRINT DE ELEICOES
         int i = 1;
         System.out.println("\nELEICOES DISPONIVEIS");
         for (Eleicao e: eleicoes) {
