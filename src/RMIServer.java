@@ -550,7 +550,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
                     lerFicheiroClients();
 
                 } catch (InterruptedException | RemoteException exception2) {
-                    System.out.println(exception2);
+                    System.out.println("Server principal em funcionamento");
                 }
             }
         }
