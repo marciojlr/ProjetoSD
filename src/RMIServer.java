@@ -126,7 +126,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             listaDepartamentos.add(d);
             escreveFicheiroDepartamentos();
 
-            System.out.println(listaDepartamentos);
+            System.out.println("Novo departamento adicionado ao sistema: " + listaDepartamentos);
             return true;
         }
         return false;

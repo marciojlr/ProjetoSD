@@ -1,5 +1,4 @@
 import java.io.Serializable;
-import java.util.ArrayList;
 
 public class ListaCandidata implements Serializable {
 
@@ -13,10 +12,6 @@ public class ListaCandidata implements Serializable {
 
     public String getNome() {
         return nome;
-    }
-
-    public void setNome(String nome) {
-        this.nome = nome;
     }
 
     public void addVote(){

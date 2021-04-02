@@ -25,18 +25,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         String teste;
         teste = adminConsole.teste((RMI_C_I) client);
         System.out.println(teste);
-        /*Departamento dei = new Departamento("DEI");
-        Departamento deec = new Departamento("DEEC");
-        GregorianCalendar datainicio = new GregorianCalendar(2021, Calendar.MARCH,26);
-        GregorianCalendar datafim = new GregorianCalendar(2021, Calendar.MARCH,30);
-        adminConsole.AddDepartamento(dei);
-        adminConsole.AddDepartamento(deec);
-        adminConsole.registarPessoa("Marcio","Estudante", "123", dei, 12345678, null,910,"Coimbra");
-        adminConsole.registarPessoa("Filipe","Estudante", "123", deec, 123456789, null,910,"Coimbra");
-
-        adminConsole.criarEleicao(datainicio,datafim,"Eleicao 1", "Descricao 1", dei, "Estudante");
-        adminConsole.criarEleicao(datainicio,datafim,"Eleicao 2", "Descricao 2", deec, "Estudante");*/
-
         menu();
 
     }
@@ -473,65 +461,67 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         Eleicao e = escolheEleicao();
         ArrayList<Departamento> deptsElegiveis=new ArrayList<>();
 
-        try {
-            deptsElegiveis = adminConsole.getDepartamentosElegiveis(e);
-        }catch (RemoteException r) {
-            long sTime = System.currentTimeMillis();
-            while ( System.currentTimeMillis() - sTime < 30000){
-                try {
-                    Thread.sleep(500);
-                    adminConsole = (RMI_S_I) Naming.lookup("Server");
-                    deptsElegiveis = adminConsole.getDepartamentosElegiveis(e);
-                    break;
-                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
-                    if(System.currentTimeMillis() - sTime >= 30000){
-                        System.exit(-1);
+        if(e != null){
+            try {
+                deptsElegiveis = adminConsole.getDepartamentosElegiveis(e);
+            }catch (RemoteException r) {
+                long sTime = System.currentTimeMillis();
+                while ( System.currentTimeMillis() - sTime < 30000){
+                    try {
+                        Thread.sleep(500);
+                        adminConsole = (RMI_S_I) Naming.lookup("Server");
+                        deptsElegiveis = adminConsole.getDepartamentosElegiveis(e);
+                        break;
+                    }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                        if(System.currentTimeMillis() - sTime >= 30000){
+                            System.exit(-1);
+                        }
                     }
                 }
             }
-        }
 
-        if(deptsElegiveis.isEmpty()){
-            System.out.println("(!) Nao existem departamentos para associar.");
-            return;
-        }
-
-        boolean valido = false;
-        int opcao= -1;
-        Departamento dept = null;
-        while (!valido){
-            int i=1;
-            System.out.println("\nMESAS DISPONIVEIS");
-            for(Departamento d : deptsElegiveis) {
-                System.out.println(i +". " + d.getNome());
-                i++;
+            if(deptsElegiveis.isEmpty()){
+                System.out.println("(!) Nao existem departamentos para associar.");
+                return;
             }
-            Scanner s = new Scanner(System.in);
-            System.out.println("Escolha a mesa que pretende adicionar" );
-            System.out.print("> ");
-            opcao = Integer.parseInt(s.nextLine());
 
-            if( opcao <= deptsElegiveis.size() && opcao > 0 ){
-                valido= true;
-            }
-            else {
-                System.out.println("(!) OPCAO NAO VALIDA");
-            }
-        }
+            boolean valido = false;
+            int opcao= -1;
+            Departamento dept = null;
+            while (!valido){
+                int i=1;
+                System.out.println("\nMESAS DISPONIVEIS");
+                for(Departamento d : deptsElegiveis) {
+                    System.out.println(i +". " + d.getNome());
+                    i++;
+                }
+                Scanner s = new Scanner(System.in);
+                System.out.println("Escolha a mesa que pretende adicionar" );
+                System.out.print("> ");
+                opcao = Integer.parseInt(s.nextLine());
 
-        try {
-            adminConsole.AddMesaVoto(e, deptsElegiveis.get(opcao - 1));
-        } catch (RemoteException e1){
-            long sTime = System.currentTimeMillis();
-            while ( System.currentTimeMillis() - sTime < 30000){
-                try {
-                    Thread.sleep(500);
-                    adminConsole = (RMI_S_I) Naming.lookup("Server");
-                    adminConsole.AddMesaVoto(e, deptsElegiveis.get(opcao - 1));
-                    break;
-                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
-                    if(System.currentTimeMillis() - sTime >= 30000){
-                        System.exit(-1);
+                if( opcao <= deptsElegiveis.size() && opcao > 0 ){
+                    valido= true;
+                }
+                else {
+                    System.out.println("(!) OPCAO NAO VALIDA");
+                }
+            }
+
+            try {
+                adminConsole.AddMesaVoto(e, deptsElegiveis.get(opcao - 1));
+            } catch (RemoteException e1){
+                long sTime = System.currentTimeMillis();
+                while ( System.currentTimeMillis() - sTime < 30000){
+                    try {
+                        Thread.sleep(500);
+                        adminConsole = (RMI_S_I) Naming.lookup("Server");
+                        adminConsole.AddMesaVoto(e, deptsElegiveis.get(opcao - 1));
+                        break;
+                    }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                        if(System.currentTimeMillis() - sTime >= 30000){
+                            System.exit(-1);
+                        }
                     }
                 }
             }

@@ -1,5 +1,6 @@
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class Eleicao implements Serializable {
@@ -128,12 +129,9 @@ public class Eleicao implements Serializable {
 
     @Override
     public String toString(){
-        return  "Nova eleição criada\n" +
-                "Titulo: " + this.titulo + "\n" +
-                "Descrição: " + this.descricao + "\n" +
-                "Departamentos: " + this.dept + "\n" +
-                "Data de inicio: " + this.data_inicio.DAY_OF_MONTH + "/" + this.data_inicio.MONTH + "/" + this.data_inicio.YEAR + "\n" +
-                "Data de encerramento: " + this.data_inicio.DAY_OF_MONTH + "/" + this.data_inicio.MONTH + "/" + this.data_inicio.YEAR
+        return  "Titulo: " + this.titulo  + "; Descrição: " + this.descricao + "; Departamentos: " + this.dept +
+                "; Data de inicio: " + this.data_inicio.get(5) + "/" + (this.data_inicio.get(2)+1) + "/" + this.data_inicio.get(1) +
+                "; Data de encerramento: " + this.data_inicio.get(5) + "/" + (this.data_inicio.get(2)+1) + "/" + this.data_inicio.get(1)
                 ;
     }
 
