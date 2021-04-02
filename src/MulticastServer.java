@@ -2,9 +2,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.*;
 import java.io.IOException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
@@ -30,7 +31,7 @@ public class MulticastServer extends Thread {
         //READING PROPERTIES FILE
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream("src/config.properties");
+            fis = new FileInputStream("config.properties");
         } catch (FileNotFoundException e) {
             System.out.println("Erro a ler ficheiro de propriedades");
         }
@@ -382,7 +383,8 @@ class DadosPartilhados{
     public DadosPartilhados(String name) throws RemoteException, NotBoundException, MalformedURLException {
         this.pedido = 0;
         this.name = name;
-        this.RMIserver = (RMI_S_I) Naming.lookup("Server");
+        Registry reg = LocateRegistry.getRegistry("192.168.1.46", 1099);
+        this.RMIserver = (RMI_S_I) reg.lookup("Server");
         this.terminalState = new HashMap();
     }
 
@@ -399,7 +401,8 @@ class DadosPartilhados{
     }
 
     public void setRMIserver() throws RemoteException, NotBoundException, MalformedURLException {
-        this.RMIserver = (RMI_S_I) Naming.lookup("Server");
+        Registry reg = LocateRegistry.getRegistry("192.168.1.46", 1099);
+        this.RMIserver = (RMI_S_I) reg.lookup("Server");
     }
 
     public String getTerminalState(String key) {

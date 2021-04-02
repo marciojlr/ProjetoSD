@@ -114,7 +114,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         return tipo;
     }
 
-    //Todo alterar o while sleeps
+    //todo : alterar todos os whiles para a nova maneira
     public static void  RegistoPessoa(){
 
         Scanner s = new Scanner(System.in);

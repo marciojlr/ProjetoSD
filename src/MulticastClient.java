@@ -43,7 +43,7 @@ public class MulticastClient extends Thread {
         //READING PROPERTIES FILE
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream("src/config.properties");
+            fis = new FileInputStream("config.properties");
         } catch (FileNotFoundException e) {
             System.out.println("Erro a ler ficheiro de propriedades");
         }
