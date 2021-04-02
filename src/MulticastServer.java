@@ -1,3 +1,5 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.*;
 import java.io.IOException;
 import java.rmi.Naming;
@@ -5,54 +7,10 @@ import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.Scanner;
 
-/**
- * Classe que vai conter informação necessária e que tem de ser partilhada
- * entre as diferentes threads a correr no servidor Multicast
- */
-class DadosPartilhados{
-    private int pedido;
-    private final String name;
-    public RMI_S_I RMIserver;
-    private HashMap<String,String> terminalState;
 
-    public DadosPartilhados(String name) throws RemoteException, NotBoundException, MalformedURLException {
-        this.pedido = 0;
-        this.name = name;
-        this.RMIserver = (RMI_S_I) Naming.lookup("Server");
-        this.terminalState = new HashMap();
-    }
-
-    public int getPedido() {
-        return pedido;
-    }
-
-    public void setPedido() {
-        this.pedido = this.pedido + 1;
-    }
-
-    public String getName(){
-        return this.name;
-    }
-
-    public void setRMIserver() throws RemoteException, NotBoundException, MalformedURLException {
-        this.RMIserver = (RMI_S_I) Naming.lookup("Server");
-    }
-
-    public String getTerminalState(String key) {
-        return this.terminalState.get(key);
-    }
-
-    public void setTerminalState(String key, String value) {
-        this.terminalState.put(key,value);
-    }
-}
-
-/*
-* Exemplos de ips   224.224.0.0
-*                   224.224.1.0
-*/
 /**
  * Classe que serve para coordenar as ligações entre a mesa de voto
  * e os diferentes terminais de voto
@@ -63,22 +21,26 @@ public class MulticastServer extends Thread {
     private final int PORT = 4321;
     private final DadosPartilhados dados;
 
-    public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
+    public static void main(String[] args) throws IOException, NotBoundException {
 
-        if(args.length < 2){
-            System.out.println("(!) NUMERO DE ARGUMENTOS INVALIDOS");
+        if(args.length < 1){
+            System.out.println("(!) INSIRA O NOME DO DEPARTAMENTO COMO ARGUMENTO");
             return;
         }
+        //READING PROPERTIES FILE
+        FileInputStream fis = new FileInputStream("src/config.properties");
+        Properties props = new Properties();
+        props.load(fis);
+        String value = (String)props.get(args[0]);
+        String[] ips = value.split(" ");
+
         DadosPartilhados dados = new DadosPartilhados(args[0]);
-        String ipMesa = args[1];
-        String ipVoto = getVoteIp(args[1]);
-        System.out.println(ipMesa + " " + ipVoto);
         dados.RMIserver.ping(dados.getName());
-        MulticastServer server = new MulticastServer(dados,ipMesa);
+        MulticastServer server = new MulticastServer(dados,ips[0]);
         server.start();
-        MulticastUserS u = new MulticastUserS(dados, ipMesa);
+        MulticastUserS u = new MulticastUserS(dados, ips[0]);
         u.start();
-        Vote v = new Vote(dados, ipVoto);
+        Vote v = new Vote(dados, ips[1]);
         v.start();
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
@@ -124,14 +86,6 @@ public class MulticastServer extends Thread {
         } finally {
             socket.close();
         }
-    }
-
-    public static String getVoteIp(String ip){
-        String[] num = ip.split("\\.");
-        int last = Integer.parseInt(num[3]);
-        last = last+1;
-
-        return num[0] + "." + num[1] + "." + num[2] + "." + last;
     }
 
     private String readMessage(MulticastSocket socket) throws IOException {
@@ -399,5 +353,47 @@ class Vote extends Thread {
         } finally {
             socket.close();
         }
+    }
+}
+
+/**
+ * Classe que vai conter informação necessária e que tem de ser partilhada
+ * entre as diferentes threads a correr no servidor Multicast
+ */
+class DadosPartilhados{
+    private int pedido;
+    private final String name;
+    public RMI_S_I RMIserver;
+    private HashMap<String,String> terminalState;
+
+    public DadosPartilhados(String name) throws RemoteException, NotBoundException, MalformedURLException {
+        this.pedido = 0;
+        this.name = name;
+        this.RMIserver = (RMI_S_I) Naming.lookup("Server");
+        this.terminalState = new HashMap();
+    }
+
+    public int getPedido() {
+        return pedido;
+    }
+
+    public void setPedido() {
+        this.pedido = this.pedido + 1;
+    }
+
+    public String getName(){
+        return this.name;
+    }
+
+    public void setRMIserver() throws RemoteException, NotBoundException, MalformedURLException {
+        this.RMIserver = (RMI_S_I) Naming.lookup("Server");
+    }
+
+    public String getTerminalState(String key) {
+        return this.terminalState.get(key);
+    }
+
+    public void setTerminalState(String key, String value) {
+        this.terminalState.put(key,value);
     }
 }

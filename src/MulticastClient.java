@@ -1,8 +1,11 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
 import java.net.MulticastSocket;
 import java.net.DatagramPacket;
 import java.net.InetAddress;
 import java.io.IOException;
 import java.util.HashMap;
+import java.util.Properties;
 import java.util.Scanner;
 
 /**
@@ -31,14 +34,31 @@ public class MulticastClient extends Thread {
     }
 
     public static void main(String[] args) {
+
+        //READING PROPERTIES FILE
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream("src/config.properties");
+        } catch (FileNotFoundException e) {
+            System.out.println("Erro a ler ficheiro de propriedades");
+        }
+        Properties props = new Properties();
+        try {
+            props.load(fis);
+        } catch (IOException e) {
+            System.out.println("Erro a dar carregar ficheiro de propriedades");
+        }
+
+        String value = (String)props.get(args[0]);
+        String[] ips = value.split(" ");
+
         long number = Integer.parseInt(args[0]);
         Data data = new Data();
-        String ipMesa = args[1];
-        String ipVoto = getVoteIp(args[1]);
-        System.out.println(ipMesa + " " + ipVoto);
-        MulticastClient client = new MulticastClient(number, data, ipMesa);
+
+
+        MulticastClient client = new MulticastClient(number, data, ips[0]);
         client.start();
-        MulticastUser user = new MulticastUser(number, data, ipMesa, ipVoto);
+        MulticastUser user = new MulticastUser(number, data, ips[0], ips[1]);
         user.start();
     }
 
@@ -58,14 +78,6 @@ public class MulticastClient extends Thread {
         } finally {
             socket.close();
         }
-    }
-
-    public static String getVoteIp(String ip){
-        String[] num = ip.split("\\.");
-        int last = Integer.parseInt(num[3]);
-        last = last+1;
-
-        return num[0] + "." + num[1] + "." + num[2] + "." + last;
     }
 
     private String readMessage(MulticastSocket socket) throws IOException {
