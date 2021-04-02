@@ -20,6 +20,10 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     }
 
     public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException{
+
+        System.getProperties().put("java.security.policy","policy.all");
+        System.setSecurityManager(new SecurityManager());
+
         adminConsole = (RMI_S_I) Naming.lookup("Server");
         RMI_C_I client = new AdminConsole();
         String teste;
