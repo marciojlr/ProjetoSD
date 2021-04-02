@@ -808,9 +808,15 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     }
     //==================================================================
 
-    public void notification(String message){
-        if(notifications){
+    public void notification(String message, int priority){
+        if(priority == 1){
             System.out.println(message);
         }
+        else{
+            if(notifications){
+                System.out.println(message);
+            }
+        }
+        System.out.print("> ");
     }
 }

@@ -199,14 +199,14 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     //******************************************** METODOS CHAMADOS PELO SERVIDOR MULTICAST **************************************************
 
-    public void sendNotification(String message){
+    public void sendNotification(String message, int priority){
         //ENVIAR MENSAGEM AOS CLIENTES
         System.out.println(client);
         ArrayList<Integer> indices = new ArrayList<>();
         int i = 0;
         for(RMI_C_I c : client){
             try {
-                c.notification(message);
+                c.notification(message, priority);
             } catch (RemoteException e) {
                 indices.add(i);
                 System.out.println("Notificaçao nao enviada!");
@@ -224,7 +224,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         for(Pessoa pessoa : listaPessoas){
             if(pessoa.getCC() == CC){
                 String message = "Eleitor com o nome " + pessoa.getNome() + " e CC " + CC + ", chegou à mesa " + department + ".";
-                sendNotification(message);
+                sendNotification(message,0);
                 return true;
             }
         }
@@ -238,15 +238,26 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
                 break;
             }
         }
-        String message = "A mesa " + dept + "encontra-se em funcionamento!";
-        sendNotification(message);
+        String message = "A mesa " + dept + " encontra-se em funcionamento!";
+        sendNotification(message,0);
+    }
+
+    public void crash(String department){
+        for (Departamento d: listaDepartamentos) {
+            if(d.getNome().equals(department)){
+                d.setMesaOn(false);
+                break;
+            }
+        }
+        String message = "(!) A mesa " + department + " foi abaixo!";
+        sendNotification(message,1);
     }
 
     public boolean acceptLogin(int userCC, String name, String password){
         for(Pessoa pessoa : listaPessoas){
             if(pessoa.getCC() == userCC && pessoa.getNome().equals(name) && pessoa.getPassword().equals(password)){
                 String message = "Eleitor com o nome " + name + " e CC " + userCC + ", efetuou login num terminal.";
-                sendNotification(message);
+                sendNotification(message,0);
                 return true;
             }
         }
@@ -358,7 +369,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             }
         }
         String message = "Eleitor com o nome " + pessoa.getNome() + " e CC " + userCC + ", efetuou o voto na mesa " + department;
-        sendNotification(message);
+        sendNotification(message,0);
     }
 
 

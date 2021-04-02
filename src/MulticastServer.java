@@ -65,17 +65,40 @@ public class MulticastServer extends Thread {
 
     public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
 
+        if(args.length < 2){
+            System.out.println("(!) NUMERO DE ARGUMENTOS INVALIDOS");
+            return;
+        }
         DadosPartilhados dados = new DadosPartilhados(args[0]);
         String ipMesa = args[1];
         String ipVoto = getVoteIp(args[1]);
         System.out.println(ipMesa + " " + ipVoto);
-        dados.RMIserver.ping("Mesa " + dados.getName() + " ligada.");
+        dados.RMIserver.ping(dados.getName());
         MulticastServer server = new MulticastServer(dados,ipMesa);
         server.start();
         MulticastUserS u = new MulticastUserS(dados, ipMesa);
         u.start();
         Vote v = new Vote(dados, ipVoto);
         v.start();
+        Runtime.getRuntime().addShutdownHook(new Thread() {
+            public void run() {
+                try {
+                    Thread.sleep(200);
+                    while(true){
+                        try{
+                            dados.RMIserver.crash(dados.getName());
+                            break;
+                        }catch (RemoteException m){
+                            dados.setRMIserver();
+                        }
+                    }
+
+                } catch (InterruptedException | RemoteException | NotBoundException | MalformedURLException e) {
+                    Thread.currentThread().interrupt();
+                    System.out.println("(!) A MESA FOI ABAIXO");
+                }
+            }
+        });
     }
 
     public MulticastServer(DadosPartilhados dados, String ip) {
@@ -231,14 +254,14 @@ class MulticastUserS extends Thread {
                 election = election - 1;
                 return eleicoes.get(election);
             } catch (Exception e){
-                System.out.println("\n(!) OPÇÃO INVÁLIDA, ESCOLHA OUTRA");
+                System.out.println("\n(!) OPCAO INVALIDA, ESCOLHA OUTRA");
             }
         }
     }
 
     private void getCC(MulticastSocket socket) throws IOException, NotBoundException {
 
-        System.out.println("Inserir número de Identificação: ");
+        System.out.println("Inserir numero de Identificacao: ");
         System.out.print("> ");
         //INPUT
         Scanner keyboardScanner = new Scanner(System.in);
@@ -249,7 +272,7 @@ class MulticastUserS extends Thread {
             CC = Integer.parseInt(readKeyboard);
         }
         catch(Exception e){
-            System.out.println("(!) FORMATO INVÁLIDO DE NÚMERO DE IDENTIFICAÇÃO");
+            System.out.println("(!) FORMATO INVALIDO DE NUMERO DE IDENTIFICACAO");
             return;
         }
         boolean registered;
@@ -273,7 +296,7 @@ class MulticastUserS extends Thread {
                     dados.setRMIserver();
                 }
             }
-            if(elections.size() > 0){ //EXISTEM ELEIÇÕES DISPONÍVEIS NESTA MESA
+            if(elections.size() > 0){ //EXISTEM ELEICOES DISPONIVEIS NESTA MESA
                 String electionName = chooseElection(elections);
                 //SEND DATA TO ALL THE CLIENTS
                 String message = "type | free; request | " + dados.getPedido() + "; userCC | " + CC + "; election | " + electionName;
@@ -282,12 +305,12 @@ class MulticastUserS extends Thread {
                 DatagramPacket packet = new DatagramPacket(buffer, buffer.length, group, PORT);
                 socket.send(packet);
             }
-            else{ //NÃO HÁ ELEIÇÕES DISPONÍVEIS NESTA MESA
-                System.out.println("(!) NÃO EXISTEM ELEIÇÕES A DECORRER NESTA MESA DE VOTO");
+            else{ //NAO HA ELEICOES DISPONIVEIS NESTA MESA
+                System.out.println("(!) NAO EXISTEM ELEICOES A DECORRER NESTA MESA DE VOTO");
             }
         }
-        else{ //SE O ELEITOR NÃO ESTIVER REGISTADO
-            System.out.println("(!) O UTILIZADOR NÃO SE ENCONTRA REGISTADO");
+        else{ //SE O ELEITOR NAO ESTIVER REGISTADO
+            System.out.println("(!) O UTILIZADOR NAO SE ENCONTRA REGISTADO");
         }
     }
 

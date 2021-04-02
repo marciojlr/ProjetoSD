@@ -198,7 +198,7 @@ class MulticastUser extends Thread {
                 System.out.println("Prima Enter para continuar...");
                 keyboardScanner.nextLine();
                 if(data.getBlocked()){
-                    System.out.println("\n(!) A MÁQUINA ENCONTRA-SE BLOQUEADA, DIRIJA-SE À MESA DE VOTO\n");
+                    System.out.println("\n(!) A MAQUINA ENCONTRA-SE BLOQUEADA, DIRIJA-SE À MESA DE VOTO\n");
                 }
                 else{
                     String username;
@@ -214,7 +214,7 @@ class MulticastUser extends Thread {
                         data.stop();
                     }
                     else{
-                        System.out.println("(!) MÁQUINA BLOQUEADA, PASSARAM 60 SEGUNDOS");
+                        System.out.println("(!) MAQUINA BLOQUEADA, PASSARAM 60 SEGUNDOS");
                     }
                     if(data.isLoggedIn()){
                         //INPUT COM OPÇÃO DE VOTO
@@ -227,7 +227,7 @@ class MulticastUser extends Thread {
                             data.setLoggedIn(false);
                         }
                         else{
-                            System.out.println("(!) MÁQUINA BLOQUEADA, PASSARAM 60 SEGUNDOS");
+                            System.out.println("(!) MAQUINA BLOQUEADA, PASSARAM 60 SEGUNDOS");
                         }
                     }
                     Thread.sleep(1000);
