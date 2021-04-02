@@ -26,14 +26,19 @@ public class MulticastClient extends Thread {
     private final int PORT = 4321;
     private final Data data;
 
-    public MulticastClient(long number, Data data, String ipMesa) {
+    public MulticastClient(long number, String name, Data data, String ipMesa) {
 
-        super("TERMINAL " + number);
+        super("TERMINAL " + name+ " " + number);
         this.data = data;
         this.MULTICAST_ADDRESS = ipMesa;
     }
 
     public static void main(String[] args) {
+
+        if(args.length < 1){
+            System.out.println("(!) INSIRA O NOME DO DEPARTAMENTO E NUMERO DO TERMINAL COMO ARGUMENTOS");
+            return;
+        }
 
         //READING PROPERTIES FILE
         FileInputStream fis = null;
@@ -52,14 +57,17 @@ public class MulticastClient extends Thread {
         String value = (String)props.get(args[0]);
         String[] ips = value.split(" ");
 
-        long number = Integer.parseInt(args[0]);
-        Data data = new Data();
-
-
-        MulticastClient client = new MulticastClient(number, data, ips[0]);
-        client.start();
-        MulticastUser user = new MulticastUser(number, data, ips[0], ips[1]);
-        user.start();
+        try {
+            long number = Integer.parseInt(args[1]);
+            Data data = new Data();
+            MulticastClient client = new MulticastClient(number,args[0], data, ips[0]);
+            client.start();
+            MulticastUser user = new MulticastUser(number,args[0], data, ips[0], ips[1]);
+            user.start();
+        }
+        catch (Exception e){
+            System.out.println("PROPERTIES FILE COM ERROS");
+        }
     }
 
     public void run() {
@@ -159,8 +167,8 @@ class MulticastUser extends Thread {
     private final int PORT = 4321;
     private final Data data;
 
-    public MulticastUser(long number, Data data, String ipMesa, String ipVoto) {
-        super("TERMINAL " + number);
+    public MulticastUser(long number,String name, Data data, String ipMesa, String ipVoto) {
+        super("TERMINAL " + name+ " " + number);
         this.data = data;
         this.VOTE_ADDRESS = ipVoto;
         this.MULTICAST_ADDRESS = ipMesa;

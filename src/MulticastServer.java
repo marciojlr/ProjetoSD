@@ -21,27 +21,40 @@ public class MulticastServer extends Thread {
     private final int PORT = 4321;
     private final DadosPartilhados dados;
 
-    public static void main(String[] args) throws IOException, NotBoundException {
+    public static void main(String[] args) throws RemoteException, NotBoundException, MalformedURLException {
 
         if(args.length < 1){
             System.out.println("(!) INSIRA O NOME DO DEPARTAMENTO COMO ARGUMENTO");
             return;
         }
         //READING PROPERTIES FILE
-        FileInputStream fis = new FileInputStream("src/config.properties");
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream("src/config.properties");
+        } catch (FileNotFoundException e) {
+            System.out.println("Erro a ler ficheiro de propriedades");
+        }
         Properties props = new Properties();
-        props.load(fis);
+        try {
+            props.load(fis);
+        } catch (IOException e) {
+            System.out.println("Erro a carregar ler ficheiro de propriedades");
+        }
         String value = (String)props.get(args[0]);
         String[] ips = value.split(" ");
-
         DadosPartilhados dados = new DadosPartilhados(args[0]);
         dados.RMIserver.ping(dados.getName());
-        MulticastServer server = new MulticastServer(dados,ips[0]);
-        server.start();
-        MulticastUserS u = new MulticastUserS(dados, ips[0]);
-        u.start();
-        Vote v = new Vote(dados, ips[1]);
-        v.start();
+        try{
+            MulticastServer server = new MulticastServer(dados,ips[0]);
+            server.start();
+            MulticastUserS u = new MulticastUserS(dados, ips[0]);
+            u.start();
+            Vote v = new Vote(dados, ips[1]);
+            v.start();
+        }
+        catch(Exception e){
+            System.out.println("PROPERTIES FILE COM ERROS");
+        }
         Runtime.getRuntime().addShutdownHook(new Thread() {
             public void run() {
                 try {
