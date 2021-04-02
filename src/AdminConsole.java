@@ -799,10 +799,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         while (!valido){
             opcao = s.nextLine();
             switch (opcao) {
-                default -> {
+                default :
                     valido = true;
                     notifications = false;
-                }
+                    break;
+
             }
         }
     }
@@ -811,12 +812,13 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
     public void notification(String message, int priority){
         if(priority == 1){
             System.out.println(message);
+            System.out.print("> ");
         }
         else{
             if(notifications){
                 System.out.println(message);
+                System.out.print("> ");
             }
         }
-        System.out.print("> ");
     }
 }
