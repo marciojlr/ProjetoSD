@@ -13,8 +13,8 @@ public class Eleicao implements Serializable {
     // LISTAS
     private ArrayList<ListaCandidata> listaCandidata;
     private ArrayList<Departamento> dept;
-
     private ArrayList<Pessoa> votantes;
+    //VOTOS
     private int total_votos;
     private int votos_branco;
     private int votos_nulos;
@@ -24,10 +24,10 @@ public class Eleicao implements Serializable {
         this.data_final = data_final;
         this.titulo = titulo;
         this.descricao = descricao;
-        this.dept = new ArrayList<Departamento>();
+        this.dept = new ArrayList<>();
         this.dept.add(dept);
         this.tipo_Pessoa = tipo_Pessoa;
-        this.listaCandidata= new ArrayList<ListaCandidata>();
+        this.listaCandidata= new ArrayList<>();
         this.votantes = new ArrayList<>();
         this.total_votos = 0;
         this.votos_branco = 0;
@@ -74,10 +74,6 @@ public class Eleicao implements Serializable {
         return votantes;
     }
 
-    public void addVotantes(Pessoa votante) {
-        this.votantes.add(votante);
-    }
-
     public void addTotalVotos(){
         this.total_votos++;
     }
@@ -90,36 +86,12 @@ public class Eleicao implements Serializable {
         this.votos_nulos++;
     }
 
-    public void setDept(Departamento dept) {
-        this.dept.add(dept);
-    }
-
     public String getTipo_Pessoa() {
         return tipo_Pessoa;
     }
 
-    public void setTipo_Pessoa(String tipo_Pessoa) {
-        this.tipo_Pessoa = tipo_Pessoa;
-    }
-
     public ArrayList<ListaCandidata> getListaCandidata() {
         return listaCandidata;
-    }
-
-    public void setListaCandidata(ArrayList<ListaCandidata> listaCandidata) {
-        this.listaCandidata = listaCandidata;
-    }
-
-    public int getTotal_votos() {
-        return total_votos;
-    }
-
-    public int getVotos_branco() {
-        return votos_branco;
-    }
-
-    public int getVotos_nulos() {
-        return votos_nulos;
     }
 
     public void addListaCandidata(String nome){
@@ -128,7 +100,6 @@ public class Eleicao implements Serializable {
     }
 
     public void removeListaCandidata(String nome){
-
         for (ListaCandidata l: this.listaCandidata) {
             if(nome.equals(l.getNome())){
                 this.listaCandidata.remove(l);
@@ -168,7 +139,8 @@ public class Eleicao implements Serializable {
 
     public String resultados(){
         String out;
-        out = "Tilulo: " + getTitulo()+"\n";
+        out = "\n- - - Resultados da Eleicao - - -\n";
+        out += "Tilulo: " + getTitulo()+"\n";
         try{
             float perVotosBrancos = ((float)votos_branco/total_votos)*100;
 

@@ -18,19 +18,12 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     //****************************************** MÉTODOS CHAMADOS PELA CONSOLA DE ADMINISTRAÇÃO *******************************************
+
     public String teste (RMI_C_I c){
         client.add(c);
         System.out.println("olaaaa");
         escreveFicheiroClients();
         return "olaaaaaa";
-    }
-
-    public ArrayList<Pessoa> getListaPessoas() {
-        return listaPessoas;
-    }
-
-    public ArrayList<Eleicao> getListaEleicoes() {
-        return listaEleicoes;
     }
 
     public ArrayList<Departamento> getListaDepartamentos() {
@@ -78,17 +71,12 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     public void RemoveListaCandidata(Eleicao e, String nome){
         for (Eleicao el: listaEleicoes ) {
             if(el.getTitulo().equals(e.getTitulo())){
-                System.out.println("Entrei aqui");
                 System.out.println(el.getListaCandidata());
-
-                //Outra alternativa
-                //el.getListaCandidata().removeIf(l -> l.getNome().equals(nome));
                 el.removeListaCandidata(nome);
-
+                escreveFicheiroEleicoes();
+                return;
             }
         }
-        escreveFicheiroEleicoes();
-
     }
 
     public void  AddMesaVoto(Eleicao e, Departamento d) {
@@ -96,12 +84,11 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
        for (Eleicao el: listaEleicoes) {
             if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
                 el.getDept().add(d);
+                System.out.println("Mesa adicionada com sucesso");
+                escreveFicheiroEleicoes();
+                return;
             }
         }
-
-        System.out.println("Mesa adicionada com sucesso");
-
-        escreveFicheiroEleicoes();
     }
 
     public void  RemoverMesaVoto(Eleicao e, Departamento d) {
@@ -109,11 +96,11 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         for (Eleicao el: listaEleicoes) {
             if( el.getTitulo().equals(e.getTitulo()) && el.getDescricao().equals(e.getDescricao())){
                 el.removeDepartamento(d);
+                System.out.println("Mesa removida com sucesso");
+                escreveFicheiroEleicoes();
+                return;
             }
         }
-
-        System.out.println("Mesa removida com sucesso");
-        escreveFicheiroEleicoes();
     }
 
     public String AlteraEleicao(String eleicao, GregorianCalendar data_inicio ,GregorianCalendar data_fim,String titulo, String descricao){
@@ -135,8 +122,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     public boolean AddDepartamento(Departamento d){
-        System.out.println("Novo departamento adicionado: " + d);
-
         if(checkDepartamentExist(d)){
             listaDepartamentos.add(d);
             escreveFicheiroDepartamentos();
@@ -144,7 +129,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             System.out.println(listaDepartamentos);
             return true;
         }
-        System.out.println(listaDepartamentos);
         return false;
     }
 
@@ -161,7 +145,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     public ArrayList<Eleicao> getEleicoesPassadas(){
         ArrayList<Eleicao> listaEleicoesPassadas = new ArrayList<>();
         GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
-        for (Eleicao e : this.getListaEleicoes()){
+        for (Eleicao e : listaEleicoes){
             if(e.getData_final().compareTo(date) < 0){
                 listaEleicoesPassadas.add(e);
             }
@@ -172,7 +156,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     public ArrayList<Eleicao> getEleicoesElegiveis(){
         ArrayList<Eleicao> elegieis = new ArrayList<>();
         GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
-        for(Eleicao e : this.getListaEleicoes()){
+        for(Eleicao e : listaEleicoes){
            if(e.getData_inicio().compareTo(date) > 0){
                elegieis.add(e);
            }
@@ -183,7 +167,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     public ArrayList<Departamento> getDepartamentosElegiveis(Eleicao e){
         ArrayList<Departamento> deptsElegiveis = new ArrayList<>();
         boolean encontrou = false;
-        for (Departamento d: this.getListaDepartamentos()) {
+        for (Departamento d: listaDepartamentos) {
             for(Departamento d2 : e.getDept()){
                 if(d2.getNome().equals(d.getNome())){
                     encontrou= true;
@@ -213,10 +197,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
 
+    //******************************************** METODOS CHAMADOS PELO SERVIDOR MULTICAST **************************************************
 
-
-
-    //******************************************** MÉTODOS CHAMADOS PELO SERVIDOR MULTICAST **************************************************
     public void sendNotification(String message){
         //ENVIAR MENSAGEM AOS CLIENTES
         System.out.println(client);
@@ -358,7 +340,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         Pessoa eleitor = null;
         Pessoa pessoa = null;
         //PROCURAR PESSOA
-        for(Pessoa p : this.getListaPessoas()){
+        for(Pessoa p : listaPessoas){
             if(userCC == p.getCC()){
                 pessoa = p;
                 break;
@@ -369,7 +351,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             eleitor = new Pessoa(pessoa.getNome(), userCC, department);
         }
         //ADICIONAR VOTANTE
-        for(Eleicao e : this.getListaEleicoes()){
+        for(Eleicao e : listaEleicoes){
             if(e.getTitulo().equals(election)){
                 e.getVotantes().add(eleitor);
                 break;
@@ -379,7 +361,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         sendNotification(message);
     }
 
-    //LEITURA E ESCRITA DE FICHEIROS OBJETO
+
+    //******************************************** METODOS DE LEITURA E ESCRITA DE OBJETOS **************************************************
+
     public  void escreveFicheiroPessoas(){
 
         File f = new File("Pessoas.obj");

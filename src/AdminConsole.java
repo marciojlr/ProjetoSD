@@ -649,7 +649,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 try {
                     Thread.sleep(500);
                     adminConsole = (RMI_S_I) Naming.lookup("Server");
-                    eleicoes = adminConsole.getListaEleicoes();
+                    eleicoes = adminConsole.getEleicoesElegiveis();
                     break;
                 }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
                     if(System.currentTimeMillis() - sTime >= 30000){
@@ -791,12 +791,9 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         while (true){
             try{
                 opcao = Integer.parseInt(s.nextLine());
-                if(opcao <= i){
-                    System.out.print("\n- - - Resultados da Eleicao - - -\n");
-                    System.out.println(listaEleicoesPassadas.get(opcao-1).resultados());
-                    return;
-                }
-            }catch (NumberFormatException e){
+                System.out.println(listaEleicoesPassadas.get(opcao-1).resultados());
+                return;
+            }catch (Exception e){
                 System.out.println("Insira uma opcao valida!");
             }
         }
