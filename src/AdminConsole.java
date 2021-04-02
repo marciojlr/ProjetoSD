@@ -2,6 +2,8 @@ import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -21,10 +23,9 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException{
 
-        System.getProperties().put("java.security.policy","policy.all");
-        System.setSecurityManager(new SecurityManager());
-
-        adminConsole = (RMI_S_I) Naming.lookup("Server");
+        //adminConsole = (RMI_S_I) Naming.lookup("Server");
+        Registry reg = LocateRegistry.getRegistry("192.168.1.46", 1099);
+        adminConsole = (RMI_S_I) reg.lookup("Server");
         RMI_C_I client = new AdminConsole();
         String teste;
         teste = adminConsole.teste((RMI_C_I) client);
