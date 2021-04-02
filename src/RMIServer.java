@@ -19,6 +19,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     //****************************************** MÉTODOS CHAMADOS PELA CONSOLA DE ADMINISTRAÇÃO *******************************************
 
+    /**
+     * @param c
+     * @return
+     */
     public String teste (RMI_C_I c){
         client.add(c);
         System.out.println("olaaaa");
@@ -26,19 +30,44 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return "olaaaaaa";
     }
 
+    /**
+     * Metodo que retorna a lista de departamentos
+     * @return lista de departamentos
+     */
     public ArrayList<Departamento> getListaDepartamentos() {
         return listaDepartamentos;
     }
 
+    /**
+     * Metodo que regista uma Pessoa no sistema
+     * @param nome nome da pessoa a registar
+     * @param tipo tipo de pessoa, Estudante, Funcionario ou Docente
+     * @param password password da pessoa a registar
+     * @param departamento departamento a que a pessoa a registar pertence
+     * @param CC cartao de cidadao da pessoa a registar
+     * @param CC_val validade do cartao de cidadao
+     * @param telemovel numero de telemovel da pessoa a registar
+     * @param morada morada da pessoa a registar
+     * @return retorna true se a pessoa foi registada com sucesso
+     */
     public boolean registarPessoa(String nome, String tipo, String password, Departamento departamento, int CC, GregorianCalendar CC_val, int telemovel, String morada){
         Pessoa p = new Pessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada);
         System.out.println(p);
         listaPessoas.add(p);
         escreveFicheiroPessoas();
-
         return true;
     }
 
+    /**
+     * Metodo que cria uma eleicao no sistema
+     * @param data_inicio data de começo da eleicao
+     * @param data_final data de fim da eleicao
+     * @param titulo nome da eleicao
+     * @param descricao descricao da eleicao
+     * @param dept departamento a que a eleicao pertence
+     * @param tipo_Pessoa tipo de pessoa que pode votar na eleicao, Estudante, Funcionario, Docente
+     * @return retorna uma string caso a eleicao seja criada com sucesso
+     */
     public String criarEleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, Departamento dept, String tipo_Pessoa){
 
         Eleicao e = new Eleicao(data_inicio,data_final,titulo,descricao,dept,tipo_Pessoa);
@@ -51,6 +80,11 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     }
 
+    /**
+     * Metodo que adiciona uma lista candidata a uma determinada eleicao
+     * @param e eleicao a qual uma lista candidata vai ser adicionada
+     * @param nome nome da lista candidata a ser adicionada
+     */
     public void AddListaCandidata(Eleicao e, String nome){
         int i=0;
         Eleicao aux=null;
@@ -68,6 +102,11 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     }
 
+    /**
+     * Metodo que remove uma lista candidata a uma determinada eleicao
+     * @param e eleicao a qual uma lista candidata vai ser removida
+     * @param nome nome da lista candidata a ser removida
+     */
     public void RemoveListaCandidata(Eleicao e, String nome){
         for (Eleicao el: listaEleicoes ) {
             if(el.getTitulo().equals(e.getTitulo())){
@@ -79,6 +118,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
     }
 
+    /**
+     * @param e
+     * @param d
+     */
     public void  AddMesaVoto(Eleicao e, Departamento d) {
 
        for (Eleicao el: listaEleicoes) {
@@ -91,6 +134,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
     }
 
+    /**
+     * @param e
+     * @param d
+     */
     public void  RemoverMesaVoto(Eleicao e, Departamento d) {
 
         for (Eleicao el: listaEleicoes) {
@@ -103,6 +150,14 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
     }
 
+    /**
+     * @param eleicao
+     * @param data_inicio
+     * @param data_fim
+     * @param titulo
+     * @param descricao
+     * @return
+     */
     public String AlteraEleicao(String eleicao, GregorianCalendar data_inicio ,GregorianCalendar data_fim,String titulo, String descricao){
 
         GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
@@ -121,6 +176,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return "Propriedades Alteradas com sucesso";
     }
 
+    /**
+     * @param d
+     * @return
+     */
     public boolean AddDepartamento(Departamento d){
         if(checkDepartamentExist(d)){
             listaDepartamentos.add(d);
@@ -132,6 +191,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return false;
     }
 
+    /**
+     * @param d
+     * @return
+     */
     public boolean checkDepartamentExist(Departamento d){
         for(Departamento dept : listaDepartamentos){
             if(dept.getNome().equals(d.getNome())){
@@ -142,6 +205,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     }
 
+    /**
+     * @return
+     */
     public ArrayList<Eleicao> getEleicoesPassadas(){
         ArrayList<Eleicao> listaEleicoesPassadas = new ArrayList<>();
         GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
@@ -153,6 +219,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return listaEleicoesPassadas;
     }
 
+    /**
+     * @return
+     */
     public ArrayList<Eleicao> getEleicoesElegiveis(){
         ArrayList<Eleicao> elegieis = new ArrayList<>();
         GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
@@ -164,6 +233,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return elegieis;
     }
 
+    /**
+     * @param e
+     * @return
+     */
     public ArrayList<Departamento> getDepartamentosElegiveis(Eleicao e){
         ArrayList<Departamento> deptsElegiveis = new ArrayList<>();
         boolean encontrou = false;
@@ -183,6 +256,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return deptsElegiveis;
     }
 
+    /**
+     * @param pessoa
+     * @return
+     */
     public ArrayList<String> LocalVoto(String pessoa){
         ArrayList<String> locais = new ArrayList<>();
         for (Eleicao e: listaEleicoes) {
@@ -199,6 +276,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     //******************************************** METODOS CHAMADOS PELO SERVIDOR MULTICAST **************************************************
 
+    /**
+     * @param message
+     * @param priority
+     */
     public void sendNotification(String message, int priority){
         //ENVIAR MENSAGEM AOS CLIENTES
         System.out.println(client);
@@ -219,6 +300,11 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
     }
 
+    /**
+     * @param CC
+     * @param department
+     * @return
+     */
     public boolean isRegistered(int CC, String department){
 
         for(Pessoa pessoa : listaPessoas){
@@ -231,6 +317,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return false;
     }
 
+    /**
+     * @param dept
+     */
     public void ping(String dept){
         for (Departamento d: listaDepartamentos) {
             if(d.getNome().equals(dept)){
@@ -242,6 +331,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         sendNotification(message,0);
     }
 
+    /**
+     * @param department
+     */
     public void crash(String department){
         for (Departamento d: listaDepartamentos) {
             if(d.getNome().equals(department)){
@@ -253,6 +345,12 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         sendNotification(message,1);
     }
 
+    /**
+     * @param userCC
+     * @param name
+     * @param password
+     * @return
+     */
     public boolean acceptLogin(int userCC, String name, String password){
         for(Pessoa pessoa : listaPessoas){
             if(pessoa.getCC() == userCC && pessoa.getNome().equals(name) && pessoa.getPassword().equals(password)){
@@ -264,6 +362,11 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return false;
     }
 
+    /**
+     * @param userCC
+     * @param departamento
+     * @return
+     */
     public ArrayList<String> getElections(int userCC, String departamento){
         Pessoa eleitor = null;
         ArrayList<String> eleicoes = new ArrayList<>();
@@ -296,6 +399,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return eleicoes;
     }
 
+    /**
+     * @param election
+     * @return
+     */
     public ArrayList<String> getCandidates(String election){
 
         ArrayList<String> listas = new ArrayList<String>();
@@ -313,6 +420,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return listas;
     }
 
+    /**
+     * @param election
+     * @param option
+     */
     public void vote(String election, String option){
         int vote;
         try{
@@ -347,6 +458,11 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
     }
 
+    /**
+     * @param election
+     * @param userCC
+     * @param department
+     */
     public void addElector(String election, int userCC, String department){
         Pessoa eleitor = null;
         Pessoa pessoa = null;
@@ -375,6 +491,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     //******************************************** METODOS DE LEITURA E ESCRITA DE OBJETOS **************************************************
 
+    /**
+     * Metodo que escreve para um ficheiro objeto as pessoas existentes no programa
+     */
     public  void escreveFicheiroPessoas(){
 
         File f = new File("Pessoas.obj");
@@ -394,6 +513,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             System.out.println("Erro a escrever para ficheiro");
         }
     }
+
+    /**
+     * Metodo que escreve para um ficheiro objeto as eleicoes existentes no programa
+     */
     public void escreveFicheiroEleicoes(){
 
         File f = new File("Eleicoes.obj");
@@ -413,6 +536,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             System.out.println("Erro a escrever para ficheiro");
         }
     }
+
+    /**
+     * Metodo que escreve para um ficheiro objeto os departamentos existentes no programa
+     */
     public void escreveFicheiroDepartamentos(){
 
         File f = new File("Departamentos.obj");
@@ -432,6 +559,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             System.out.println("Erro a escrever para ficheiro");
         }
     }
+
+    /**
+     * Metodo que escreve para um ficheiro objeto os clientes existentes no programa
+     */
     public void escreveFicheiroClients(){
 
         File f = new File("Clients.obj");
@@ -452,6 +583,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
     }
 
+    /**
+     * Metodo que le de um ficheiro objeto os clientes existentes no programa
+     */
     public static void lerFicheiroClients(){
         File f = new File("Clients.obj");
         try {
@@ -470,7 +604,12 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             e.printStackTrace();
         }
     }
-    public  static void leFicheiroPessoas() throws ClassNotFoundException {
+
+
+    /**
+     * Metodo que le de um ficheiro objeto as pessoas existentes no programa
+     */
+    public  static void leFicheiroPessoas() {
 
         File f = new File("Pessoas.obj");
         try {
@@ -484,10 +623,16 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             listaPessoas = new ArrayList<>();
         } catch(IOException e){
             System.out.println("Erro a escrever para ficheiro");
-        }
+        }catch (ClassNotFoundException e) {
+        e.printStackTrace();
+    }
 
     }
-    public  static void leFicheiroEleicoes() throws ClassNotFoundException {
+
+    /**
+     * Metodo que le de um ficheiro objeto as eleicoes existentes no programa
+     */
+    public  static void leFicheiroEleicoes(){
 
         File f = new File("Eleicoes.obj");
         try {
@@ -501,10 +646,16 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             listaEleicoes = new ArrayList<>();
         } catch(IOException e){
             System.out.println("Erro a escrever para ficheiro");
+        }catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
 
     }
-    public  static void leFicheiroDepartamentos() throws ClassNotFoundException {
+
+    /**
+     * Metodo que le de um ficheiro objeto os departamentos existentes no programa
+     */
+    public  static void leFicheiroDepartamentos(){
 
         File f = new File("Departamentos.obj");
         try {
@@ -518,14 +669,20 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             listaDepartamentos = new ArrayList<>();
         } catch(IOException e){
             System.out.println("Erro a escrever para ficheiro");
+        }catch (ClassNotFoundException e) {
+            e.printStackTrace();
         }
-
     }
 
     public static void main(String [] args ) throws IOException, ClassNotFoundException {
 
         boolean failed = true;
+        System.getProperties().put("java.security.policy","policy.all");
+        System.setSecurityManager(new SecurityManager());
         RMI_S_I server = new RMIServer();
+        System.getProperties().put("java.security.policy","policy.all");
+        System.setSecurityManager(new SecurityManager());
+
         leFicheiroPessoas();
         leFicheiroDepartamentos();
         leFicheiroEleicoes();
