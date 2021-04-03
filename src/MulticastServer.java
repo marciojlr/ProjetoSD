@@ -331,7 +331,6 @@ class Vote extends Thread {
             String option = map.get("option");
             while(true){
                 try{
-                    System.out.println("<" + option + "<");
                     dados.RMIserver.vote(map.get("election"), option);
                     break;
                 }catch(Exception e){

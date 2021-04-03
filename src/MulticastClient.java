@@ -191,7 +191,7 @@ class MulticastUser extends Thread {
     private String getInput(Scanner keyboardScanner) throws IOException {
 
         long sTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - sTime < 10000)
+        while (System.currentTimeMillis() - sTime < 60000)
         {
             if (System.in.available() > 0)
             {
