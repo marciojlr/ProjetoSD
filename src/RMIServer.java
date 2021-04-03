@@ -19,6 +19,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     //****************************************** MÉTODOS CHAMADOS PELA CONSOLA DE ADMINISTRAÇÃO *******************************************
 
+
     /**
      * @param c
      * @return
