@@ -60,7 +60,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             System.out.println("5. Alterar propriedades de eleicao");
             System.out.println("6. Saber local de voto de um dado eleitor");
             System.out.println("7. Estado das mesas de voto / Votos em tempo real");
-            System.out.println("14. Consultar eleicoes passadas");
+            System.out.println("8. Consultar eleicoes passadas");
             System.out.print("> ");
             option= myObj.nextLine();
             switch (option) {
@@ -91,7 +91,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 case "7":
                     notifications();
                     break;
-                case "14":
+                case "8":
                     ConsultarEleicoesPassadas();
                     break;
                 default:
