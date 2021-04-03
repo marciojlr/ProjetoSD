@@ -379,7 +379,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         if(elegivel != null){
             String nome = elegivel.getTitulo();
             GregorianCalendar data_inicio= elegivel.getData_inicio();
-            GregorianCalendar data_final = elegivel.getData_inicio();
+            GregorianCalendar data_final = elegivel.getData_final();
             String titulo= elegivel.getTitulo();
             String descricao= elegivel.getDescricao();
             boolean sair = false;
