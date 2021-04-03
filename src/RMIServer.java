@@ -119,8 +119,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param e
-     * @param d
+     * Metodo que adiciona uma Mesa de Voto a uma determinada eleicao
+     * @param e Eleicao a qual vai ser adicionada a mesa de voto
+     * @param d Departamento a que a mesa de voto pertence
      */
     public void  AddMesaVoto(Eleicao e, Departamento d) {
 
@@ -135,8 +136,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param e
-     * @param d
+     * Metodo que remove uma Mesa de Voto a uma determinada eleicao
+     * @param e Eleicao a qual vai ser removida a mesa de voto
+     * @param d Departamento a que a mesa de voto pertence
      */
     public void  RemoverMesaVoto(Eleicao e, Departamento d) {
 
@@ -151,20 +153,23 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param eleicao
-     * @param data_inicio
-     * @param data_fim
-     * @param titulo
-     * @param descricao
-     * @return
+     * Metodo que altera as propriedades de uma determinada eleicao
+     * @param eleicao Nome da eleicao que vai sofrer as alteracoes
+     * @param data_inicio Data de inicio da eleicao
+     * @param data_fim Data de fim da eleicao
+     * @param titulo Titulo da eleicao
+     * @param descricao Descricao da eleicao
+     * @return retorna a string "Propriedades Alteradas com sucesso"
      */
+
+    //TODO VER ISTO, NORMALMENTE JA NAO É PRECISO COMPARAR DATAS
     public String AlteraEleicao(String eleicao, GregorianCalendar data_inicio ,GregorianCalendar data_fim,String titulo, String descricao){
 
         GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
         for(Eleicao e : listaEleicoes){
             if (e.getTitulo().equals(eleicao)){
                 if(e.getData_inicio().compareTo(date) < 0){
-                    return "NAO É POSSIVEL";
+                    return "NAO E POSSIVEL";
                 }
                 e.setData_inicio(data_inicio);
                 e.setData_final(data_fim);
@@ -177,8 +182,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param d
-     * @return
+     * Metodo que adiciona um Departamento a lista de Departamentos do programa
+     * @param d Departamento que vai ser adicionado
+     * @return retorna true caso seja possivel adicionar o departamento e false caso nao seja
      */
     public boolean AddDepartamento(Departamento d){
         if(checkDepartamentExist(d)){
@@ -192,8 +198,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param d
-     * @return
+     * Metodo que verifica se o departamento ja existe na lista de departamentos do programa
+     * @param d Departamento que vai ser testado
+     * @return retorna false se o departamento ja existe no programa e true se nao existe
      */
     public boolean checkDepartamentExist(Departamento d){
         for(Departamento dept : listaDepartamentos){
@@ -206,7 +213,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @return
+     * Metodo que vai buscar as Eleicoes cuja a data ja passou
+     * @return ArrayList com as eleicoes cuja data ja passou
      */
     public ArrayList<Eleicao> getEleicoesPassadas(){
         ArrayList<Eleicao> listaEleicoesPassadas = new ArrayList<>();
@@ -220,7 +228,8 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @return
+     * Metodo que vai buscar as Eleiçoes que ainda nao comecaram
+     * @return ArrayList com as eleicoes que ainda nao comecaram
      */
     public ArrayList<Eleicao> getEleicoesElegiveis(){
         ArrayList<Eleicao> elegieis = new ArrayList<>();
@@ -234,8 +243,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param e
-     * @return
+     * Metodo que vai retornar os departamentos que sao possivel adicionar a uma determinada eleicao
+     * @param e Eleicao que se pretende saber quais os departamentos que ainda e possivel adicionar
+     * @return ArrayList com os departamentos elegiveis
      */
     public ArrayList<Departamento> getDepartamentosElegiveis(Eleicao e){
         ArrayList<Departamento> deptsElegiveis = new ArrayList<>();
@@ -257,8 +267,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param pessoa
-     * @return
+     * Metodo que vai retornar um ArrayList com todos os locais em que uma determinada pessoa votou
+     * @param pessoa Pessoa que se quer saber onde voto
+     * @return ArrayList com os locais de voto
      */
     public ArrayList<String> LocalVoto(String pessoa){
         ArrayList<String> locais = new ArrayList<>();
