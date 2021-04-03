@@ -43,7 +43,7 @@ public class MulticastClient extends Thread {
         //READING PROPERTIES FILE
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream("src/config.properties");
+            fis = new FileInputStream("config.properties");
         } catch (FileNotFoundException e) {
             System.out.println("Erro a ler ficheiro de propriedades");
         }
@@ -191,7 +191,7 @@ class MulticastUser extends Thread {
     private String getInput(Scanner keyboardScanner) throws IOException {
 
         long sTime = System.currentTimeMillis();
-        while (System.currentTimeMillis() - sTime < 60000)
+        while (System.currentTimeMillis() - sTime < 10000)
         {
             if (System.in.available() > 0)
             {
@@ -223,11 +223,28 @@ class MulticastUser extends Thread {
                 else{
                     String username;
                     String password = null;
-                    System.out.print("Username: ");
-                    username = getInput(keyboardScanner);
+                    while(true){
+                        System.out.print("Username: ");
+                        username = getInput(keyboardScanner);
+                        if(username == null || username.length() > 0){
+                            break;
+                        }
+                        else{
+                            System.out.println("(!) USERNAME INVALIDO");
+                        }
+                    }
+
                     if(!data.getBlocked()){
-                        System.out.print("Password: ");
-                        password = getInput(keyboardScanner);
+                        while(true){
+                            System.out.print("Password: ");
+                            password = getInput(keyboardScanner);
+                            if(password == null || password.length() > 0){
+                                break;
+                            }
+                            else{
+                                System.out.println("(!) PASSWORD INVALIDA");
+                            }
+                        }
                     }
                     if(!data.getBlocked()){
                         send(socket, "type | login; id | " + this.getName() + "; userCC | " + data.getUserCC() + "; username | " + username + "; password | " + password);

@@ -1,31 +1,46 @@
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
 import java.net.MalformedURLException;
 import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.rmi.server.UnicastRemoteObject;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.GregorianCalendar;
-import java.util.Scanner;
+import java.util.*;
 
 // Script de Cliente diretamente ligado ao Server
 public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     private static RMI_S_I adminConsole;
     private static boolean notifications;
+    private static String RMIServerIP;
 
-    public AdminConsole() throws RemoteException {
+    public AdminConsole(String RMIServerIP) throws RemoteException {
         super();
         notifications= false;
+        this.RMIServerIP = RMIServerIP;
     }
 
-    public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException{
+    public static void main(String[] args) throws RemoteException, NotBoundException{
 
-        System.getProperties().put("java.security.policy","policy.all");
-        System.setSecurityManager(new SecurityManager());
-
-        adminConsole = (RMI_S_I) Naming.lookup("Server");
-        RMI_C_I client = new AdminConsole();
+        FileInputStream fis = null;
+        try {
+            fis = new FileInputStream("config.properties");
+        } catch (FileNotFoundException e) {
+            System.out.println("Erro a ler ficheiro de propriedades");
+        }
+        Properties props = new Properties();
+        try {
+            props.load(fis);
+        } catch (IOException e) {
+            System.out.println("Erro a carregar ler ficheiro de propriedades");
+        }
+        String RMIServerIP = (String)props.get("RMIServerIP");
+        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+        adminConsole = (RMI_S_I) reg.lookup("Server");
+        RMI_C_I client = new AdminConsole(RMIServerIP);
         String teste;
         teste = adminConsole.teste((RMI_C_I) client);
         System.out.println(teste);
@@ -45,7 +60,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             System.out.println("5. Alterar propriedades de eleicao");
             System.out.println("6. Saber local de voto de um dado eleitor");
             System.out.println("7. Estado das mesas de voto / Votos em tempo real");
-            System.out.println("14. Consultar eleicoes passadas");
+            System.out.println("8. Consultar eleicoes passadas");
             System.out.print("> ");
             option= myObj.nextLine();
             switch (option) {
@@ -76,7 +91,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 case "7":
                     notifications();
                     break;
-                case "14":
+                case "8":
                     ConsultarEleicoesPassadas();
                     break;
                 default:
@@ -113,7 +128,6 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         return tipo;
     }
 
-    //Todo alterar o while sleeps
     public static void  RegistoPessoa(){
 
         Scanner s = new Scanner(System.in);
@@ -161,10 +175,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    adminConsole = (RMI_S_I) reg.lookup("Server");
                     adminConsole.registarPessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada);
                     break;
-                }catch(NotBoundException  | RemoteException | MalformedURLException | InterruptedException m){
+                }catch(NotBoundException  | RemoteException | InterruptedException m){
                     if(System.currentTimeMillis() - sTime >= 30000){
                         System.exit(-1);
                     }
@@ -243,10 +258,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    adminConsole = (RMI_S_I) reg.lookup("Server");
                     adminConsole.criarEleicao(data_inicio, data_fim, titulo, descricao, departamento, tipo_Pessoa);
                     break;
-                }catch(NotBoundException  | RemoteException | MalformedURLException |InterruptedException m){
+                }catch(NotBoundException  | RemoteException | InterruptedException m){
                     if(System.currentTimeMillis() - sTime >= 30000){
                         System.exit(-1);
                     }
@@ -295,10 +311,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    adminConsole = (RMI_S_I) reg.lookup("Server");
                     adminConsole.AddListaCandidata(elegivel,nome);
                     break;
-                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                }catch(NotBoundException | RemoteException | InterruptedException m){
                     if(System.currentTimeMillis() - sTime >= 30000){
                         System.exit(-1);
                     }
@@ -341,10 +358,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    adminConsole = (RMI_S_I) reg.lookup("Server");
                     adminConsole.RemoveListaCandidata(elegivel,elegivel.getListaCandidata().get(nome-1).getNome());
                     break;
-                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                }catch(NotBoundException | RemoteException | InterruptedException m){
                     if(System.currentTimeMillis() - sTime >= 30000){
                         System.exit(-1);
                     }
@@ -361,7 +379,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         if(elegivel != null){
             String nome = elegivel.getTitulo();
             GregorianCalendar data_inicio= elegivel.getData_inicio();
-            GregorianCalendar data_final = elegivel.getData_inicio();
+            GregorianCalendar data_final = elegivel.getData_final();
             String titulo= elegivel.getTitulo();
             String descricao= elegivel.getDescricao();
             boolean sair = false;
@@ -414,10 +432,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 while ( System.currentTimeMillis() - sTime < 30000){
                     try {
                         Thread.sleep(500);
-                        adminConsole = (RMI_S_I) Naming.lookup("Server");
+                        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                        adminConsole = (RMI_S_I) reg.lookup("Server");
                         System.out.println(adminConsole.AlteraEleicao(nome,data_inicio,data_final, titulo,descricao));
                         break;
-                    }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                    }catch(NotBoundException | RemoteException | InterruptedException m){
                         if(System.currentTimeMillis() - sTime >= 30000){
                             System.exit(-1);
                         }
@@ -473,10 +492,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 while ( System.currentTimeMillis() - sTime < 30000){
                     try {
                         Thread.sleep(500);
-                        adminConsole = (RMI_S_I) Naming.lookup("Server");
+                        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                        adminConsole = (RMI_S_I) reg.lookup("Server");
                         deptsElegiveis = adminConsole.getDepartamentosElegiveis(e);
                         break;
-                    }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                    }catch(NotBoundException | RemoteException | InterruptedException m){
                         if(System.currentTimeMillis() - sTime >= 30000){
                             System.exit(-1);
                         }
@@ -519,10 +539,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 while ( System.currentTimeMillis() - sTime < 30000){
                     try {
                         Thread.sleep(500);
-                        adminConsole = (RMI_S_I) Naming.lookup("Server");
+                        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                        adminConsole = (RMI_S_I) reg.lookup("Server");
                         adminConsole.AddMesaVoto(e, deptsElegiveis.get(opcao - 1));
                         break;
-                    }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                    }catch(NotBoundException | RemoteException | InterruptedException m){
                         if(System.currentTimeMillis() - sTime >= 30000){
                             System.exit(-1);
                         }
@@ -568,10 +589,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    adminConsole = (RMI_S_I) reg.lookup("Server");
                     adminConsole.RemoverMesaVoto(e,departamento);
                     break;
-                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                }catch(NotBoundException | RemoteException | InterruptedException m){
                     if(System.currentTimeMillis() - sTime >= 30000){
                         System.exit(-1);
                     }
@@ -590,10 +612,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    adminConsole = (RMI_S_I) reg.lookup("Server");
                     depts = adminConsole.getListaDepartamentos();
                     break;
-                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                }catch(NotBoundException | RemoteException | InterruptedException m){
                     if(System.currentTimeMillis() - sTime >= 30000){
                         System.exit(-1);
                     }
@@ -642,10 +665,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    adminConsole = (RMI_S_I) reg.lookup("Server");
                     eleicoes = adminConsole.getEleicoesElegiveis();
                     break;
-                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                }catch(NotBoundException | RemoteException | InterruptedException m){
                     if(System.currentTimeMillis() - sTime >= 30000){
                         System.exit(-1);
                     }
@@ -691,10 +715,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 while ( System.currentTimeMillis() - sTime < 30000){
                     try {
                         Thread.sleep(500);
-                        adminConsole = (RMI_S_I) Naming.lookup("Server");
+                        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                        adminConsole = (RMI_S_I) reg.lookup("Server");
                         check = adminConsole.AddDepartamento(d);
                         break;
-                    } catch (NotBoundException | RemoteException | MalformedURLException | InterruptedException m) {
+                    } catch (NotBoundException | RemoteException | InterruptedException m) {
                         if(System.currentTimeMillis() - sTime >= 30000){
                             System.exit(-1);
                         }
@@ -725,10 +750,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    adminConsole = (RMI_S_I) reg.lookup("Server");
                     locais= adminConsole.LocalVoto(nome);
                     break;
-                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                }catch(NotBoundException | RemoteException | InterruptedException m){
                     if( System.currentTimeMillis() - sTime >= 30000){
                         System.exit(-1);
                     }
@@ -756,10 +782,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    adminConsole = (RMI_S_I) Naming.lookup("Server");
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    adminConsole = (RMI_S_I) reg.lookup("Server");
                     listaEleicoesPassadas = adminConsole.getEleicoesPassadas();
                     break;
-                }catch(NotBoundException | RemoteException | MalformedURLException | InterruptedException m){
+                }catch(NotBoundException | RemoteException | InterruptedException m){
                     if(System.currentTimeMillis() - sTime >= 30000){
                         System.exit(-1);
                     }

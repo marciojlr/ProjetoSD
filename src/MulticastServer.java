@@ -2,9 +2,10 @@ import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.*;
 import java.io.IOException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
+import java.rmi.registry.LocateRegistry;
+import java.rmi.registry.Registry;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.Properties;
@@ -30,7 +31,7 @@ public class MulticastServer extends Thread {
         //READING PROPERTIES FILE
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream("src/config.properties");
+            fis = new FileInputStream("config.properties");
         } catch (FileNotFoundException e) {
             System.out.println("Erro a ler ficheiro de propriedades");
         }
@@ -42,7 +43,8 @@ public class MulticastServer extends Thread {
         }
         String value = (String)props.get(args[0]);
         String[] ips = value.split(" ");
-        DadosPartilhados dados = new DadosPartilhados(args[0]);
+        String RMIServerIP = (String)props.get("RMIServerIP");
+        DadosPartilhados dados = new DadosPartilhados(args[0], RMIServerIP);
         dados.RMIserver.ping(dados.getName());
         try{
             MulticastServer server = new MulticastServer(dados,ips[0]);
@@ -329,6 +331,7 @@ class Vote extends Thread {
             String option = map.get("option");
             while(true){
                 try{
+                    System.out.println("<" + option + "<");
                     dados.RMIserver.vote(map.get("election"), option);
                     break;
                 }catch(Exception e){
@@ -376,13 +379,16 @@ class Vote extends Thread {
 class DadosPartilhados{
     private int pedido;
     private final String name;
+    private String RMIServerIP;
     public RMI_S_I RMIserver;
     private HashMap<String,String> terminalState;
 
-    public DadosPartilhados(String name) throws RemoteException, NotBoundException, MalformedURLException {
+    public DadosPartilhados(String name, String RMIServerIP) throws RemoteException, NotBoundException, MalformedURLException {
         this.pedido = 0;
         this.name = name;
-        this.RMIserver = (RMI_S_I) Naming.lookup("Server");
+        this.RMIServerIP = RMIServerIP;
+        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+        this.RMIserver = (RMI_S_I) reg.lookup("Server");
         this.terminalState = new HashMap();
     }
 
@@ -399,7 +405,8 @@ class DadosPartilhados{
     }
 
     public void setRMIserver() throws RemoteException, NotBoundException, MalformedURLException {
-        this.RMIserver = (RMI_S_I) Naming.lookup("Server");
+        Registry reg = LocateRegistry.getRegistry(this.RMIServerIP, 1099);
+        this.RMIserver = (RMI_S_I) reg.lookup("Server");
     }
 
     public String getTerminalState(String key) {

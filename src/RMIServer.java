@@ -19,15 +19,16 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
     //****************************************** MÉTODOS CHAMADOS PELA CONSOLA DE ADMINISTRAÇÃO *******************************************
 
+
     /**
      * @param c
      * @return
      */
     public String teste (RMI_C_I c){
         client.add(c);
-        System.out.println("olaaaa");
+        System.out.println("Cliente Registado");
         escreveFicheiroClients();
-        return "olaaaaaa";
+        return "Registado no Servidor";
     }
 
     /**
@@ -293,7 +294,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
      */
     public void sendNotification(String message, int priority){
         //ENVIAR MENSAGEM AOS CLIENTES
-        System.out.println(client);
         ArrayList<Integer> indices = new ArrayList<>();
         int i = 0;
         for(RMI_C_I c : client){
@@ -607,7 +607,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             ois.close();
 
         }catch (FileNotFoundException e){
-            System.out.println("Erro ao abrir o ficheiro");
+            System.out.println("Ficheiro Clients ainda nao existe");
             listaPessoas = new ArrayList<>();
         } catch(IOException e){
             System.out.println("Erro a escrever para ficheiro");
@@ -630,7 +630,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             listaPessoas = (ArrayList<Pessoa>) ois.readObject();
             ois.close();
         }catch (FileNotFoundException e){
-            System.out.println("Erro ao abrir o ficheiro");
+            System.out.println("Ficheiro Pessoas ainda nao existe");
             listaPessoas = new ArrayList<>();
         } catch(IOException e){
             System.out.println("Erro a escrever para ficheiro");
@@ -653,7 +653,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             listaEleicoes= (ArrayList<Eleicao>) ois.readObject();
             ois.close();
         }catch (FileNotFoundException e){
-            System.out.println("Erro ao abrir o ficheiro");
+            System.out.println("Ficheiro Eleicoes ainda nao existe");
             listaEleicoes = new ArrayList<>();
         } catch(IOException e){
             System.out.println("Erro a escrever para ficheiro");
@@ -676,7 +676,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             listaDepartamentos = (ArrayList<Departamento>) ois.readObject();
             ois.close();
         }catch (FileNotFoundException e){
-            System.out.println("Erro ao abrir o ficheiro");
+            System.out.println("Ficheiro Departamentos ainda nao existe");
             listaDepartamentos = new ArrayList<>();
         } catch(IOException e){
             System.out.println("Erro a escrever para ficheiro");
