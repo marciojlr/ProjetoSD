@@ -43,7 +43,8 @@ public class MulticastServer extends Thread {
         }
         String value = (String)props.get(args[0]);
         String[] ips = value.split(" ");
-        DadosPartilhados dados = new DadosPartilhados(args[0]);
+        String RMIServerIP = (String)props.get("RMIServerIP");
+        DadosPartilhados dados = new DadosPartilhados(args[0], RMIServerIP);
         dados.RMIserver.ping(dados.getName());
         try{
             MulticastServer server = new MulticastServer(dados,ips[0]);
@@ -377,13 +378,15 @@ class Vote extends Thread {
 class DadosPartilhados{
     private int pedido;
     private final String name;
+    private String RMIServerIP;
     public RMI_S_I RMIserver;
     private HashMap<String,String> terminalState;
 
-    public DadosPartilhados(String name) throws RemoteException, NotBoundException, MalformedURLException {
+    public DadosPartilhados(String name, String RMIServerIP) throws RemoteException, NotBoundException, MalformedURLException {
         this.pedido = 0;
         this.name = name;
-        Registry reg = LocateRegistry.getRegistry("192.168.1.46", 1099);
+        this.RMIServerIP = RMIServerIP;
+        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
         this.RMIserver = (RMI_S_I) reg.lookup("Server");
         this.terminalState = new HashMap();
     }
@@ -401,7 +404,7 @@ class DadosPartilhados{
     }
 
     public void setRMIserver() throws RemoteException, NotBoundException, MalformedURLException {
-        Registry reg = LocateRegistry.getRegistry("192.168.1.46", 1099);
+        Registry reg = LocateRegistry.getRegistry(this.RMIServerIP, 1099);
         this.RMIserver = (RMI_S_I) reg.lookup("Server");
     }
 
