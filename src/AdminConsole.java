@@ -23,7 +23,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         this.RMIServerIP = RMIServerIP;
     }
 
-    public static void main(String[] args) throws MalformedURLException, RemoteException, NotBoundException{
+    public static void main(String[] args) throws RemoteException, NotBoundException{
 
         FileInputStream fis = null;
         try {
