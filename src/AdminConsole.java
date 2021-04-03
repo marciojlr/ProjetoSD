@@ -128,6 +128,10 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         return tipo;
     }
 
+    /**
+     * Metodo que recebe como input toda a informacao necessaria para o registo de uma pessoa e que regista a
+     * mesma atraves da invocacao do metodo registarPessoa do RMIServer
+     */
     public static void  RegistoPessoa(){
 
         Scanner s = new Scanner(System.in);
@@ -188,6 +192,10 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
+    /**
+     * Metodo que recebe como input as horas e minutos para definir na data recebida como parametro
+     * @param date data na qual se vai definir as horas
+     */
     private static void setHour(GregorianCalendar date){
         Scanner s = new Scanner(System.in);
         System.out.println("HORA (HH:MM)");
@@ -205,6 +213,10 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
+    /**
+     * Metodo que retorna uma data recebida por input
+     * @return data recebida por input
+     */
     public static GregorianCalendar pedeData(){
         Scanner s = new Scanner(System.in);
         System.out.print("Dia: ");
@@ -219,6 +231,10 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         return data;
     }
 
+    /**
+     * Metodo que recebe como input toda a informacao necessaria para a criacao de uma eleicao e que regista a
+     * mesma atraves da invocacao do metodo criarEleicao do RMIServer
+     */
     public static void  criaEleicao(){
         //RECOLHER INFORMAÇÃO
         Scanner s = new Scanner(System.in);
@@ -271,6 +287,10 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
+    /**
+     * Metodo que permite ao utilizador escolher se pretende adicionar ou remover uma Lista Candidata a uma
+     * determinada eleicao retornada pelo metodo escolheEleicao
+     */
     public static void gerirListaCandidata(){
 
         Scanner s = new Scanner(System.in);
@@ -299,6 +319,12 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
+
+    /**
+     * Metodo que adiciona uma Lista Candidata recebida atraves de input a uma determinada eleicao atraves da invocacao
+     * do metodo AddListaCandidata do RMIServer
+     * @param elegivel Eleicao a qual vai ser adicionada a Lista Candidata
+     */
     public static void  adicionaListaCandidata(Eleicao elegivel){
         Scanner s = new Scanner(System.in);
         System.out.println("Insira Lista Candidata que deseja inserir: ");
@@ -324,6 +350,11 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
+    /**
+     * Metodo que remove uma Lista Candidata recebida atraves de input a uma determinada eleicao atraves da invocacao
+     * do metodo RemoveListaCandidata do RMIServer
+     * @param elegivel Eleicao a qual vai ser adicionada a Lista Candidata
+     */
     public static void removeListaCandidata(Eleicao elegivel){
         Scanner s = new Scanner(System.in);
         if(elegivel.getListaCandidata().isEmpty()){
@@ -371,6 +402,10 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
+    /**
+     * Metodo que permite ao utilizaddor alterar propriedades de uma determinada eleiçao, recebendo
+     * as mesmas por input. As propriedades sao alteradas atraves da invocacao do metodo AlteraEleicao do RMIServer
+     */
     public static void AlteraPropriedadesEleicao(){
 
         Scanner s = new Scanner(System.in);
@@ -447,6 +482,9 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     }
 
+    /**
+     * Metodo que permite ao utilizador associar, remover ou criar uma mesa de voto
+     */
     public static void GerirMesa(){
         System.out.println("1. Associar   2. Remover  3. Criar");
         Scanner s = new Scanner(System.in);
@@ -737,6 +775,10 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     }
 
+    /**
+     * Metodo que permite ao utilizador pesquisar os locais de voto de uma determinada pessoa que recebe como input. O metodo invoca o metodo LocalVoto
+     * que vai retornar os locais de voto da pessoa pesquisada. Os locais de votos sao impressos no ecra
+     */
     public static void LocaisDeVoto(){
         Scanner s = new Scanner(System.in);
         System.out.println("Insira o nome do eleitor");
@@ -773,6 +815,10 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         }
     }
 
+    /**
+     * Metodo que permite ao utilizador consultar as eleicoes que ja encerraram. O metodo invoca o metodo getEleicoesPassadas() que
+     * retorna a lista de eleicoes q ja encerraram
+     */
     public static void ConsultarEleicoesPassadas(){
         ArrayList<Eleicao> listaEleicoesPassadas = new ArrayList<>();
         try{
