@@ -13,8 +13,9 @@ import java.util.Scanner;
 
 
 /**
- * Classe que serve para coordenar as ligações entre a mesa de voto
- * e os diferentes terminais de voto
+ * Classe que serve para coordenar as ligacoes entre a mesa de voto
+ * e os diferentes terminais de voto. Esta classe vai criar um objeto que
+ * estara a sempre a espera de receber mensagens através de um socket
  */
 public class MulticastServer extends Thread {
 
@@ -372,7 +373,7 @@ class Vote extends Thread {
 }
 
 /**
- * Classe que vai conter informação necessária e que tem de ser partilhada
+ * Classe que vai conter informacao necessaria e que tem de ser partilhada
  * entre as diferentes threads a correr no servidor Multicast
  */
 class DadosPartilhados{

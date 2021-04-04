@@ -138,7 +138,8 @@ public class Eleicao implements Serializable {
     public String resultados(){
         String out;
         out = "\n- - - Resultados da Eleicao - - -\n";
-        out += "Tilulo: " + getTitulo()+"\n";
+        out += "Total de votos: " + this.total_votos + "\n";
+        out += "Titulo: " + getTitulo()+"\n";
         try{
             float perVotosBrancos = ((float)votos_branco/total_votos)*100;
 

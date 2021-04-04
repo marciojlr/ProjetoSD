@@ -289,8 +289,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     //******************************************** METODOS CHAMADOS PELO SERVIDOR MULTICAST **************************************************
 
     /**
-     * @param message
-     * @param priority
+     * Metodo que vai percorrer a lista de consolas de administracao
+     * e efetuar callback de modo a enviar uma notificacao.
+     * @param message - Conteudo da notificacao
+     * @param priority - Prioridade da notificacao 0 ou 1
      */
     public void sendNotification(String message, int priority){
         //ENVIAR MENSAGEM AOS CLIENTES
@@ -312,9 +314,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param CC
-     * @param department
-     * @return
+     * @param CC Numero de cartao de cidadao inserido na mesa
+     * @param department nome da mesa onde o eleitor inseriu as credenciais
+     * @return true se o eleitor estiver registado e false caso contrario
      */
     public boolean isRegistered(int CC, String department){
 
@@ -329,7 +331,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param dept
+     * Indica as consolas de administracao que a mesa se encontra ativa
+     * enviando uma notificacao atraves de um callbak
+     * @param dept Nome da mesa que foi iniciada
      */
     public void ping(String dept){
         for (Departamento d: listaDepartamentos) {
@@ -343,7 +347,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param department
+     * Indica as consolas de administracao que a mesa se encontra desativadas
+     * ou sofreram um crash enviando uma notificacao atraves de um callbak
+     * @param department Nome da mesa que foi abaixo
      */
     public void crash(String department){
         for (Departamento d: listaDepartamentos) {
@@ -357,10 +363,12 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param userCC
-     * @param name
-     * @param password
-     * @return
+     * Funcao para verificar se as credencias de autenticacao foram bem colocada
+     * pelo eleitor no terminal de voto
+     * @param userCC - Numero do cartao de cidadaos
+     * @param name - Nome do eleitor
+     * @param password - Password
+     * @return True - Se os dados estao corretos. False - Se os dados estao errados
      */
     public boolean acceptLogin(int userCC, String name, String password){
         for(Pessoa pessoa : listaPessoas){
@@ -374,9 +382,12 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param userCC
-     * @param departamento
-     * @return
+     * Metodo para obter uma lista com o nome das eleicoes que sao comuns ao eleitor e
+     * a mesa. Retorna todas as eleicoes que estejam a decorrer na mesa e que sejam compativeis
+     * com o eleitor.
+     * @param userCC - Numero do cartao de cidadao
+     * @param departamento - Nome do departamento onde se encontra a mesa
+     * @return ArrayList<String> com o nome das eleicoes
      */
     public ArrayList<String> getElections(int userCC, String departamento){
         Pessoa eleitor = null;
@@ -411,8 +422,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param election
-     * @return
+     * Metodo para obeter as listas pertencentes a uma determinada eleicao
+     * @param election - Nome da eleicao
+     * @return ArrayList<String> com as listas de uma dada eleicao
      */
     public ArrayList<String> getCandidates(String election){
 
@@ -432,8 +444,9 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param election
-     * @param option
+     * Regista o voto
+     * @param election - Nome da eleicao
+     * @param option - Opcao em que pretende votar
      */
     public void vote(String election, String option){
         int vote;
@@ -470,9 +483,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
-     * @param election
-     * @param userCC
-     * @param department
+     * Adiciona o eleitor a lista de votantes de uma determinada eleicao
+     * @param election - Nome da eleicao
+     * @param userCC - Numero de cartao de cidadao
+     * @param department - Nome da mesa em que votou
      */
     public void addElector(String election, int userCC, String department){
         Pessoa eleitor = null;
