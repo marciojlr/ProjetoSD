@@ -6,13 +6,33 @@ import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.GregorianCalendar;
 
+/**
+ * Classe que implementa o server rmi, contém todos os metodos remotos
+ *
+ */
 public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
+    /**
+     * ArrayList com as pessoas registadas no server
+     */
     public static  ArrayList<Pessoa> listaPessoas;
+    /**
+     *  ArrayList com as eleicoes registadas no server
+     */
     public static ArrayList<Eleicao> listaEleicoes;
+    /**
+     *  ArrayList com os departamentos registados no server
+     */
     public static ArrayList<Departamento> listaDepartamentos;
+    /**
+     *  ArrayList com os clients ligados aoserver
+     */
     public static ArrayList<RMI_C_I> client= new ArrayList<>();
 
+    /**
+     * Construtor da classe RMIServer
+     * @throws RemoteException
+     */
     protected RMIServer() throws RemoteException {
         super();
     }
@@ -21,8 +41,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
 
 
     /**
-     * @param c
-     * @return
+     * Metodo que adiciona os clientes que se liga ao rmi server a lista de clientes. Tambem faz
+     * a invocacao do metodo escreveFicheiroClients para a escrita dos mesmos
+     * @param c Cliente que se liga
+     * @return String com a mensagem "Registado no servidor"
      */
     public String teste (RMI_C_I c){
         client.add(c);
@@ -387,7 +409,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
      * com o eleitor.
      * @param userCC - Numero do cartao de cidadao
      * @param departamento - Nome do departamento onde se encontra a mesa
-     * @return ArrayList<String> com o nome das eleicoes
+     * @return ArrayList com o nome das eleicoes
      */
     public ArrayList<String> getElections(int userCC, String departamento){
         Pessoa eleitor = null;
@@ -424,7 +446,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     /**
      * Metodo para obeter as listas pertencentes a uma determinada eleicao
      * @param election - Nome da eleicao
-     * @return ArrayList<String> com as listas de uma dada eleicao
+     * @return ArrayList com as listas de uma dada eleicao
      */
     public ArrayList<String> getCandidates(String election){
 
@@ -699,6 +721,10 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
     }
 
+    /**
+     * @throws IOException
+     * @throws ClassNotFoundException
+     */
     public static void main(String [] args ) throws IOException, ClassNotFoundException {
 
         boolean failed = true;
