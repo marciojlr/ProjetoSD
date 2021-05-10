@@ -1,8 +1,8 @@
+package rmiserver;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.io.IOException;
-import java.net.MalformedURLException;
-import java.rmi.Naming;
 import java.rmi.NotBoundException;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -38,7 +38,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             System.out.println("Erro a carregar ler ficheiro de propriedades");
         }
         String RMIServerIP = (String)props.get("RMIServerIP");
-        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
         adminConsole = (RMI_S_I) reg.lookup("Server");
         RMI_C_I client = new AdminConsole(RMIServerIP);
         String teste;
@@ -130,7 +130,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     /**
      * Metodo que recebe como input toda a informacao necessaria para o registo de uma pessoa e que regista a
-     * mesma atraves da invocacao do metodo registarPessoa do RMIServer
+     * mesma atraves da invocacao do metodo registarPessoa do rmiserver.RMIServer
      */
     public static void  RegistoPessoa(){
 
@@ -179,7 +179,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
                     adminConsole = (RMI_S_I) reg.lookup("Server");
                     adminConsole.registarPessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada);
                     break;
@@ -233,7 +233,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     /**
      * Metodo que recebe como input toda a informacao necessaria para a criacao de uma eleicao e que regista a
-     * mesma atraves da invocacao do metodo criarEleicao do RMIServer
+     * mesma atraves da invocacao do metodo criarEleicao do rmiserver.RMIServer
      */
     public static void  criaEleicao(){
         //RECOLHER INFORMAÇÃO
@@ -274,7 +274,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
                     adminConsole = (RMI_S_I) reg.lookup("Server");
                     adminConsole.criarEleicao(data_inicio, data_fim, titulo, descricao, departamento, tipo_Pessoa);
                     break;
@@ -322,7 +322,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     /**
      * Metodo que adiciona uma Lista Candidata recebida atraves de input a uma determinada eleicao atraves da invocacao
-     * do metodo AddListaCandidata do RMIServer
+     * do metodo AddListaCandidata do rmiserver.RMIServer
      * @param elegivel Eleicao a qual vai ser adicionada a Lista Candidata
      */
     public static void  adicionaListaCandidata(Eleicao elegivel){
@@ -337,7 +337,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
                     adminConsole = (RMI_S_I) reg.lookup("Server");
                     adminConsole.AddListaCandidata(elegivel,nome);
                     break;
@@ -352,7 +352,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     /**
      * Metodo que remove uma Lista Candidata recebida atraves de input a uma determinada eleicao atraves da invocacao
-     * do metodo RemoveListaCandidata do RMIServer
+     * do metodo RemoveListaCandidata do rmiserver.RMIServer
      * @param elegivel Eleicao a qual vai ser adicionada a Lista Candidata
      */
     public static void removeListaCandidata(Eleicao elegivel){
@@ -389,7 +389,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
                     adminConsole = (RMI_S_I) reg.lookup("Server");
                     adminConsole.RemoveListaCandidata(elegivel,elegivel.getListaCandidata().get(nome-1).getNome());
                     break;
@@ -404,7 +404,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
 
     /**
      * Metodo que permite ao utilizaddor alterar propriedades de uma determinada eleiçao, recebendo
-     * as mesmas por input. As propriedades sao alteradas atraves da invocacao do metodo AlteraEleicao do RMIServer
+     * as mesmas por input. As propriedades sao alteradas atraves da invocacao do metodo AlteraEleicao do rmiserver.RMIServer
      */
     public static void AlteraPropriedadesEleicao(){
 
@@ -467,7 +467,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 while ( System.currentTimeMillis() - sTime < 30000){
                     try {
                         Thread.sleep(500);
-                        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
                         adminConsole = (RMI_S_I) reg.lookup("Server");
                         System.out.println(adminConsole.AlteraEleicao(nome,data_inicio,data_final, titulo,descricao));
                         break;
@@ -530,7 +530,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 while ( System.currentTimeMillis() - sTime < 30000){
                     try {
                         Thread.sleep(500);
-                        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
                         adminConsole = (RMI_S_I) reg.lookup("Server");
                         deptsElegiveis = adminConsole.getDepartamentosElegiveis(e);
                         break;
@@ -577,7 +577,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 while ( System.currentTimeMillis() - sTime < 30000){
                     try {
                         Thread.sleep(500);
-                        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
                         adminConsole = (RMI_S_I) reg.lookup("Server");
                         adminConsole.AddMesaVoto(e, deptsElegiveis.get(opcao - 1));
                         break;
@@ -627,7 +627,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
                     adminConsole = (RMI_S_I) reg.lookup("Server");
                     adminConsole.RemoverMesaVoto(e,departamento);
                     break;
@@ -650,7 +650,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
                     adminConsole = (RMI_S_I) reg.lookup("Server");
                     depts = adminConsole.getListaDepartamentos();
                     break;
@@ -703,7 +703,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
                     adminConsole = (RMI_S_I) reg.lookup("Server");
                     eleicoes = adminConsole.getEleicoesElegiveis();
                     break;
@@ -753,7 +753,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                 while ( System.currentTimeMillis() - sTime < 30000){
                     try {
                         Thread.sleep(500);
-                        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
                         adminConsole = (RMI_S_I) reg.lookup("Server");
                         check = adminConsole.AddDepartamento(d);
                         break;
@@ -792,7 +792,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
                     adminConsole = (RMI_S_I) reg.lookup("Server");
                     locais= adminConsole.LocalVoto(nome);
                     break;
@@ -828,7 +828,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
             while ( System.currentTimeMillis() - sTime < 30000){
                 try {
                     Thread.sleep(500);
-                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+                    Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
                     adminConsole = (RMI_S_I) reg.lookup("Server");
                     listaEleicoesPassadas = adminConsole.getEleicoesPassadas();
                     break;

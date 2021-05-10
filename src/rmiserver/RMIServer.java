@@ -1,3 +1,5 @@
+package rmiserver;
+
 import java.io.*;
 import java.rmi.RemoteException;
 import java.rmi.registry.LocateRegistry;
@@ -30,7 +32,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     public static ArrayList<RMI_C_I> client= new ArrayList<>();
 
     /**
-     * Construtor da classe RMIServer
+     * Construtor da classe rmiserver.RMIServer
      * @throws RemoteException
      */
     protected RMIServer() throws RemoteException {
@@ -358,6 +360,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
      * @param dept Nome da mesa que foi iniciada
      */
     public void ping(String dept){
+        System.out.println("ola");
         for (Departamento d: listaDepartamentos) {
             if(d.getNome().equals(dept)){
                 d.setMesaOn(true);
@@ -728,11 +731,11 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     public static void main(String [] args ) throws IOException, ClassNotFoundException {
 
         boolean failed = true;
-        System.getProperties().put("java.security.policy","policy.all");
-        System.setSecurityManager(new SecurityManager());
+        //System.getProperties().put("java.security.policy","policy.all");
+        //System.setSecurityManager(new SecurityManager());
         RMI_S_I server = new RMIServer();
-        System.getProperties().put("java.security.policy","policy.all");
-        System.setSecurityManager(new SecurityManager());
+        //System.getProperties().put("java.security.policy","policy.all");
+        //System.setSecurityManager(new SecurityManager());
 
         leFicheiroPessoas();
         leFicheiroDepartamentos();
@@ -740,7 +743,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         lerFicheiroClients();
 
         try {
-            LocateRegistry.createRegistry(1099).rebind("Server",server);
+            LocateRegistry.createRegistry(7000).rebind("Server",server);
             System.out.println("RMI Server ready...!");
         } catch (RemoteException exception){
             System.out.println("O server principal já se encontra ligado");
@@ -749,7 +752,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
                 try {
                     Thread.sleep(5000);
                     System.out.println("A tentar de novo");
-                    LocateRegistry.createRegistry(1099).rebind("Server",server);
+                    LocateRegistry.createRegistry(7000).rebind("Server",server);
                     System.out.println("Server Secundario is Ready");
                     failed = false;
                     leFicheiroPessoas();

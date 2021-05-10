@@ -1,3 +1,5 @@
+package rmiserver;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.*;
@@ -32,7 +34,7 @@ public class MulticastServer extends Thread {
         //READING PROPERTIES FILE
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream("config.properties");
+            fis = new FileInputStream("rmiserver/config.properties");
         } catch (FileNotFoundException e) {
             System.out.println("Erro a ler ficheiro de propriedades");
         }
@@ -387,7 +389,7 @@ class DadosPartilhados{
         this.pedido = 0;
         this.name = name;
         this.RMIServerIP = RMIServerIP;
-        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 1099);
+        Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
         this.RMIserver = (RMI_S_I) reg.lookup("Server");
         this.terminalState = new HashMap();
     }
@@ -405,7 +407,7 @@ class DadosPartilhados{
     }
 
     public void setRMIserver() throws RemoteException, NotBoundException, MalformedURLException {
-        Registry reg = LocateRegistry.getRegistry(this.RMIServerIP, 1099);
+        Registry reg = LocateRegistry.getRegistry(this.RMIServerIP, 7000);
         this.RMIserver = (RMI_S_I) reg.lookup("Server");
     }
 

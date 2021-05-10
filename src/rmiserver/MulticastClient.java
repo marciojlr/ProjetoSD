@@ -1,3 +1,5 @@
+package rmiserver;
+
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
 import java.net.MulticastSocket;
@@ -43,7 +45,7 @@ public class MulticastClient extends Thread {
         //READING PROPERTIES FILE
         FileInputStream fis = null;
         try {
-            fis = new FileInputStream("config.properties");
+            fis = new FileInputStream("rmiserver/config.properties");
         } catch (FileNotFoundException e) {
             System.out.println("Erro a ler ficheiro de propriedades");
         }
