@@ -75,6 +75,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
      * @param morada morada da pessoa a registar
      * @return retorna true se a pessoa foi registada com sucesso
      */
+
     public boolean registarPessoa(String nome, String tipo, String password, Departamento departamento, int CC, GregorianCalendar CC_val, int telemovel, String morada){
         Pessoa p = new Pessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada);
         System.out.println(p);
