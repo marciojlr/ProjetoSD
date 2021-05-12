@@ -9,7 +9,7 @@ public interface RMI_S_I extends Remote {
 
     //MÉTODOS CHAMADOS PELA CONSOLA DE ADMINISTRAÇÃO
     String teste (RMI_C_I c) throws RemoteException;
-    boolean registarPessoa(String nome, String tipo, String password, Departamento departamento, int CC, GregorianCalendar CC_val, int telemovel, String morada) throws RemoteException;
+    boolean registarPessoa(String nome, String tipo, String password, Departamento departamento, int CC, GregorianCalendar CC_val, int telemovel, String morada, boolean admin) throws RemoteException;
     String criarEleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, Departamento dept, String tipo_Pessoa) throws RemoteException;
     void AddListaCandidata(Eleicao e, String nome) throws RemoteException;
     void RemoveListaCandidata(Eleicao e, String nome) throws RemoteException;

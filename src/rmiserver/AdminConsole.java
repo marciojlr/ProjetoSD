@@ -170,7 +170,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
         //chamar funçao registar do server
         try{
             boolean result;
-            result = adminConsole.registarPessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada);
+            result = adminConsole.registarPessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada, false);
             if(result){
                 System.out.println("\nELEITOR REGISTADO COM SUCESSO!\n");
             }
@@ -181,7 +181,7 @@ public class AdminConsole extends UnicastRemoteObject implements RMI_C_I {
                     Thread.sleep(500);
                     Registry reg = LocateRegistry.getRegistry(RMIServerIP, 7000);
                     adminConsole = (RMI_S_I) reg.lookup("Server");
-                    adminConsole.registarPessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada);
+                    adminConsole.registarPessoa(nome, tipo, password, departamento, CC, CC_val, telemovel, morada, false);
                     break;
                 }catch(NotBoundException  | RemoteException | InterruptedException m){
                     if(System.currentTimeMillis() - sTime >= 30000){

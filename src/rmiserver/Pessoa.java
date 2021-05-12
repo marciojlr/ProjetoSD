@@ -15,8 +15,9 @@ public class Pessoa implements Serializable{
     private int telemovel;
     private String morada;
     private String localVoto;
+    private boolean admin;
 
-    public Pessoa(String nome, String tipo, String password, Departamento departamento, int CC, GregorianCalendar CC_val,int telemovel, String morada) {
+    public Pessoa(String nome, String tipo, String password, Departamento departamento, int CC, GregorianCalendar CC_val,int telemovel, String morada, boolean admin) {
         this.nome = nome;
         this.tipo = tipo;
         this.password = password;
@@ -25,6 +26,7 @@ public class Pessoa implements Serializable{
         this.validade_CC = CC_val;
         this.telemovel = telemovel;
         this.morada = morada;
+        this.admin = admin;
     }
 
     public Pessoa(String nome, int CC, String localVoto) {
@@ -55,6 +57,6 @@ public class Pessoa implements Serializable{
 
     @Override
     public String toString() {
-        return "Nome: " + this.nome + "; Tipo: " + this.tipo + "; CC: " + this.CC + "; Departamento: " + this.departamento;
+        return "Nome: " + this.nome + "; Tipo: " + this.tipo + "; CC: " + this.CC + "; Departamento: " + this.departamento + "; Admin: " + this.admin;
     }
 }
