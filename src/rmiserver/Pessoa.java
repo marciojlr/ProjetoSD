@@ -55,6 +55,10 @@ public class Pessoa implements Serializable{
         return CC;
     }
 
+    public boolean getAdmin(){
+        return this.admin;
+    }
+
     @Override
     public String toString() {
         return "Nome: " + this.nome + "; Tipo: " + this.tipo + "; CC: " + this.CC + "; Departamento: " + this.departamento + "; Admin: " + this.admin;

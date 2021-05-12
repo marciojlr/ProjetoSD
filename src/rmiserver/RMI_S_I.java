@@ -26,6 +26,7 @@ public interface RMI_S_I extends Remote {
 
     //MÉTODOS CHAMADAS PELO SERVIDOR MULTICAST
     boolean isRegistered(int CC, String department) throws RemoteException;
+    boolean loginAdmin(int CC, String password) throws RemoteException;
     void ping(String dept) throws RemoteException;
     void crash(String department) throws RemoteException;
     boolean acceptLogin(int userCC, String name, String password) throws RemoteException;

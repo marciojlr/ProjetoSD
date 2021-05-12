@@ -355,6 +355,20 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     }
 
     /**
+     * @param CC Numero de cartao de cidadao
+     * @param password password para entrar na conta
+     * @return true se o eleitor estiver registado e false caso contrario
+     */
+    public boolean loginAdmin(int CC, String password){
+        for(Pessoa pessoa : listaPessoas){
+            if(pessoa.getCC() == CC && pessoa.getPassword().equals(password) && pessoa.getAdmin()){
+                return true;
+            }
+        }
+        return false;
+    }
+
+    /**
      * Indica as consolas de administracao que a mesa se encontra ativa
      * enviando uma notificacao atraves de um callbak
      * @param dept Nome da mesa que foi iniciada
