@@ -123,8 +123,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
             i++;
         }
         escreveFicheiroEleicoes();
-
-
     }
 
     /**
