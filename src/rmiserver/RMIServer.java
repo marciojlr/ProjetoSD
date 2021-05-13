@@ -306,6 +306,15 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return locais;
     }
 
+    public Eleicao stringToElection(String titulo){
+        for(Eleicao e : listaEleicoes){
+            if(e.getTitulo().equals(titulo)){
+                return e;
+            }
+        }
+        return null;
+    }
+
 
     //******************************************** METODOS CHAMADOS PELO SERVIDOR MULTICAST **************************************************
 
@@ -357,6 +366,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
      * @return true se o eleitor estiver registado e false caso contrario
      */
     public boolean loginAdmin(int CC, String password){
+        System.out.println(listaPessoas);
         for(Pessoa pessoa : listaPessoas){
             if(pessoa.getCC() == CC && pessoa.getPassword().equals(password) && pessoa.getAdmin()){
                 return true;
@@ -722,7 +732,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         try {
             FileInputStream fis = new FileInputStream(f);
             ObjectInputStream ois = new ObjectInputStream(fis);
-
             listaDepartamentos = (ArrayList<Departamento>) ois.readObject();
             ois.close();
         }catch (FileNotFoundException e){
