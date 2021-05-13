@@ -467,6 +467,35 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return eleicoes;
     }
 
+    public ArrayList<String> getElectionsWeb(int userCC){
+        Pessoa eleitor = null;
+        ArrayList<String> eleicoes = new ArrayList<>();
+
+        //ENCONTRAR ELEITOR
+        for(Pessoa p : listaPessoas){
+            if(p.getCC() == userCC){
+                eleitor = p;
+            }
+        }
+        GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
+        //ENCONTRAR ELEICOES COMUNS HA MESA E ELEITORES
+        for(Eleicao e : listaEleicoes){
+            boolean voted = false;
+            if(e.getTipo_Pessoa().equals(eleitor.getTipo()) && e.getData_inicio().compareTo(date) < 0 && e.getData_final().compareTo(date) > 0){
+                for(Pessoa p : e.getVotantes()){
+                    if(p.getCC() == userCC){
+                        voted = true;
+                        break;
+                    }
+                }
+                if(!voted){
+                    eleicoes.add(e.getTitulo());
+                }
+            }
+        }
+        return eleicoes;
+    }
+
     /**
      * Metodo para obeter as listas pertencentes a uma determinada eleicao
      * @param election - Nome da eleicao

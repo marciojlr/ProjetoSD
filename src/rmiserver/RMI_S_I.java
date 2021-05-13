@@ -36,4 +36,5 @@ public interface RMI_S_I extends Remote {
     void addElector(String election, int userCC, String department) throws RemoteException;
 
     Eleicao stringToElection(String titulo) throws RemoteException;
+    ArrayList<String> getElectionsWeb(int userCC) throws RemoteException;
 }
