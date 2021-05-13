@@ -2,6 +2,7 @@ package rmiserver;
 
 import java.io.Serializable;
 import java.util.ArrayList;
+import java.util.Calendar;
 import java.util.GregorianCalendar;
 
 public class Eleicao implements Serializable {
@@ -132,7 +133,9 @@ public class Eleicao implements Serializable {
     public String toString(){
         return  "Titulo: " + this.titulo  + "; Descrição: " + this.descricao + "; Departamentos: " + this.dept +
                 "; Data de inicio: " + this.data_inicio.get(5) + "/" + (this.data_inicio.get(2)+1) + "/" + this.data_inicio.get(1) +
-                "; Data de encerramento: " + this.data_inicio.get(5) + "/" + (this.data_inicio.get(2)+1) + "/" + this.data_inicio.get(1)
+                " " + this.data_inicio.get(Calendar.HOUR_OF_DAY) + ":" + this.data_inicio.get(Calendar.MINUTE) +
+                "; Data de encerramento: " + this.data_final.get(5) + "/" + (this.data_final.get(2)+1) + "/" + this.data_final.get(1) +
+                " " + this.data_final.get(Calendar.HOUR_OF_DAY) + ":" + this.data_final.get(Calendar.MINUTE)
                 ;
     }
 

@@ -94,7 +94,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
      * @return retorna uma string caso a eleicao seja criada com sucesso
      */
     public String criarEleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, Departamento dept, String tipo_Pessoa){
-
         Eleicao e = new Eleicao(data_inicio,data_final,titulo,descricao,dept,tipo_Pessoa);
         System.out.println(e);
 
