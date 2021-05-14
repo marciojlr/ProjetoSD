@@ -315,6 +315,18 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return null;
     }
 
+    public boolean checkUser(String nome){
+        System.out.println(nome);
+        for (Pessoa p:listaPessoas) {
+            System.out.println(p.getNome());
+            if(p.getNome().equals(nome)){
+                System.out.println("oupa");
+                return true;
+            }
+        }
+        return false;
+    }
+
 
     //******************************************** METODOS CHAMADOS PELO SERVIDOR MULTICAST **************************************************
 
