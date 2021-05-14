@@ -381,9 +381,11 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         System.out.println(listaPessoas);
         for(Pessoa pessoa : listaPessoas){
             if(pessoa.getCC() == CC && pessoa.getPassword().equals(password) && pessoa.getAdmin()){
+                System.out.println("Login Admin(" + CC + "): Accepted");
                 return true;
             }
         }
+        System.out.println("Login Admin(" + CC + "): Rejected");
         return false;
     }
 
@@ -431,11 +433,13 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
     public boolean acceptLogin(int userCC, String name, String password){
         for(Pessoa pessoa : listaPessoas){
             if(pessoa.getCC() == userCC && pessoa.getNome().equals(name) && pessoa.getPassword().equals(password)){
+                System.out.println("Login Elector(" + name + "): Accepted");
                 String message = "Eleitor com o nome " + name + " e CC " + userCC + ", efetuou login num terminal.";
                 sendNotification(message,0);
                 return true;
             }
         }
+        System.out.println("Login Elector(" + name + "): Rejected");
         return false;
     }
 
@@ -569,6 +573,37 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
     }
 
+    public void voteWeb(String election, String option){
+        System.out.println(election + " " + option);
+        for(Eleicao e : listaEleicoes){
+            if(e.getTitulo().equals(election)){
+
+                if(option.equals("Nulo")){
+                    e.addVotoNulo();
+                    System.out.println("Voto Nulo");
+                }
+                else if(option.equals("Branco")){
+                    e.addVotoBranco();
+                    System.out.println("Voto em branco");
+                    e.addTotalVotos();
+                }
+                else{
+                    for(ListaCandidata lista : e.getListaCandidata()){
+                        if(lista.getNome().equals(option)){
+                            lista.addVote();
+                            System.out.println("Voto: " + lista);
+                            break;
+                        }
+                    }
+                    e.addTotalVotos();
+                }
+
+                escreveFicheiroEleicoes();
+                return;
+            }
+        }
+    }
+
     /**
      * Adiciona o eleitor a lista de votantes de uma determinada eleicao
      * @param election - Nome da eleicao
@@ -576,6 +611,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
      * @param department - Nome da mesa em que votou
      */
     public void addElector(String election, int userCC, String department){
+        System.out.println("Adicionado: " + election + " " + userCC + " " + department);
         Pessoa eleitor = null;
         Pessoa pessoa = null;
         //PROCURAR PESSOA
