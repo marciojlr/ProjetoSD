@@ -168,16 +168,34 @@ public class Eleicao implements Serializable {
     }
 
     public void addRealTime(String str){
-        this.realTime.add(str);
+        System.out.println("Adicionar utilizador realtime");
+        System.out.print("Antes");
+        for(String a : this.realTime){
+            System.out.print(a);
+        }
+        if(!this.realTime.contains(str))
+            this.realTime.add(str);
+        System.out.print("\nDepois");
+        for(String a : this.realTime){
+            System.out.print(a);
+        }
     }
 
     public void removeRealTime(String str){
-
+        System.out.println("Remover utilizador realtime");
+        System.out.print("Antes");
+        for(String a : this.realTime){
+            System.out.print(a);
+        }
         for(String elector : this.realTime){
             if(elector.equals(str)){
                 realTime.remove(elector);
                 return;
             }
+        }
+        System.out.print("\nDepois");
+        for(String a : this.realTime){
+            System.out.print(a);
         }
     }
 

@@ -40,5 +40,5 @@ public interface RMI_S_I extends Remote {
     boolean checkUser(String nome) throws RemoteException;
     void voteWeb(String election, String option) throws RemoteException;
 
-    public ArrayList<String> getRealTimeUsers(String eleicao, String user) throws RemoteException;
+    public ArrayList<String> getRealTimeUsers(String eleicao, String user, String option) throws RemoteException;
 }

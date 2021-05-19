@@ -327,11 +327,14 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return false;
     }
 
-    public ArrayList<String> getRealTimeUsers(String eleicao, String user){
+    public ArrayList<String> getRealTimeUsers(String eleicao, String user, String option){
 
         for (Eleicao e:listaEleicoes) {
             if(e.getTitulo().equals(eleicao)){
-                e.addRealTime(user);
+                if(option.equals("add"))
+                    e.addRealTime(user);
+                else if(option.equals("remove"))
+                    e.removeRealTime(user);
                 return e.getRealTime();
             }
         }
