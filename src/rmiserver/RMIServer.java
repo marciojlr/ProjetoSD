@@ -327,6 +327,17 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return false;
     }
 
+    public ArrayList<String> getRealTimeUsers(String eleicao, String user){
+
+        for (Eleicao e:listaEleicoes) {
+            if(e.getTitulo().equals(eleicao)){
+                e.addRealTime(user);
+                return e.getRealTime();
+            }
+        }
+        return null;
+    }
+
 
     //******************************************** METODOS CHAMADOS PELO SERVIDOR MULTICAST **************************************************
 

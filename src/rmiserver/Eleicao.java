@@ -99,6 +99,10 @@ public class Eleicao implements Serializable {
         return listaCandidata;
     }
 
+    public ArrayList<String> getRealTime() {
+        return realTime;
+    }
+
     public void addListaCandidata(String nome){
         ListaCandidata l = new ListaCandidata(nome);
         this.listaCandidata.add(l);
