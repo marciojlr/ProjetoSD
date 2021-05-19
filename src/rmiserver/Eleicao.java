@@ -21,6 +21,7 @@ public class Eleicao implements Serializable {
     private int total_votos;
     private int votos_branco;
     private int votos_nulos;
+    private ArrayList<String> realTime;
 
     public Eleicao(GregorianCalendar data_inicio, GregorianCalendar data_final, String titulo, String descricao, Departamento dept, String tipo_Pessoa) {
         this.data_inicio = data_inicio;
@@ -35,6 +36,7 @@ public class Eleicao implements Serializable {
         this.total_votos = 0;
         this.votos_branco = 0;
         this.votos_nulos = 0;
+        this.realTime = new ArrayList<>();
     }
 
     public GregorianCalendar getData_inicio() {
@@ -159,6 +161,20 @@ public class Eleicao implements Serializable {
 
         return out;
 
+    }
+
+    public void addRealTime(String str){
+        this.realTime.add(str);
+    }
+
+    public void removeRealTime(String str){
+
+        for(String elector : this.realTime){
+            if(elector.equals(str)){
+                realTime.remove(elector);
+                return;
+            }
+        }
     }
 
 }
