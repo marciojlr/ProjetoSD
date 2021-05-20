@@ -327,15 +327,20 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return false;
     }
 
-    public ArrayList<String> getRealTimeUsers(String eleicao, String user, String option){
-
+    public String getRealTimeUsers(String eleicao, String user, String option){
+        String str = "";
         for (Eleicao e:listaEleicoes) {
             if(e.getTitulo().equals(eleicao)){
                 if(option.equals("add"))
                     e.addRealTime(user);
                 else if(option.equals("remove"))
                     e.removeRealTime(user);
-                return e.getRealTime();
+                str += e.resultadosOnline();
+                str += e.getRealTime().size() + " utilizadores online\n";
+                for(String s : e.getRealTime()){
+                    str += s + "\n";
+                }
+                return str;
             }
         }
         return null;
@@ -534,6 +539,20 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
                 if(!voted){
                     eleicoes.add(e.getTitulo());
                 }
+            }
+        }
+        return eleicoes;
+    }
+
+    public ArrayList<String> getAtualElections(){
+        ArrayList<String> eleicoes = new ArrayList<>();
+
+        GregorianCalendar date = (GregorianCalendar) Calendar.getInstance();
+        //ENCONTRAR ELEICOES COMUNS HA MESA E ELEITORES
+        for(Eleicao e : listaEleicoes){
+            if(e.getData_inicio().compareTo(date) < 0 && e.getData_final().compareTo(date) > 0)
+            {
+                eleicoes.add(e.getTitulo());
             }
         }
         return eleicoes;
