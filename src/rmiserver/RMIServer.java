@@ -341,7 +341,20 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         return null;
     }
 
-
+    public String userOnOff(String nome, boolean state){
+        int count = 0;
+        String str = "";
+        for(Pessoa p : listaPessoas){
+            if(p.getNome().equals(nome)){
+                p.setOn(state);
+            }
+            if(p.isOn()){
+                str += p.getNome() + "\n";
+                count++;
+            }
+        }
+        return count + " utilizadores ativos :\n" + str;
+    }
     //******************************************** METODOS CHAMADOS PELO SERVIDOR MULTICAST **************************************************
 
     /**

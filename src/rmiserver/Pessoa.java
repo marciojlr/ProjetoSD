@@ -16,6 +16,7 @@ public class Pessoa implements Serializable{
     private String morada;
     private String localVoto;
     private boolean admin;
+    private boolean on;
 
     public Pessoa(String nome, String tipo, String password, Departamento departamento, int CC, GregorianCalendar CC_val,int telemovel, String morada, boolean admin) {
         this.nome = nome;
@@ -27,6 +28,7 @@ public class Pessoa implements Serializable{
         this.telemovel = telemovel;
         this.morada = morada;
         this.admin = admin;
+        this.on = false;
     }
 
     public Pessoa(String nome, int CC, String localVoto) {
@@ -37,6 +39,14 @@ public class Pessoa implements Serializable{
 
     public String getLocalVoto() {
         return localVoto;
+    }
+
+    public boolean isOn() {
+        return on;
+    }
+
+    public void setOn(boolean on) {
+        this.on = on;
     }
 
     public String getNome() {
