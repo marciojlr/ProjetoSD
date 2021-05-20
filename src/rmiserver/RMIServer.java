@@ -336,9 +336,11 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
                 else if(option.equals("remove"))
                     e.removeRealTime(user);
                 str += e.resultadosOnline();
-                str += e.getRealTime().size() + " utilizadores online\n";
+                str += "Atualmente estao " + e.getRealTime().size() + " eleitores a votar:\n";
+                int aux = 0;
                 for(String s : e.getRealTime()){
-                    str += s + "\n";
+                    aux++;
+                    str += aux + ". " + s + "\n";
                 }
                 return str;
             }
