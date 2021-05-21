@@ -43,4 +43,6 @@ public interface RMI_S_I extends Remote {
     public String getRealTimeUsers(String eleicao, String user, String option) throws RemoteException;
     String userOnOff(String nome, boolean state) throws RemoteException;
     ArrayList<String> getAtualElections() throws RemoteException;
+    void setFacebookId(String eleitor , String id) throws RemoteException;
+    String checkIdface(String id) throws RemoteException;
 }

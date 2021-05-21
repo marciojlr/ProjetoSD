@@ -17,6 +17,7 @@ public class Pessoa implements Serializable{
     private String localVoto;
     private boolean admin;
     private boolean on;
+    private String id_face = null;
 
     public Pessoa(String nome, String tipo, String password, Departamento departamento, int CC, GregorianCalendar CC_val,int telemovel, String morada, boolean admin) {
         this.nome = nome;
@@ -68,6 +69,10 @@ public class Pessoa implements Serializable{
     public boolean getAdmin(){
         return this.admin;
     }
+
+    public String getId_face() { return id_face; }
+
+    public void setId_face(String id_face) { this.id_face = id_face; }
 
     @Override
     public String toString() {

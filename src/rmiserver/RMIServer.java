@@ -362,6 +362,27 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         }
         return count + " utilizadores ativos :\n" + str;
     }
+
+    public void setFacebookId(String eleitor , String id){
+        for(Pessoa p : listaPessoas){
+            if(p.getNome().equals(eleitor)){
+                p.setId_face(id);
+                System.out.println("Conta Associada: "+ p.getNome() + "  id: " + p.getId_face());
+                return;
+            }
+        }
+
+    }
+
+    public String checkIdface(String id){
+        for (Pessoa p: listaPessoas) {
+            if(p.getId_face() != null && p.getId_face().equals(id)){
+                System.out.println("ID confere, sessao iniciada atrves do facebook!");
+                return p.getNome();
+            }
+        }
+        return null;
+    }
     //******************************************** METODOS CHAMADOS PELO SERVIDOR MULTICAST **************************************************
 
     /**
