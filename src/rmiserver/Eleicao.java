@@ -145,6 +145,25 @@ public class Eleicao implements Serializable {
                 ;
     }
 
+    public String getInfo(){
+        String str = "";
+        str += "Titulo: " + this.titulo  + "\nDescrição: " + this.descricao + "\nDepartamentos: ";
+        for(Departamento department : this.dept){
+            str += department.getNome() + ", ";
+        }
+        str += "\nListas Candidatas: ";
+        for(ListaCandidata lista : this.listaCandidata){
+            str += lista.getNome() + ", ";
+        }
+        str += "\nData de inicio: " + this.data_inicio.get(5) + "/" + (this.data_inicio.get(2)+1) + "/" + this.data_inicio.get(1) +
+                " " + this.data_inicio.get(Calendar.HOUR_OF_DAY) + ":" + this.data_inicio.get(Calendar.MINUTE) +
+                "\nData de encerramento: " + this.data_final.get(5) + "/" + (this.data_final.get(2)+1) + "/" + this.data_final.get(1) +
+                " " + this.data_final.get(Calendar.HOUR_OF_DAY) + ":" + this.data_final.get(Calendar.MINUTE)
+        ;
+
+        return str;
+    }
+
     public String resultadosOnline(){
         String out = "Total de votos ate ao momento: " + this.total_votos + "\n";
         return out;

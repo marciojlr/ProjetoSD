@@ -433,7 +433,6 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
      * @return true se o eleitor estiver registado e false caso contrario
      */
     public boolean loginAdmin(int CC, String password){
-        System.out.println(listaPessoas);
         for(Pessoa pessoa : listaPessoas){
             if(pessoa.getCC() == CC && pessoa.getPassword().equals(password) && pessoa.getAdmin()){
                 System.out.println("Login Admin(" + CC + "): Accepted");
@@ -907,6 +906,15 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         leFicheiroDepartamentos();
         leFicheiroEleicoes();
         lerFicheiroClients();
+
+        if(listaDepartamentos.size() == 0){
+            listaDepartamentos.add(new Departamento("DEI"));
+        }
+        if(listaPessoas.size() == 0){
+            listaPessoas.add(new Pessoa("admin","Docente","1",new Departamento("DEI"),1,null,9100000,"Ramalheira",true));
+        }
+        System.out.println(listaDepartamentos);
+        System.out.println(listaPessoas);
 
         try {
             LocateRegistry.createRegistry(7000).rebind("Server",server);
