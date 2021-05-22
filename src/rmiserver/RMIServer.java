@@ -378,7 +378,7 @@ public class RMIServer extends UnicastRemoteObject implements RMI_S_I {
         for (Pessoa p: listaPessoas) {
             if(p.getId_face() != null && p.getId_face().equals(id)){
                 System.out.println("ID confere, sessao iniciada atrves do facebook!");
-                return p.getNome();
+                return p.getNome() + ":" +p.getCC();
             }
         }
         return null;
